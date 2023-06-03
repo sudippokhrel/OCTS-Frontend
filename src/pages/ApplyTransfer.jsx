@@ -1,9 +1,21 @@
 import React from 'react'
+import Navbar from '../components/Navbar'
+import Box from '@mui/material/Box';
 
-function ApplyTransfer() {
+export default function Home() {
   return (
-    <div>ApplyTransfer</div>
+    <>
+      <Box sx={{ display: 'flex' }}>
+       <Navbar/>
+    
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <h1>applyfortransfer</h1>
+        
+        </Box>
+      </Box>
+     
+    </>
+    
   )
 }
 
-export default ApplyTransfer;
