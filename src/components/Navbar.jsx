@@ -143,7 +143,7 @@ export default function Navbar() {
         <Divider />
         <List>
           
-            <ListItem key="Home" disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/")}}>
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -166,7 +166,7 @@ export default function Navbar() {
 
             <Divider />
 
-            <ListItem key="ApplyTransfer" disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/applytransfer")}}>
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/applytransfer")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -187,7 +187,7 @@ export default function Navbar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem key="ViewTransfers" disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/viewtransfers")}}>
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/viewtransfers")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -210,7 +210,7 @@ export default function Navbar() {
 
             <Divider/>
 
-            <ListItem key="Login" disablePadding sx={{ display: 'block' }}onClick={()=>{navigate("/login")}}>
+            <ListItem disablePadding sx={{ display: 'block' }}onClick={()=>{navigate("/login")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -231,7 +231,7 @@ export default function Navbar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem key="Settings" disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/settings")}}>
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/settings")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
