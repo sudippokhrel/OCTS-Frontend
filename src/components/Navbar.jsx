@@ -29,7 +29,7 @@ import AppsIcon from '@mui/icons-material/Apps';
 import MailIcon from '@mui/icons-material/Mail';
 
 // importing navigation to make events for navigation bar 
-import {useNavigate}  from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const drawerWidth = 240;
 
