@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import Box from '@mui/material/Box';
 import Appbar from '../components/Appbar';
+import TransferForm from '../components/TransferForm';
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
     
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <h1>applyfortransfer</h1>
+          <TransferForm/>
         
         </Box>
       </Box>
