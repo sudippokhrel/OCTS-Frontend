@@ -7,6 +7,7 @@ import ApplyTransfer from "./pages/ApplyTransfer";
 import ViewTransfer from "./pages/ViewTransfers";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
         <Route path ="/viewtransfers"  eact element={<ViewTransfer/>}></Route>
         <Route path ="/settings" exact element={<Settings/>}></Route>
         <Route path ="/login" exact element={<Login/>}></Route>
+        <Route path="/signup" exact element={<Signup/>}></Route>
       </Routes>
     </BrowserRouter>
 

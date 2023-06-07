@@ -23,6 +23,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import SettingsIcon from '@mui/icons-material/Settings';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import GradingIcon from '@mui/icons-material/Grading';
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AppsOutageIcon from '@mui/icons-material/AppsOutage';
 import AppsIcon from '@mui/icons-material/Apps';
@@ -185,6 +186,27 @@ export default function Navbar() {
                   <LoginIcon />
                 </ListItemIcon>
                 <ListItemText primary= "Login" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/signup")}}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <AppRegistrationIcon />
+                </ListItemIcon>
+                <ListItemText primary= "Sign Up" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
 
