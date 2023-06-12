@@ -1,95 +1,140 @@
 import React, { useState } from 'react';
-import App from '../App'
-import { Grid, Paper,Avatar, TextField, Button, Typography , Link } from '@mui/material'
-import LoginIcon from '@mui/icons-material/Login';
-import { blue } from '@mui/material/colors';
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@mui/material';
+import { LockOutlined } from '@mui/icons-material';
+import { auth } from '../firebase-config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 
+const Login = () => {
+  const [errorMessage, setErrorMessage] = useState('');
 
-const Login=()=>{
+  const handleLogin = async (values) => {
+    const { email, password } = values;
 
-  const [emailOrPhone, setEmailOrPhone] = useState('');
-  const [password, setPassword] = useState('');
-  
-  const [isValidEmailOrPhone, setIsValidEmailOrPhone] = useState(true);
-  const [isValidPassword, setIsValidPassword] = useState(true);
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false); // Track if the form has been submitted
-  
+    signInWithEmailAndPassword(auth,email, password)
+      .then((userCredential)=>{
+      console.log('Logged in successfully!')
+      console.log(userCredential)
+      }).catch((error) =>{
+      console.error('Error logging in:', error)
+      setErrorMessage('Invalid email or password')
+    })
+  }
 
-  const validateEmailOrPhone = () => {
-    const emailRegex = /^[\w.%+-]+@(gmail\.com|pu\.edu\.np|student\.pu\.edu\.np)$/;
-    const phoneRegex = /^\+977\d{9}$/;
-    setIsValidEmailOrPhone(emailRegex.test(emailOrPhone) || phoneRegex.test(emailOrPhone));
+  const handleForgotPassword = async (values) => {
+    const { email } = values;
+    try {
+      await sendPasswordResetEmail(auth,email);
+      console.log('Password reset email sent!');
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      setErrorMessage('Failed to send password reset email');
+    }
   };
 
-  const validatePassword = () => {
-    // Password validation rules (e.g., minimum 8 characters, at least one uppercase letter, etc.)
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    setIsValidPassword(passwordRegex.test(password));
-  };
+  const validationSchema = Yup.object().shape({
+    email: Yup.string().email('Invalid email').required('Required'),
+    password: Yup.string().min(8, 'Password must be at least 8 characters').required('Required'),
+  });
 
-
-
-  const handleEmailOrPhoneChange = (event) => {
-    setEmailOrPhone(event.target.value);
-    if (isFormSubmitted) {
-        validateEmailOrPhone();
-      }
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-    if (isFormSubmitted) {
-        validatePassword();
-      }
-  };
-
- 
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    validateEmailOrPhone();
-    validatePassword();
-    setIsFormSubmitted(true);
-    
-    // Perform further actions (e.g., submit form) based on validation results
-  };
-
-    const paperStyle={padding:20 , height:'70vh' , width:280 , margin:"20px auto"}
-    const avatarStyle={backgroundColor:'#2473b2'}
-    const textFieldStyle={margin:'10px 0'}
-    const buttonStyle={margin:'8px 0'}
-    const typographyStyle={margin:'5px 0'}
-    return(
-        <Grid>
-            <Paper elevation={15 } style={paperStyle}>
-                <Grid align='center'> 
-                <Avatar style={avatarStyle}><LoginIcon/></Avatar>
-                <h2>Sign In</h2></Grid>
-
-                <form onSubmit={handleSubmit}>
-                                
-                <TextField id="outlined-basic" label='Email or phone' placeholder="Enter your email or phone " fullWidth required style={textFieldStyle} value={emailOrPhone} onChange={handleEmailOrPhoneChange}/>
-                {isValidEmailOrPhone ? null : <span style={{ color: 'red' }}>Invalid email or phone number</span>}
-
-                <TextField id="outlined-basic" label='Password' type="password" placeholder='Enter your password' fullWidth required style={textFieldStyle} value={password} onChange={handlePasswordChange}/>
-                {isValidPassword ? null : <span style={{ color: 'red' }}>Invalid password</span>}
-
-                <Button type='submit' fullWidth variant='contained'style={buttonStyle}>Sign in</Button> </form>
-                <Typography style={typographyStyle}>
-                    <Link href="#">Forgot password?</Link>
+  return (
+    <Grid container justifyContent="center" style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
+      <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+          <Grid align="center">
+            <Avatar style={{ backgroundColor: '#1976d2' }}>
+              <LockOutlined />
+            </Avatar>
+            <Typography variant="h5" style={{ margin: '20px 0', color: '#1976d2' }}>
+              LOGIN
+            </Typography>
+            <Typography variant="subtitle1" style={{ marginBottom: '20px', color: '#666' }}>
+              Please fill this form to login!
+            </Typography>
+          </Grid>
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            validationSchema={validationSchema}
+            onSubmit={handleLogin}
+          >
+            {({ errors,values }) => (
+              <Form>
+                <Field
+                  as={TextField}
+                  variant="outlined"
+                  label="Email"
+                  name="email"
+                  fullWidth
+                  margin="normal"
+                  error={Boolean(errors.email)}
+                  helperText={errors.email}
+                />
+                <Field
+                  as={TextField}
+                  variant="outlined"
+                  label="Password"
+                  name="password"
+                  type="password"
+                  fullWidth
+                  margin="normal"
+                  error={Boolean(errors.password)}
+                  helperText={errors.password}
+                />
+                {errorMessage && (
+                  <Typography variant="body2" color="error" style={{ marginBottom: '10px' }}>
+                    {errorMessage}
+                  </Typography>
+                )}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  style={{ marginTop: '10px', backgroundColor: '#1976d2', color: '#fff' }}
+                >
+                  Login
+                </Button>
+                <div style={{ marginTop: '10px' }}>
+                <Typography variant="caption">
+                   Do not have an account?{' '}
+                   <Link href="/signup" underline="hover">
+                      Sign up
+                   </Link>
                 </Typography>
-                <Typography style={typographyStyle}> Don't have an account?
-                    <Link href="#">Sign up now</Link>
+                </div>
+                <div style={{ marginTop: '10px' }}>
+                <Typography variant="caption">
+                  <Link onClick={() => handleForgotPassword(values)} underline="hover" color="primary">
+                    Forgot Password?
+                  </Link>
                 </Typography>
-                
-            </Paper>
-        </Grid>
-    )
-}
-export default Login
+                </div>
+
+              </Form>
+            )}
+          </Formik>
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default Login;
 
 
 
 
 
+
+/*const handleLogin = async (values) => {
+  const { email, password } = values;
+
+  try {
+    await signInWithEmailAndPassword(auth,email, password);
+    console.log('Logged in successfully!');
+  } catch (error) {
+    console.error('Error logging in:', error);
+    setErrorMessage('Invalid email or password');
+  }*/
