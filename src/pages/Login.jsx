@@ -31,7 +31,7 @@ const Login = () => {
       console.log('Password reset email sent!');
     } catch (error) {
       console.error('Error sending password reset email:', error);
-      setErrorMessage('Failed to send password reset email');
+      setErrorMessage('Please enter your Email first to reset the password.');
     }
   };
 
