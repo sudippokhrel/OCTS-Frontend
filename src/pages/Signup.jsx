@@ -1,30 +1,13 @@
-import React from 'react';
-import { Grid, Paper, TextField, Button, Avatar, Typography, MenuItem } from '@mui/material';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import React, { useState } from 'react';
+import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
+import { Grid, Paper, Avatar, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { LockOutlined } from '@mui/icons-material';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase-config'; // Assuming you have the Firebase config and auth instance in a separate file
 
 const Signup = () => {
-  const paperStyle = {
-    padding: '30px 20px',
-    width: 300,
-    margin: '20px auto',
-  };
-  const headerStyle = { margin: 0 };
-  const avatarStyle = { backgroundColor: 'blue' };
-  const initialValues = {
-    name: '',
-    email: '',
-    puRegistrationNumber: '',
-    faculty: '',
-    college: '',
-    password: '',
-    confirmPassword: '',
-  };
-
-  const textFieldStyle = {
-    marginBottom: '10px',
-  };
+  const [errorMessage, setErrorMessage] = useState('');
 
   const faculties = [
     'Faculty of Science and Technology',
@@ -55,131 +38,156 @@ const Signup = () => {
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().required('Required'),
-    email: Yup.string().email('Invalid Email').required('Required'),
-    puRegistrationNumber: Yup.string().required('Required'),
+    email: Yup.string().email('Invalid email').required('Required'),
+    puRegNumber: Yup.string().required('Required'),
     faculty: Yup.string().required('Required'),
     college: Yup.string().required('Required'),
-    password: Yup.string()
-      .min(8, 'Password must be at least 8 characters')
-      .required('Password is Required'),
+    password: Yup.string().min(8, 'Password must be at least 8 characters').required('Required'),
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Confirm Password is required'),
+      .required('Required'),
   });
 
-  const onSubmit = (values, props) => {
-    console.log(values);
-    props.resetForm();
-  };
+  const handleSubmit = async (values) => {
+    const { name, email, puRegNumber, faculty, college, password } = values;
+
+      createUserWithEmailAndPassword(auth,email, password)
+        .then((userCredential)=>{
+        console.log('Created successfully!')
+        console.log(userCredential)
+        }).catch((error) =>{
+        console.error('Error creating account:', error)
+        setErrorMessage('Invalid email or password')
+      })
+    }
 
   return (
-    <Grid>
-      <Paper elevation={20} style={paperStyle}>
-        <Grid align="center">
-          <Avatar style={avatarStyle}>
-            <AddCircleOutlineOutlinedIcon />
-          </Avatar>
-          <h2>Sign Up</h2>
-          <Typography variant="caption" gutterBottom>
-            Please fill this form to create an account!
-          </Typography>
-        </Grid>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {(props) => (
+    <Grid container justifyContent="center" style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
+      <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+          <Grid align="center">
+            <Avatar style={{ backgroundColor: '#1976d2' }}>
+              <LockOutlined />
+            </Avatar>
+            <Typography variant="h5" style={{ margin: '20px 0', color: '#1976d2' }}>
+              SIGN UP
+            </Typography>
+            <Typography variant="subtitle1" style={{ marginBottom: '20px', color: '#666' }}>
+              Please fill this form to create an account!
+            </Typography>
+          </Grid>
+          <Formik
+            initialValues={{
+              name: '',
+              email: '',
+              puRegNumber: '',
+              faculty: '',
+              college: '',
+              password: '',
+              confirmPassword: '',
+            }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+          {({ errors}) => (
             <Form>
               <Field
                 as={TextField}
-                fullWidth
-                name="name"
+                variant="outlined"
                 label="Name"
-                placeholder="Enter your name"
-                helperText={<ErrorMessage name="name" />}
-                style={textFieldStyle}
+                name="name"
+                fullWidth
+                margin="normal"
+                error={Boolean(errors.name)}
+                helperText={errors.name}
               />
               <Field
                 as={TextField}
-                fullWidth
-                name="email"
+                variant="outlined"
                 label="Email"
-                placeholder="Enter your Email"
-                helperText={<ErrorMessage name="email" />}
-                style={textFieldStyle}
+                name="email"
+                fullWidth
+                margin="normal"
+                error={Boolean(errors.email)}
+                helperText={errors.email}
               />
               <Field
                 as={TextField}
+                variant="outlined"
+                label="PU Registration Number"
+                name="puRegNumber"
                 fullWidth
-                name="puRegistrationNumber"
-                label="PU-Registration number"
-                placeholder="Enter your PU-registration number"
-                helperText={<ErrorMessage name="puRegistrationNumber" />}
-                style={textFieldStyle}
+                margin="normal"
+                error={Boolean(errors.puRegNumber)}
+                helperText={errors.puRegNumber}
               />
-              <Field
-                as={TextField}
-                fullWidth
-                name="faculty"
-                label="Faculty"
-                placeholder="Select your Faculty"
-                select
-                helperText={<ErrorMessage name="faculty" />}
-                style={textFieldStyle}
-              >
+              <FormControl variant="outlined" fullWidth margin="normal">
+              <InputLabel>Faculty</InputLabel>
+              <Field as={Select} name="faculty" label="Faculty" error={Boolean(errors.faculty)}>
+                <MenuItem value="">Select Faculty</MenuItem>
                 {faculties.map((faculty) => (
                   <MenuItem key={faculty} value={faculty}>
                     {faculty}
                   </MenuItem>
                 ))}
               </Field>
-
-              <Field
-                as={TextField}
-                fullWidth
-                name="college"
-                label="College"
-                placeholder="Select your College"
-                select
-                helperText={<ErrorMessage name="college" />}
-                style={textFieldStyle}
-              >
+            </FormControl>
+            <FormControl variant="outlined" fullWidth margin="normal">
+              <InputLabel>College</InputLabel>
+              <Field as={Select} name="college" label="College" error={Boolean(errors.college)}>
+                <MenuItem value="">Select College</MenuItem>
                 {colleges.map((college) => (
                   <MenuItem key={college} value={college}>
                     {college}
                   </MenuItem>
                 ))}
               </Field>
-
+            </FormControl>
               <Field
                 as={TextField}
-                fullWidth
-                name="password"
+                variant="outlined"
                 label="Password"
+                name="password"
                 type="password"
-                helperText={<ErrorMessage name="password" />}
-                style={textFieldStyle}
+                fullWidth
+                margin="normal"
+                error={Boolean(errors.password)}
+                helperText={errors.password}
               />
               <Field
                 as={TextField}
-                fullWidth
-                name="confirmPassword"
+                variant="outlined"
                 label="Confirm Password"
+                name="confirmPassword"
                 type="password"
-                helperText={<ErrorMessage name="confirmPassword" />}
-                style={textFieldStyle}
+                fullWidth
+                margin="normal"
+                error={Boolean(errors.confirmPassword)}
+                helperText={errors.confirmPassword}
               />
-              <Button type="submit" variant="contained" color="primary">
+              {errorMessage && (
+                <Typography variant="body2" color="error" align="center" style={{ marginTop: '10px' }}>
+                  {errorMessage}
+                </Typography>
+              )}
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                style={{ marginTop: '20px', backgroundColor: '#1976d2', color: '#fff' }}
+              >
                 Sign Up
               </Button>
             </Form>
-          )}
-        </Formik>
-      </Paper>
+            )}
+          </Formik>
+        </Paper>
+      </Grid>
     </Grid>
   );
-};
+}
 
 export default Signup;
+
+
 

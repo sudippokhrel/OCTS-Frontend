@@ -18,7 +18,7 @@ function App() {
       <Routes>
         <Route path ="/" exact element={<Home/>}></Route>
         <Route  path ="/applytransfer"  exact element={<ApplyTransfer/>}></Route>
-        <Route path ="/viewtransfers"  eact element={<ViewTransfer/>}></Route>
+        <Route path ="/viewtransfers"  exact element={<ViewTransfer/>}></Route>
         <Route path ="/settings" exact element={<Settings/>}></Route>
         <Route path ="/login" exact element={<Login/>}></Route>
         <Route path="/signup" exact element={<Signup/>}></Route>
@@ -26,10 +26,7 @@ function App() {
     </BrowserRouter>
 
   {/* <Navbar/> */}
-  </>
-      
-    
-      
+  </>   
   )
 }
 
