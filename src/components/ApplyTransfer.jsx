@@ -1,8 +1,8 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from './Navbar'
 import Box from '@mui/material/Box';
-import Appbar from '../components/Appbar';
-import TransferForm from '../components/TransferForm';
+import Appbar from './Appbar';
+import TransferForm from '../pages/TransferForm';
 
 export default function Home() {
   return (

@@ -1,28 +1,34 @@
 import React, { useState } from 'react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
 import { Grid, Paper, Avatar, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase-config'; // Assuming you have the Firebase config and auth instance in a separate file
+import { Link, useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../components/context/UserAuthContext';
+import { Alert } from '@mui/material';
 
 const Signup = () => {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [puRegNumber, setPuRegNumber] = useState('');
+  const [faculty, setFaculty] = useState('');
+  const [college, setCollege] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const { signUp } = useUserAuth();
+  const navigate = useNavigate();
 
-  const faculties = [
-    'Faculty of Science and Technology',
-  ];
+  const faculties = ['Faculty of Science and Technology'];
 
   const colleges = [
-    'School of Engineering, Pokhara Lekhnath-30,Kaski',
+    'School of Engineering, Pokhara Lekhnath-30, Kaski',
     'Madan Bhandari Memorial Academy Nepal, Urlabari-3, Morang',
     'Nepal Engineering College, Changunarayan, Bhaktapur',
-    'School of Environmental Science & management (SchEMS), Mid Baneshwor,Kathmandu',
+    'School of Environmental Science & Management (SchEMS), Mid Baneshwor, Kathmandu',
     'Gandaki College of Engineering and Science, Lamachaur, Pokhara-16, Kaski',
     'Pokhara Engineering College, Phirke, Pokhara, Kaski',
     'Universal Engineering College, Chakupat, Lalitpur',
     'Crimson College of Technology, Devinagar, Rupandehi',
-    'Oxford College of Engineering and Management, Gaidakot, Nawalparasi', 
+    'Oxford College of Engineering and Management, Gaidakot, Nawalparasi',
     'Lumbini Engineering, Management and Science College, Bhalwari, Butwal, Rupandehi',
     'National Academy of Science and Technology Dhangadi, Kailali',
     'Nepal College of Information Technology, Balkumari, Lalitpur',
@@ -36,35 +42,29 @@ const Signup = () => {
     'Ritz College of Engineering and Management, Balkumari, Lalitpur',
   ];
 
-  const validationSchema = Yup.object().shape({
-    name: Yup.string().required('Required'),
-    email: Yup.string().email('Invalid email').required('Required'),
-    puRegNumber: Yup.string().required('Required'),
-    faculty: Yup.string().required('Required'),
-    college: Yup.string().required('Required'),
-    password: Yup.string().min(8, 'Password must be at least 8 characters').required('Required'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], 'Passwords must match')
-      .required('Required'),
-  });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
 
-  const handleSubmit = async (values) => {
-    const { name, email, puRegNumber, faculty, college, password } = values;
-
-      createUserWithEmailAndPassword(auth,email, password)
-        .then((userCredential)=>{
-        console.log('Created successfully!')
-        console.log(userCredential)
-        }).catch((error) =>{
-        console.error('Error creating account:', error)
-        setErrorMessage('Invalid email or password')
-      })
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
     }
 
+    try {
+      await signUp(email, password);
+      console.log('Logged in successfully!');
+      navigate('/');
+    } catch (error) {
+      console.error('Error creating account:', error);
+      setError('Invalid email or password');
+    }
+  };
+
   return (
-    <Grid container justifyContent="center" style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
-      <Grid item xs={12} sm={8} md={6} lg={4}>
-        <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+      <Grid item xs={11} sm={8} md={6} lg={4}>
+      <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
           <Grid align="center">
             <Avatar style={{ backgroundColor: '#1976d2' }}>
               <LockOutlined />
@@ -76,118 +76,97 @@ const Signup = () => {
               Please fill this form to create an account!
             </Typography>
           </Grid>
-          <Formik
-            initialValues={{
-              name: '',
-              email: '',
-              puRegNumber: '',
-              faculty: '',
-              college: '',
-              password: '',
-              confirmPassword: '',
-            }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-          {({ errors}) => (
-            <Form>
-              <Field
-                as={TextField}
-                variant="outlined"
-                label="Name"
-                name="name"
-                fullWidth
-                margin="normal"
-                error={Boolean(errors.name)}
-                helperText={errors.name}
-              />
-              <Field
-                as={TextField}
-                variant="outlined"
-                label="Email"
-                name="email"
-                fullWidth
-                margin="normal"
-                error={Boolean(errors.email)}
-                helperText={errors.email}
-              />
-              <Field
-                as={TextField}
-                variant="outlined"
-                label="PU Registration Number"
-                name="puRegNumber"
-                fullWidth
-                margin="normal"
-                error={Boolean(errors.puRegNumber)}
-                helperText={errors.puRegNumber}
-              />
-              <FormControl variant="outlined" fullWidth margin="normal">
+          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+          <form onSubmit={handleSubmit}>
+            <TextField
+              variant="outlined"
+              label="Name"
+              name="name"
+              fullWidth
+              margin="normal"
+              placeholder="Name"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              label="Email"
+              name="email"
+              fullWidth
+              margin="normal"
+              placeholder="Email address"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              label="PU Registration Number"
+              name="puRegNumber"
+              fullWidth
+              margin="normal"
+              placeholder="PU Registration Number"
+              onChange={(e) => setPuRegNumber(e.target.value)}
+            />
+            <FormControl variant="outlined" fullWidth margin="normal">
               <InputLabel>Faculty</InputLabel>
-              <Field as={Select} name="faculty" label="Faculty" error={Boolean(errors.faculty)}>
+              <Select  value={faculty}
+              onChange={(e) => setFaculty(e.target.value)}
+              label="Faculty">
                 <MenuItem value="">Select Faculty</MenuItem>
                 {faculties.map((faculty) => (
                   <MenuItem key={faculty} value={faculty}>
                     {faculty}
                   </MenuItem>
                 ))}
-              </Field>
+              </Select>
             </FormControl>
             <FormControl variant="outlined" fullWidth margin="normal">
               <InputLabel>College</InputLabel>
-              <Field as={Select} name="college" label="College" error={Boolean(errors.college)}>
+              <Select value={college}
+              onChange={(e) => setCollege(e.target.value)}
+              label="College">
                 <MenuItem value="">Select College</MenuItem>
                 {colleges.map((college) => (
                   <MenuItem key={college} value={college}>
                     {college}
                   </MenuItem>
                 ))}
-              </Field>
+              </Select>
             </FormControl>
-              <Field
-                as={TextField}
-                variant="outlined"
-                label="Password"
-                name="password"
-                type="password"
-                fullWidth
-                margin="normal"
-                error={Boolean(errors.password)}
-                helperText={errors.password}
-              />
-              <Field
-                as={TextField}
-                variant="outlined"
-                label="Confirm Password"
-                name="confirmPassword"
-                type="password"
-                fullWidth
-                margin="normal"
-                error={Boolean(errors.confirmPassword)}
-                helperText={errors.confirmPassword}
-              />
-              {errorMessage && (
-                <Typography variant="body2" color="error" align="center" style={{ marginTop: '10px' }}>
-                  {errorMessage}
-                </Typography>
-              )}
-              <Button
-                type="submit"
-                variant="contained"
-                fullWidth
-                style={{ marginTop: '20px', backgroundColor: '#1976d2', color: '#fff' }}
-              >
-                Sign Up
-              </Button>
-            </Form>
-            )}
-          </Formik>
+            <TextField
+              variant="outlined"
+              label="Password"
+              name="password"
+              type="password"
+              fullWidth
+              margin="normal"
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <TextField
+              variant="outlined"
+              label="Confirm Password"
+              name="confirmPassword"
+              type="password"
+              fullWidth
+              margin="normal"
+              placeholder="Confirm Password"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button type="submit" variant="contained" fullWidth style={{ marginTop: '20px', backgroundColor: '#1976d2', color: '#fff' }}>
+              Sign Up
+            </Button>
+            <div style={{ marginTop: '10px' }}>
+              <Typography variant="caption">
+                Already have an account?
+                <Link to ="/login" underline="hover">
+                  Login
+                </Link>
+              </Typography>
+            </div>
+          </form>
         </Paper>
       </Grid>
     </Grid>
   );
-}
+};
 
 export default Signup;
-
-
-

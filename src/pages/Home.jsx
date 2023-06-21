@@ -2,11 +2,25 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import Appbar from '../components/Appbar'
 import Box from '@mui/material/Box';
+import {Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../components/context/UserAuthContext';
 
-export default function Home() {
+
+const Home=()=> {
+  const { logOut, user } = useUserAuth();
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate("/login");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
   return (
     <>
-
     <Appbar/>
     <Box height={30}/>
       <Box sx={{ display: 'flex' }}>
@@ -14,7 +28,16 @@ export default function Home() {
        <Navbar/>
     
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <h1>Home testinggg</h1>
+        <div style={{ marginTop: '10px' }}>
+         Hello! Welcome <br />
+        {user && user.email}
+        </div>
+        
+        <div style={{ marginTop: '10px' }}>
+        <Button variant="primary" onClick={handleLogout}>
+        Log out
+        </Button>
+        </div>
         
         </Box>
       </Box>
@@ -23,3 +46,5 @@ export default function Home() {
     
   )
 }
+
+export default Home;
