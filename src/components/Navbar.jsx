@@ -33,6 +33,9 @@ import MailIcon from '@mui/icons-material/Mail';
 // importing navigation to make events for navigation bar 
 import {useNavigate} from 'react-router-dom';
 
+import { useUserAuth } from '../components/context/UserAuthContext';
+
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -88,6 +91,17 @@ export default function Navbar() {
   const [open, setOpen] = React.useState(true);
   //For navigation of pages
   const navigate = useNavigate();
+
+//for handling logout after being clicked 
+  const { logOut} = useUserAuth();
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate("/logout");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
 
   return (
@@ -233,7 +247,7 @@ export default function Navbar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/logou")}}>
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={handleLogout}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
