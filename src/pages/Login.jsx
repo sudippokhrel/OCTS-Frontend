@@ -1,49 +1,46 @@
 import React, { useState } from 'react';
-import { Formik, Form, Field } from 'formik';
-import * as Yup from 'yup';
+import { auth } from '../firebase-config';
+import { Alert } from '@mui/material';
 import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
-import { auth } from '../firebase-config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import { sendPasswordResetEmail } from 'firebase/auth';
-
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../components/context/UserAuthContext';
 
 const Login = () => {
-  const [errorMessage, setErrorMessage] = useState('');
+  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const { logIn } = useUserAuth();
+  const navigate = useNavigate();
 
-  const handleLogin = async (values) => {
-    const { email, password } = values;
-
-    signInWithEmailAndPassword(auth,email, password)
-      .then((userCredential)=>{
-      console.log('Logged in successfully!')
-      console.log(userCredential)
-      }).catch((error) =>{
-      console.error('Error logging in:', error)
-      setErrorMessage('Invalid email or password')
-    })
-  }
-
-  const handleForgotPassword = async (values) => {
-    const { email } = values;
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
     try {
-      await sendPasswordResetEmail(auth,email);
-      console.log('Password reset email sent!');
+      await logIn(email, password);
+      console.log('Logged in successfully!');
+      navigate('/');
     } catch (error) {
-      console.error('Error sending password reset email:', error);
-      setErrorMessage('Please enter your Email first to reset the password.');
+      console.error('Error logging in:', error);
+      setError('Invalid email or password');
     }
   };
 
-  const validationSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email').required('Required'),
-    password: Yup.string().min(8, 'Password must be at least 8 characters').required('Required'),
-  });
+  const handleForgotPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log('Password reset email sent!');
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      setError('Please enter your email first to reset the password.');
+    }
+  };
 
   return (
-    <Grid container justifyContent="center" style={{ minHeight: '100vh', backgroundColor: '#f0f2f5' }}>
-      <Grid item xs={12} sm={8} md={6} lg={4}>
-        <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+      <Grid item xs={11} sm={8} md={6} lg={4}>
+      <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
           <Grid align="center">
             <Avatar style={{ backgroundColor: '#1976d2' }}>
               <LockOutlined />
@@ -55,66 +52,50 @@ const Login = () => {
               Please fill this form to login!
             </Typography>
           </Grid>
-          <Formik
-            initialValues={{ email: '', password: '' }}
-            validationSchema={validationSchema}
-            onSubmit={handleLogin}
-          >
-            {({ errors,values }) => (
-              <Form>
-                <Field
-                  as={TextField}
+          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+          <form onSubmit={handleLogin} style={{ marginTop: '2rem' }}>
+            <Grid container direction="column" spacing={2}>
+              <Grid item>
+                <TextField
+                  type="email"
+                  label="Email Address"
                   variant="outlined"
-                  label="Email"
-                  name="email"
                   fullWidth
-                  margin="normal"
-                  error={Boolean(errors.email)}
-                  helperText={errors.email}
-                />
-                <Field
-                  as={TextField}
-                  variant="outlined"
-                  label="Password"
-                  name="password"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  sx={{ width: '100%' }}
+
+                  />
+              </Grid>
+              <Grid item>
+                <TextField
                   type="password"
+                  label="Password"
+                  variant="outlined"
                   fullWidth
-                  margin="normal"
-                  error={Boolean(errors.password)}
-                  helperText={errors.password}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  sx={{ width: '100%' }}
                 />
-                {errorMessage && (
-                  <Typography variant="body2" color="error" style={{ marginBottom: '10px' }}>
-                    {errorMessage}
-                  </Typography>
-                )}
-                <Button
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  style={{ marginTop: '10px', backgroundColor: '#1976d2', color: '#fff' }}
-                >
-                  Login
+              </Grid>
+              <Grid item>
+                <Button variant="contained" type="submit" fullWidth>
+                  Log In
                 </Button>
-                <div style={{ marginTop: '10px' }}>
-                <Typography variant="caption">
-                   Do not have an account?{' '}
-                   <Link href="/signup" underline="hover">
-                      Sign up
-                   </Link>
-                </Typography>
-                </div>
-                <div style={{ marginTop: '10px' }}>
-                <Typography variant="caption">
-                  <Link onClick={() => handleForgotPassword(values)} underline="hover" color="primary">
+              </Grid>
+              <Grid item>
+                <Typography variant="body2" align="center">
+                  <Link component={RouterLink} to="#" onClick={handleForgotPassword}>
                     Forgot Password?
                   </Link>
                 </Typography>
-                </div>
-
-              </Form>
-            )}
-          </Formik>
+              </Grid>
+              <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+               Don't have an account? <Link component={RouterLink} to="/signup">Sign up</Link>
+              </Typography>
+            </Grid>
+          </form>
+          
         </Paper>
       </Grid>
     </Grid>
@@ -122,19 +103,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-
-
-
-/*const handleLogin = async (values) => {
-  const { email, password } = values;
-
-  try {
-    await signInWithEmailAndPassword(auth,email, password);
-    console.log('Logged in successfully!');
-  } catch (error) {
-    console.error('Error logging in:', error);
-    setErrorMessage('Invalid email or password');
-  }*/

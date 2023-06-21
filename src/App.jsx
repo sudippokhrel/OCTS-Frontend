@@ -1,10 +1,14 @@
 import React from "react";
 import Navbar from "./components/Navbar";
 import { Routes, Route, BrowserRouter } from "react-router-dom"; //importing reactrouter dom for routing
+import ProtectedRoute from "./components/ProtectedRoute";
+import { UserAuthContextProvider } from "./components/context/UserAuthContext";
+
 
 //Importing pages for routing
 import Home from "./pages/Home";
-import ApplyTransfer from "./pages/ApplyTransfer";
+import "./App.css";
+import ApplyTransfer from "./components/ApplyTransfer";
 import ViewTransfer from "./pages/ViewTransfers";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
@@ -13,21 +17,17 @@ import Signup from "./pages/Signup";
 
 function App() {
   return (
-  <>
-  {/* different Routes added ie. home transferapply, view transfer,settingsetc  */}
-    <BrowserRouter>
+    <UserAuthContextProvider>
       <Routes>
-        <Route path ="/" exact element={<Home/>}></Route>
-        <Route  path ="/applytransfer"  exact element={<ApplyTransfer/>}></Route>
-        <Route path ="/viewtransfers"  exact element={<ViewTransfer/>}></Route>
-        <Route path ="/settings" exact element={<Settings/>}></Route>
-        <Route path ="/login" exact element={<Login/>}></Route>
-        <Route path="/signup" exact element={<Signup/>}></Route>
+        <Route path ="/"  element={<Home/>}></Route>
+        <Route  path ="/applytransfer"  element={<ProtectedRoute><ApplyTransfer/></ProtectedRoute>}></Route>
+        <Route path ="/viewtransfers"  element={<ProtectedRoute><ViewTransfer/></ProtectedRoute>}></Route>
+        <Route path ="/settings"  element={<ProtectedRoute><Settings/></ProtectedRoute>}></Route>
+        <Route path ="/login"  element={<Login/>}></Route>
+        <Route path="/signup" element={<Signup/>}></Route>
       </Routes>
-    </BrowserRouter>
+    </UserAuthContextProvider>
 
-  {/* <Navbar/> */}
-  </>   
   )
 }
 
