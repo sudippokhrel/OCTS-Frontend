@@ -1,95 +1,105 @@
 import React, { useState } from 'react';
-import App from '../App'
-import { Grid, Paper,Avatar, TextField, Button, Typography , Link } from '@mui/material'
-import LoginIcon from '@mui/icons-material/Login';
-import { blue } from '@mui/material/colors';
+import { auth } from '../firebase-config';
+import { Alert } from '@mui/material';
+import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@mui/material';
+import { LockOutlined } from '@mui/icons-material';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useUserAuth } from '../components/context/UserAuthContext';
 
-
-
-const Login=()=>{
-
-  const [emailOrPhone, setEmailOrPhone] = useState('');
+const Login = () => {
+  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  
-  const [isValidEmailOrPhone, setIsValidEmailOrPhone] = useState(true);
-  const [isValidPassword, setIsValidPassword] = useState(true);
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false); // Track if the form has been submitted
-  
+  const { logIn } = useUserAuth();
+  const navigate = useNavigate();
 
-  const validateEmailOrPhone = () => {
-    const emailRegex = /^[\w.%+-]+@(gmail\.com|pu\.edu\.np|student\.pu\.edu\.np)$/;
-    const phoneRegex = /^\+977\d{9}$/;
-    setIsValidEmailOrPhone(emailRegex.test(emailOrPhone) || phoneRegex.test(emailOrPhone));
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await logIn(email, password);
+      console.log('Logged in successfully!');
+      navigate('/');
+    } catch (error) {
+      console.error('Error logging in:', error);
+      setError('Invalid email or password');
+    }
   };
 
-  const validatePassword = () => {
-    // Password validation rules (e.g., minimum 8 characters, at least one uppercase letter, etc.)
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    setIsValidPassword(passwordRegex.test(password));
+  const handleForgotPassword = async () => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      console.log('Password reset email sent!');
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      setError('Please enter your email first to reset the password.');
+    }
   };
 
+  return (
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
+      <Grid item xs={11} sm={8} md={6} lg={4}>
+      <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+          <Grid align="center">
+            <Avatar style={{ backgroundColor: '#1976d2' }}>
+              <LockOutlined />
+            </Avatar>
+            <Typography variant="h5" style={{ margin: '20px 0', color: '#1976d2' }}>
+              LOGIN
+            </Typography>
+            <Typography variant="subtitle1" style={{ marginBottom: '20px', color: '#666' }}>
+              Please fill this form to login!
+            </Typography>
+          </Grid>
+          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+          <form onSubmit={handleLogin} style={{ marginTop: '2rem' }}>
+            <Grid container direction="column" spacing={2}>
+              <Grid item>
+                <TextField
+                  type="email"
+                  label="Email Address"
+                  variant="outlined"
+                  fullWidth
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  sx={{ width: '100%' }}
 
-
-  const handleEmailOrPhoneChange = (event) => {
-    setEmailOrPhone(event.target.value);
-    if (isFormSubmitted) {
-        validateEmailOrPhone();
-      }
-  };
-
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-    if (isFormSubmitted) {
-        validatePassword();
-      }
-  };
-
- 
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    validateEmailOrPhone();
-    validatePassword();
-    setIsFormSubmitted(true);
-    
-    // Perform further actions (e.g., submit form) based on validation results
-  };
-
-    const paperStyle={padding:20 , height:'70vh' , width:280 , margin:"20px auto"}
-    const avatarStyle={backgroundColor:'#2473b2'}
-    const textFieldStyle={margin:'10px 0'}
-    const buttonStyle={margin:'8px 0'}
-    const typographyStyle={margin:'5px 0'}
-    return(
-        <Grid>
-            <Paper elevation={15 } style={paperStyle}>
-                <Grid align='center'> 
-                <Avatar style={avatarStyle}><LoginIcon/></Avatar>
-                <h2>Sign In</h2></Grid>
-
-                <form onSubmit={handleSubmit}>
-                                
-                <TextField id="outlined-basic" label='Email or phone' placeholder="Enter your email or phone " fullWidth required style={textFieldStyle} value={emailOrPhone} onChange={handleEmailOrPhoneChange}/>
-                {isValidEmailOrPhone ? null : <span style={{ color: 'red' }}>Invalid email or phone number</span>}
-
-                <TextField id="outlined-basic" label='Password' type="password" placeholder='Enter your password' fullWidth required style={textFieldStyle} value={password} onChange={handlePasswordChange}/>
-                {isValidPassword ? null : <span style={{ color: 'red' }}>Invalid password</span>}
-
-                <Button type='submit' fullWidth variant='contained'style={buttonStyle}>Sign in</Button> </form>
-                <Typography style={typographyStyle}>
-                    <Link href="#">Forgot password?</Link>
+                  />
+              </Grid>
+              <Grid item>
+                <TextField
+                  type="password"
+                  label="Password"
+                  variant="outlined"
+                  fullWidth
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  sx={{ width: '100%' }}
+                />
+              </Grid>
+              <Grid item>
+                <Button variant="contained" type="submit" fullWidth>
+                  Log In
+                </Button>
+              </Grid>
+              <Grid item>
+                <Typography variant="body2" align="center">
+                  <Link component={RouterLink} to="#" onClick={handleForgotPassword}>
+                    Forgot Password?
+                  </Link>
                 </Typography>
-                <Typography style={typographyStyle}> Don't have an account?
-                    <Link href="#">Sign up now</Link>
-                </Typography>
-                
-            </Paper>
-        </Grid>
-    )
-}
-export default Login
+              </Grid>
+              <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+               Don't have an account? <Link component={RouterLink} to="/signup">Sign up</Link>
+              </Typography>
+            </Grid>
+          </form>
+          
+        </Paper>
+      </Grid>
+    </Grid>
+  );
+};
 
-
-
-
-
+export default Login;
