@@ -17,6 +17,11 @@ export default function Home() {
           <TransferForm/>
         
         </Box>
+        <Box>
+          <h1>
+            This is heading below 
+          </h1>
+        </Box>
       </Box>
      
     </>

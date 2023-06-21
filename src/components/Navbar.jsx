@@ -20,6 +20,7 @@ import ListItemText from '@mui/material/ListItemText';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import GradingIcon from '@mui/icons-material/Grading';
@@ -168,7 +169,8 @@ export default function Navbar() {
 
             <Divider/>
 
-            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/login")}}>
+
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/settings")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -183,9 +185,9 @@ export default function Navbar() {
                     justifyContent: 'center',
                   }}
                 >
-                  <LoginIcon />
+                  <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary= "Login" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary= "Settings" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
 
@@ -210,7 +212,7 @@ export default function Navbar() {
               </ListItemButton>
             </ListItem>
 
-            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/settings")}}>
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/login")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -225,11 +227,33 @@ export default function Navbar() {
                     justifyContent: 'center',
                   }}
                 >
-                  <SettingsIcon />
+                  <LoginIcon />
                 </ListItemIcon>
-                <ListItemText primary= "Settings" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary= "Login" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/logou")}}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText primary= "Logout" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+            
           
         </List>
       
