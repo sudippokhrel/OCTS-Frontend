@@ -8,7 +8,7 @@ import { UserAuthContextProvider } from "./components/context/UserAuthContext";
 //Importing pages for routing
 import Home from "./pages/Home";
 import "./App.css";
-import ApplyTransfer from "./components/ApplyTransfer";
+import ApplyTransfer from "./pages/ApplyTransfer";
 import ViewTransfer from "./pages/ViewTransfers";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";

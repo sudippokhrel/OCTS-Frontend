@@ -1,3 +1,11 @@
+/* FOR BACKGROUND COLOR */
+.bg-colour{
+  min-height: 100vh;
+  background-color: #ECEFF1;
+
+}
+
+
 /* LogoutPage.css */
 
 .logout-page {
