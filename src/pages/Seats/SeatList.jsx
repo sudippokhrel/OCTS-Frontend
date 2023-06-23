@@ -8,6 +8,14 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
+
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const columns = [
   { id: 'name', label: 'College', minWidth: 170 },
@@ -44,7 +52,7 @@ const rows = [
   createData('School Of Engineering', 'BE Computer', 8, 48),
   createData('School Of Engineering', 'BE Software', 1, 48),
   createData('School Of Engineering', 'BE Software', 2, 48),
-  createData('School Of Engineering', 'BE Software', 3, 48),
+  createData('Pokhara Engineering college', 'BE Software', 3, 48),
   createData('School Of Engineering', 'BE Software', 4, 48),
   createData('School Of Engineering', 'BE Software', 5, 48),
   createData('School Of Engineering', 'BE Software', 6, 48),
@@ -73,7 +81,25 @@ export default function SeatList() {
             sx={{ padding: "20px" }}
           >
             Search For Seats
-          </Typography>
+      </Typography>
+      <Divider />
+      <Box height={10} />
+          <Stack direction="row" spacing={2} className="my-2 mb-2">
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={rows}
+              sx={{ width: 300 }}
+              onChange={(e, v) => filterData(v)}
+              getOptionLabel={(rows) => rows.name || ""}
+              renderInput={(params) => (
+                <TextField {...params} size="small" label="Search College" />
+              )}
+            />
+            
+            
+          </Stack>
+
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
