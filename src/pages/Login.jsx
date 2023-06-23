@@ -6,6 +6,8 @@ import { LockOutlined } from '@mui/icons-material';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
   const [error, setError] = useState('');
@@ -20,10 +22,11 @@ const Login = () => {
     try {
       await logIn(email, password);
       console.log('Logged in successfully!');
-      navigate('/');
+      toast.success('Login successful!');
     } catch (error) {
       console.error('Error logging in:', error);
       setError('Invalid email or password');
+      toast.error('Invalid email or password');
     }
   };
 
@@ -31,9 +34,11 @@ const Login = () => {
     try {
       await sendPasswordResetEmail(auth, email);
       console.log('Password reset email sent!');
+      toast.success('Password reset email sent!');
     } catch (error) {
       console.error('Error sending password reset email:', error);
       setError('Please enter your email first to reset the password.');
+      toast.error('Error sending password reset email');
     }
   };
 
@@ -98,6 +103,7 @@ const Login = () => {
           
         </Paper>
       </Grid>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </Grid>
   );
 };
