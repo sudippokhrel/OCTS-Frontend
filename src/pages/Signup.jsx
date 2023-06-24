@@ -54,7 +54,7 @@ const Signup = () => {
     try {
       await signUp(email, password);
       console.log('Logged in successfully!');
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       console.error('Error creating account:', error);
       setError('Invalid email or password');

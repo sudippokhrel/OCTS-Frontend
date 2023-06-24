@@ -93,7 +93,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
 //for handling logout after being clicked 
-  const { logOut} = useUserAuth();
+  const { logOut, user} = useUserAuth();
   const handleLogout = async () => {
     try {
       await logOut();
@@ -183,7 +183,8 @@ export default function Navbar() {
 
             <Divider/>
 
-
+            {user ? (
+            <>
             <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/settings")}}>
               <ListItemButton
                 sx={{
@@ -202,48 +203,6 @@ export default function Navbar() {
                   <SettingsIcon />
                 </ListItemIcon>
                 <ListItemText primary= "Settings" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/signup")}}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <AppRegistrationIcon />
-                </ListItemIcon>
-                <ListItemText primary= "Sign Up" sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/login")}}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <LoginIcon />
-                </ListItemIcon>
-                <ListItemText primary= "Login" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
 
@@ -267,6 +226,58 @@ export default function Navbar() {
                 <ListItemText primary= "Logout" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+            </>
+
+            ):(
+          <>
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/signup")}}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <AppRegistrationIcon />
+              </ListItemIcon>
+              <ListItemText primary= "Sign Up" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/login")}}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+                >
+                <LoginIcon />
+              </ListItemIcon>
+              <ListItemText primary= "Login" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+            </ListItem>
+          </>
+          
+          
+          )}
+            
+
+            
             
           
         </List>
