@@ -5,6 +5,9 @@ import Box from '@mui/material/Box';
 import {Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const Home=()=> {
@@ -13,6 +16,7 @@ const Home=()=> {
   const handleLogout = async () => {
     try {
       await logOut();
+      toast.success('You have successfully logged out')
       navigate("/login");
     } catch (error) {
       console.log(error.message);
@@ -26,6 +30,7 @@ const Home=()=> {
       <Box sx={{ display: 'flex' }}>
         
        <Navbar/>
+
     
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <div style={{ marginTop: '10px' }}>
