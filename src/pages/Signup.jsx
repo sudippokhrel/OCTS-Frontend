@@ -4,7 +4,7 @@ import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
 import { Alert } from '@mui/material';
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
@@ -55,12 +55,13 @@ const Signup = () => {
 
     try {
       await signUp(email, password);
-      console.log('Logged in successfully!');
-      toast.success('Sign up successful!');
+      console.log('Successfully created an account');
+      toast.success('Successfully Created an account'); 
+      navigate('/login');
     } catch (error) {
       console.error('Error creating account:', error);
       setError('Invalid email or password');
-      toast.error('An error occurred while signing up.');
+      toast.error('Error creating an account. Please try again!')
     }
   };
 
