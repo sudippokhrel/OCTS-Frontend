@@ -1,0 +1,55 @@
+/* FOR BACKGROUND COLOR */
+.bg-colour{
+  min-height: 100vh;
+  background-color: #ECEFF1;
+
+}
+
+
+/* LogoutPage.css */
+
+.logout-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f1f1f1;
+}
+
+.logout-content {
+  text-align: center;
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.logout-title {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+
+.logout-message {
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.logout-options {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.logout-link {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.logout-link:hover {
+  background-color: #0056b3;
+}

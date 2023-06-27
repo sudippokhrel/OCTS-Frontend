@@ -52,7 +52,7 @@ const TransferForm = () => {
   };
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="full">
       <Typography variant="h4" align="center" gutterBottom>
         Apply for College Transfer
       </Typography>
