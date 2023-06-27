@@ -16,6 +16,12 @@ import MailIcon from '@mui/icons-material/Mail';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 
+//to import user
+import { useUserAuth } from '../components/context/UserAuthContext';
+import { Divider } from '@mui/material';
+
+
+
 
 const AppBar = styled(MuiAppBar, {
 })(({ theme }) => ({
@@ -66,6 +72,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 export default function Appbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const {  user} = useUserAuth();//to display the profile bar according to user
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -105,7 +112,9 @@ export default function Appbar() {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+      <Divider sx={{ borderStyle: 'line' }} />
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
 
@@ -192,6 +201,7 @@ export default function Appbar() {
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
+          {user ? (<>
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             <IconButton size="large" aria-label="show 4 new mails" color="inherit">
               <Badge badgeContent={4} color="error">
@@ -207,6 +217,7 @@ export default function Appbar() {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+
             <IconButton
               size="large"
               edge="end"
@@ -219,6 +230,14 @@ export default function Appbar() {
               <AccountCircle />
             </IconButton>
           </Box>
+          <Box sx={{ my: 1.5, px: 2.5 }}>
+          <Typography variant="subtitle2" noWrap>
+            {user.displayName}
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            {user.email}
+          </Typography>
+        </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -229,9 +248,13 @@ export default function Appbar() {
               color="inherit"
             >
               <MoreIcon />
-            </IconButton>
+            </IconButton>            
           </Box>
+          
+          </>):"No user(Not Logged in)"}
         </Toolbar>
+        
+        
       </AppBar>
       {renderMobileMenu}
       {renderMenu}

@@ -56,8 +56,10 @@ const Signup = () => {
 
     try {
       await signUp(email, password);
+
       console.log('Successfully created an account');
       toast.success('Successfully Created an account'); 
+      
       navigate('/login');
     } catch (error) {
       console.error('Error creating account:', error);
