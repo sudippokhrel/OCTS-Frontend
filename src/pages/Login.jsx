@@ -8,8 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 const Login = () => {
   const [error, setError] = useState('');
