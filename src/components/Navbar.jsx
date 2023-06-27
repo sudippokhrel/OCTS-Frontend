@@ -30,6 +30,8 @@ import AppsOutageIcon from '@mui/icons-material/AppsOutage';
 import AppsIcon from '@mui/icons-material/Apps';
 import MailIcon from '@mui/icons-material/Mail';
 
+import { toast } from 'react-toastify';
+
 // importing navigation to make events for navigation bar 
 import {useNavigate} from 'react-router-dom';
 
@@ -97,6 +99,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await logOut();
+      toast.success('You have successfully logged out')
       navigate("/logout");
     } catch (error) {
       console.log(error.message);
