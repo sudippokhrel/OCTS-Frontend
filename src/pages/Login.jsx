@@ -23,6 +23,8 @@ const Login = () => {
       await logIn(email, password);
       console.log('Logged in successfully!');
       toast.success('Login successful!');
+      navigate('/');
+      
     } catch (error) {
       console.error('Error logging in:', error);
       setError('Invalid email or password');
