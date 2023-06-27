@@ -12,10 +12,7 @@ import SeatList from './Seats/SeatList';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-
-
-
+function Home() {
 
   return (
     <>
