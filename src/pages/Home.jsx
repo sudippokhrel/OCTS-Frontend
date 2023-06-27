@@ -5,21 +5,17 @@ import Box from '@mui/material/Box';
 import {Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
+
 import '../App.css';
 import SeatList from './Seats/SeatList';
 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const Home=()=> {
-  const { logOut, user } = useUserAuth();
-  const navigate = useNavigate();
-  const handleLogout = async () => {
-    try {
-      await logOut();
-      navigate("/login");
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+
+
+
+
 
   return (
     <>
@@ -31,7 +27,7 @@ const Home=()=> {
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
         <SeatList/>
-        
+ 
         </Box>
       </Box>
 
