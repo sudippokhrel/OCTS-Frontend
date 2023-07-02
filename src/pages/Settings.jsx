@@ -26,10 +26,11 @@ const Profile = () => {
         padding: 5,
         fontSize: 20,
         display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'flex-start',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
         borderRadius: 8,
+        textAlign: 'left',
       }}
     >
       <p>
