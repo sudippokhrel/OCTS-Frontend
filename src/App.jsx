@@ -15,6 +15,9 @@ import Settings from "./pages/settings/Settings";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Logout from "./pages/logout/Logout";
+import Students from "./pages/students/Students";
+import StudentProfile from "./pages/students/studentProfile";
+import AddStudent from "./pages/students/AddStudent";
 
 
 
@@ -29,6 +32,26 @@ function App() {
         <Route path ="/login"  element={<Login/>}></Route>
         <Route path="/signup" element={<Signup/>}></Route>
         <Route path="/logout" element={<Logout/>}></Route>
+
+        {/* Add User for admin */}
+        <Route path="/students">
+          <Route index element={<Students />} />
+              <Route path="profile" element={<StudentProfile />} />
+              <Route
+                path="new"
+                element={<AddStudent />}
+              />
+         </Route>
+
+         {/* <Route path="/directors">
+          <Route index element={<Directors />} />
+              <Route path="profile" element={<DirectorProfile />} />
+              <Route
+                path="new"
+                element={<AddDirector />}
+              />
+         </Route> */}
+
       </Routes>
     </UserAuthContextProvider>
     

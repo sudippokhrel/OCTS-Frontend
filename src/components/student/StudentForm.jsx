@@ -2,23 +2,22 @@ import React, { useState } from 'react';
 import { Grid, Paper, Avatar, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../../components/context/UserAuthContext';
+import { useUserAuth } from '../context/UserAuthContext';
 import { Alert } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {  collection, getDocs, doc,  setDoc } from "firebase/firestore";
 import { db } from '../../firebase-config';
 
-const Signup = () => {
+const StudentForm = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [puRegNumber, setPuRegNumber] = useState('');
   const [faculty, setFaculty] = useState('');
   const [college, setCollege] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp ,logIn} = useUserAuth();
+  const { signUp } = useUserAuth();
   const navigate = useNavigate();
 
   const faculties = ['Faculty of Science and Technology'];
@@ -50,11 +49,6 @@ const Signup = () => {
     e.preventDefault();
     setError('');
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
     try {
       const { user: authUser } = await signUp(email, password);
       const userRef = doc(db, "users", authUser.uid);
@@ -62,13 +56,15 @@ const Signup = () => {
         name:name,
         email:email,
         puRegNumber:puRegNumber,
-        faculty:faculty
+        faculty:faculty,
+        college:college,
+
        });
 
       console.log('Successfully created an account');
-      toast.success('Successfully Created an account');
+      toast.success('Successfully Created an Student'); 
       
-      navigate('/login');
+      navigate('/students');
     } catch (error) {
       console.error('Error creating account:', error);
       setError('Invalid email or password');
@@ -77,18 +73,13 @@ const Signup = () => {
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
-      <Grid item xs={11} sm={8} md={6} lg={4}>
-      <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+    <Grid container  >
+      <Grid >
+      <Paper elevation={3} style={{ padding: '20px', marginTop: '25px', backgroundColor: '#fff' }}>
           <Grid align="center">
-            <Avatar style={{ backgroundColor: '#1976d2' }}>
-              <LockOutlined />
-            </Avatar>
-            <Typography variant="h5" style={{ margin: '20px 0', color: '#1976d2' }}>
-              SIGN UP
-            </Typography>
-            <Typography variant="subtitle1" style={{ marginBottom: '20px', color: '#666' }}>
-              Please fill this form to create an account!
+            
+            <Typography variant="h5" style={{ marginTop: '1px 0' , color: '#1976d2' }}>
+              Add New Student
             </Typography>
           </Grid>
           {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
@@ -156,27 +147,10 @@ const Signup = () => {
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <TextField
-              variant="outlined"
-              label="Confirm Password"
-              name="confirmPassword"
-              type="password"
-              fullWidth
-              margin="normal"
-              placeholder="Confirm Password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
             <Button type="submit" variant="contained" fullWidth style={{ marginTop: '20px', backgroundColor: '#1976d2', color: '#fff' }}>
-              Sign Up
+              Add User
             </Button>
-            <div style={{ marginTop: '10px' }}>
-              <Typography variant="caption">
-                Already have an account?
-                <Link to ="/login" underline="hover">
-                  Login
-                </Link>
-              </Typography>
-            </div>
+            
           </form>
         </Paper>
       </Grid>
@@ -184,4 +158,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default StudentForm;

@@ -96,6 +96,17 @@ export default function SeatList() {
                 <TextField {...params} size="small" label="Search College" />
               )}
             />
+            <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={rows}
+              sx={{ width: 300 }}
+              onChange={(e, v) => filterData(v)}
+              getOptionLabel={(rows) => rows.semester || ""}
+              renderInput={(params) => (
+                <TextField {...params} size="small" label="Search Semester" />
+              )}
+              ></Autocomplete>
             
             
           </Stack>
