@@ -1,114 +1,55 @@
-// import React from 'react'
-// import Navbar from '../components/Navbar'
-// import Box from '@mui/material/Box';
-// import Appbar from '../components/Appbar';
-
-// // Profile component
-// const Profile = () => {
-//   return (
-//     <div>
-//       <h1>Profile</h1>
-//       {/* Add profile content here */}
-//     </div>
-//   );
-// };
-
-// export default function Home() {
-//   return (
-//     <>
-//     <Appbar/>
-//     <Box height={30}/>
-//       <Box sx={{ display: 'flex' }}>
-//        <Navbar/>
-    
-//         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-//           {/* Render different components based on the selected tab */}
-//           {tab === 'settings' && <h1>Settings</h1>}
-//           {tab === 'profile' && <Profile />}
-//           <TabPanel value={value} index={0}>
-//             Profile
-//           </TabPanel>
-//         </Box>
-//       </Box>
-     
-//     </>
-    
-//   )
-// }
-
-
-
-// import React, { useState } from 'react';
-// import Navbar from '../components/Navbar';
-// import Box from '@mui/material/Box';
-// import Appbar from '../components/Appbar';
-// import Tabs from '@mui/material/Tabs';
-// import Tab from '@mui/material/Tab';
-
-// // Profile component
-// const Profile = () => {
-//   const profileData = {
-//     name: 'Udaya Raj Dhungana',
-//     email: 'udaya@example.com',
-//     role: 'Program Coordinator',
-//     college: 'School of Engineering',
-//   };
-//   return (
-//     <div>
-//       <h1>Profile</h1>
-//       <p>Name: {profileData.name}</p>
-//       <p>Email: {profileData.email}</p>
-//       <p>Role: {profileData.role}</p>
-//       <p>College: {profileData.college}</p>
-//     </div>
-//   );
-// };
-
-// export default function Home() {
-//   return (
-//     <>
-//       <Appbar />
-//       <Box height={30} />
-//       <Box sx={{ display: 'flex' }}>
-//         <Navbar />
-
-//         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-//           <h1>Settings</h1>
-//         </Box>
-//       </Box>
-
-//       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-//         <h1>Settings</h1>
-//         <Tabs value={value} onChange={handleChange}>
-//           <Tab label="Settings" />
-//           <Tab label="Profile" />
-//         </Tabs>
-//         {value === 0 && <h1>Settings</h1>}
-//         {value === 1 && <Profile />}
-//       </Box>
-//     </>
-//   );
-// }
-
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
-import Box from '@mui/material/Box';
+import Box from '@mui/system/Box';
 import Appbar from '../components/Appbar';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import { TabPanel, TabList, TabContext } from '@mui/lab';
 
 // Profile component
 const Profile = () => {
+  // Sample profile data
+  const profileData = {
+    name: 'Dr. Udaya Raj Dhungana',
+    email: 'udaya@example.com',
+    role: 'Program Coordinator',
+    college: 'School of Engineering',
+  };
+
   return (
-    <div>
-      <h1>Profile</h1>
-      {/* Add profile content here */}
-    </div>
+    <Box
+      sx={{
+        width: 450,
+        height: 250,
+        backgroundColor: 'lightgray',
+        border: '2px solid gray',
+        padding: 5,
+        fontSize: 20,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 8,
+      }}
+    >
+      <p>
+        <strong>Name:</strong> {profileData.name}
+      </p>
+      <p>
+        <strong>Email:</strong> {profileData.email}
+      </p>
+      <p>
+        <strong>Role:</strong> {profileData.role}
+      </p>
+      <p>
+        <strong>College:</strong> {profileData.college}
+      </p>
+    </Box>
   );
 };
 
 export default function Home() {
-  const [value, setValue] = useState(0); // Active tab state
+  const [value, setValue] = useState('profile'); // Active tab state
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -121,13 +62,29 @@ export default function Home() {
       <Box sx={{ display: 'flex' }}>
         <Navbar />
 
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Tabs value={value} onChange={handleChange}>
-            <Tab label="Settings" />
-            <Tab label="Profile" />
-          </Tabs>
-          {value === 0 && <h1>Settings</h1>}
-          {value === 1 && <Profile />}
+        <Box component="main" sx={{ flexGrow: 1, p: '1rem' }}>
+          <h1>Settings</h1>
+          <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="Profile" value="profile" />
+                <Tab label="Settings" value="settings" />
+              </TabList>
+            </Box>
+            <TabPanel value="settings">Settings content</TabPanel>
+            <TabPanel value="profile">
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                <Profile />
+              </Box>
+            </TabPanel>
+          </TabContext>
         </Box>
       </Box>
     </>
