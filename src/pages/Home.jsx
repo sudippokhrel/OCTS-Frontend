@@ -12,6 +12,7 @@ import SeatList from './Seats/SeatList';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const Home=()=> {
   // const { logOut, user } = useUserAuth();
   // const navigate = useNavigate();
@@ -24,7 +25,6 @@ const Home=()=> {
   //     console.log(error.message);
   //   }
   // };
-
 
 
   return (
