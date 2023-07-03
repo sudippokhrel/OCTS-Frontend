@@ -1,7 +1,7 @@
 import React from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/sidebar/Navbar'
 import Box from '@mui/material/Box';
-import Appbar from '../components/Appbar';
+import Appbar from '../../components/navbar/Appbar';
 
 export default function Home() {
   return (

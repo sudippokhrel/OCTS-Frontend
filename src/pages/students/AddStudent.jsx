@@ -11,6 +11,7 @@ import SeatList from '../../components/seatlist/SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import StudentForm from '../../components/student/StudentForm';
 
 function Home() {
 
@@ -23,7 +24,7 @@ function Home() {
         
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <SeatList/>
+        <StudentForm/>
  
         </Box>
       </Box>

@@ -11,8 +11,9 @@ import SeatList from '../../components/seatlist/SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import StudentsTable from '../../components/student/StudentsTable';
 
-function Home() {
+function Students() {
 
   return (
     <>
@@ -23,7 +24,7 @@ function Home() {
         
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <SeatList/>
+        <StudentsTable/>
  
         </Box>
       </Box>
@@ -35,4 +36,4 @@ function Home() {
   )
 }
 
-export default Home;
+export default Students;

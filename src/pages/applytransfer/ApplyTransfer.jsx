@@ -1,8 +1,8 @@
 import React , {useState} from 'react'
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/sidebar/Navbar'
 import Box from '@mui/material/Box';
-import Appbar from '../components/Appbar';
-import TransferForm from '../components/TransferForm';
+import Appbar from '../../components/navbar/Appbar';
+import TransferForm from '../../components/transferform/TransferForm';
 import {Button } from '@mui/material';
 
 const Home = () => {
