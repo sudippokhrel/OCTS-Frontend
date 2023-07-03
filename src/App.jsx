@@ -5,6 +5,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./components/context/UserAuthContext";
 
 
+
 //Importing pages for routing
 import Home from "./pages/Home";
 import "./App.css";
@@ -30,6 +31,7 @@ function App() {
         <Route path="/logout" element={<Logout/>}></Route>
       </Routes>
     </UserAuthContextProvider>
+    
 
   )
 }

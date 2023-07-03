@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
 import '../App.css';
 import SeatList from './Seats/SeatList';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 const Home=()=> {
@@ -15,6 +18,7 @@ const Home=()=> {
   const handleLogout = async () => {
     try {
       await logOut();
+      toast.success('You have successfully logged out')
       navigate("/login");
     } catch (error) {
       console.log(error.message);
@@ -28,9 +32,20 @@ const Home=()=> {
     <Box height={70}/>
       <Box sx={{ display: 'flex' }}>
         
-       <Navbar/>    
-        <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <SeatList/>
+       <Navbar/>
+
+    
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <div style={{ marginTop: '10px' }}>
+         Hello! Welcome <br />
+        {user && user.email}
+        </div>
+        
+        <div style={{ marginTop: '10px' }}>
+        <Button variant="primary" onClick={handleLogout}>
+        Log out
+        </Button>
+        </div>
         
         </Box>
       </Box>
