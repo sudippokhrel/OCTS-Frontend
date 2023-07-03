@@ -34,7 +34,6 @@ const columns = [
     align: 'right',
     format: (value) => value.toLocaleString('en-US'),
   },
-  
 ];
 
 function createData(name, program, semester, seats) {
@@ -62,6 +61,7 @@ const rows = [
 export default function SeatList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -72,44 +72,57 @@ export default function SeatList() {
     setPage(0);
   };
 
+  const filterData = (selectedCollege, selectedProgram) => {
+    let filteredData = rows;
+    
+    if (selectedCollege) {
+      filteredData = filteredData.filter((row) => row.name === selectedCollege.name);
+    }
+    
+    if (selectedProgram) {
+      filteredData = filteredData.filter((row) => row.program === selectedProgram.program);
+    }
+
+    setFilteredRows(filteredData);
+    setPage(0);
+  };
+
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <Typography
-            gutterBottom
-            variant="h5"
-            component="div"
-            sx={{ padding: "20px" }}
-          >
-            Search For Seats
+        gutterBottom
+        variant="h5"
+        component="div"
+        sx={{ padding: "20px" }}
+      >
+        Search For Seats
       </Typography>
       <Divider />
       <Box height={10} />
-          <Stack direction="row" spacing={2} className="my-2 mb-2">
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={rows}
-              sx={{ width: 300 }}
-              onChange={(e, v) => filterData(v)}
-              getOptionLabel={(rows) => rows.name || ""}
-              renderInput={(params) => (
-                <TextField {...params} size="small" label="Search College" />
-              )}
-            />
-            <Autocomplete
-              disablePortal
-              id="combo-box-demo"
-              options={rows}
-              sx={{ width: 300 }}
-              onChange={(e, v) => filterData(v)}
-              getOptionLabel={(rows) => rows.semester || ""}
-              renderInput={(params) => (
-                <TextField {...params} size="small" label="Search Semester" />
-              )}
-              ></Autocomplete>
-            
-            
-          </Stack>
+      <Stack direction="row" spacing={2} className="my-2 mb-2">
+        <Autocomplete
+          disablePortal
+          id="combo-box-college"
+          options={rows}
+          sx={{ width: 300 }}
+          onChange={(e, v) => filterData(v, null)}
+          getOptionLabel={(row) => row.name || ""}
+          renderInput={(params) => (
+            <TextField {...params} size="small" label="Search College" />
+          )}
+        />
+        <Autocomplete
+          disablePortal
+          id="combo-box-program"
+          options={rows}
+          sx={{ width: 300 }}
+          onChange={(e, v) => filterData(null, v)}
+          getOptionLabel={(row) => row.program || ""}
+          renderInput={(params) => (
+            <TextField {...params} size="small" label="Search Program" />
+          )}
+        />
+      </Stack>
 
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
@@ -127,7 +140,7 @@ export default function SeatList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {filteredRows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
@@ -149,9 +162,9 @@ export default function SeatList() {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5,8,10, 25, 100]}
+        rowsPerPageOptions={[5, 8, 10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={filteredRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
