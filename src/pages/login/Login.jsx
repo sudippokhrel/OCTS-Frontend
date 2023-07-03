@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { auth } from '../firebase-config';
+import { auth } from '../../firebase-config';
 import { Alert } from '@mui/material';
 import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
@@ -7,7 +7,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../components/context/UserAuthContext';
+import { useUserAuth } from '../../components/context/UserAuthContext';
 
 
 const Login = () => {

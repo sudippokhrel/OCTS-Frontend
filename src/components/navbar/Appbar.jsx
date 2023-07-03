@@ -17,7 +17,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MoreIcon from '@mui/icons-material/MoreVert';
 
 //to import user
-import { useUserAuth } from '../components/context/UserAuthContext';
+import { useUserAuth } from '../context/UserAuthContext';
 import { Divider } from '@mui/material';
 
 
