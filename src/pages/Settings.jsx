@@ -64,7 +64,7 @@ export default function Home() {
         <Navbar />
 
         <Box component="main" sx={{ flexGrow: 1, p: '1rem' }}>
-          <h1>Settings</h1>
+          <h1> </h1>
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <TabList onChange={handleChange} aria-label="lab API tabs example">
