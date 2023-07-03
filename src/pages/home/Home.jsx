@@ -12,20 +12,7 @@ import SeatList from '../../components/seatlist/SeatList';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-const Home=()=> {
-  // const { logOut, user } = useUserAuth();
-  // const navigate = useNavigate();
-  // const handleLogout = async () => {
-  //   try {
-  //     await logOut();
-  //     toast.success('You have successfully logged out')
-  //     navigate("/login");
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
+function Home() {
 
   return (
     <>

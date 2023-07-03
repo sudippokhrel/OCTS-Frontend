@@ -35,7 +35,7 @@ import { toast } from 'react-toastify';
 // importing navigation to make events for navigation bar 
 import {useNavigate} from 'react-router-dom';
 
-import { useUserAuth } from '../components/context/UserAuthContext';
+import { useUserAuth } from '../context/UserAuthContext';
 
 
 const drawerWidth = 240;

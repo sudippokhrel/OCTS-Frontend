@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Grid, Paper, Avatar, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../components/context/UserAuthContext';
+import { useUserAuth } from '../../components/context/UserAuthContext';
 import { Alert } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {  collection, getDocs, doc,  setDoc } from "firebase/firestore";
+import { db } from '../../firebase-config';
 
 
 const Signup = () => {
@@ -18,7 +20,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp } = useUserAuth();
+  const { signUp ,logIn} = useUserAuth();
   const navigate = useNavigate();
 
   const faculties = ['Faculty of Science and Technology'];
@@ -56,10 +58,17 @@ const Signup = () => {
     }
 
     try {
-      await signUp(email, password);
+      const { user: authUser } = await signUp(email, password);
+      const userRef = doc(db, "users", authUser.uid);
+      await setDoc(userRef, { 
+        name:name,
+        email:email,
+        puRegNumber:puRegNumber,
+        faculty:faculty
+       });
 
       console.log('Successfully created an account');
-      toast.success('Successfully Created an account'); 
+      toast.success('Successfully Created an account');
       
       navigate('/login');
     } catch (error) {
@@ -94,8 +103,7 @@ const Signup = () => {
               margin="normal"
               placeholder="Name"
               onChange={(e) => setName(e.target.value)}
-            />
-            <TextField
+            /><TextField
               variant="outlined"
               label="Email"
               name="email"
@@ -104,6 +112,7 @@ const Signup = () => {
               placeholder="Email address"
               onChange={(e) => setEmail(e.target.value)}
             />
+            
             <TextField
               variant="outlined"
               label="PU Registration Number"
