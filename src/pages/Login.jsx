@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
 
+
 const Login = () => {
   const [error, setError] = useState('');
   const [email, setEmail] = useState('');
@@ -24,6 +25,7 @@ const Login = () => {
       console.log('Logged in successfully!');
       toast.success('Login successful!');      
       navigate('/');
+      
     } catch (error) {
       console.error('Error logging in:', error);
       setError('Invalid email or password');
@@ -39,6 +41,7 @@ const Login = () => {
     } catch (error) {
       console.error('Error sending password reset email:', error);
       setError('Please enter your email first to reset the password.');
+      toast.error('Error sending password reset email');
     }
   };
 
@@ -103,6 +106,7 @@ const Login = () => {
           
         </Paper>
       </Grid>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </Grid>
   );
 };

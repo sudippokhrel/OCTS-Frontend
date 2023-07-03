@@ -4,8 +4,10 @@ import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../components/context/UserAuthContext';
 import { Alert } from '@mui/material';
+import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -70,7 +72,7 @@ const Signup = () => {
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
       <Grid item xs={11} sm={8} md={6} lg={4}>
-      <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
+        <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', backgroundColor: '#fff' }}>
           <Grid align="center">
             <Avatar style={{ backgroundColor: '#1976d2' }}>
               <LockOutlined />
@@ -113,9 +115,11 @@ const Signup = () => {
             />
             <FormControl variant="outlined" fullWidth margin="normal">
               <InputLabel>Faculty</InputLabel>
-              <Select  value={faculty}
-              onChange={(e) => setFaculty(e.target.value)}
-              label="Faculty">
+              <Select
+                value={faculty}
+                onChange={(e) => setFaculty(e.target.value)}
+                label="Faculty"
+              >
                 <MenuItem value="">Select Faculty</MenuItem>
                 {faculties.map((faculty) => (
                   <MenuItem key={faculty} value={faculty}>
@@ -126,9 +130,11 @@ const Signup = () => {
             </FormControl>
             <FormControl variant="outlined" fullWidth margin="normal">
               <InputLabel>College</InputLabel>
-              <Select value={college}
-              onChange={(e) => setCollege(e.target.value)}
-              label="College">
+              <Select
+                value={college}
+                onChange={(e) => setCollege(e.target.value)}
+                label="College"
+              >
                 <MenuItem value="">Select College</MenuItem>
                 {colleges.map((college) => (
                   <MenuItem key={college} value={college}>
@@ -157,13 +163,18 @@ const Signup = () => {
               placeholder="Confirm Password"
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
-            <Button type="submit" variant="contained" fullWidth style={{ marginTop: '20px', backgroundColor: '#1976d2', color: '#fff' }}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              style={{ marginTop: '20px', backgroundColor: '#1976d2', color: '#fff' }}
+            >
               Sign Up
             </Button>
             <div style={{ marginTop: '10px' }}>
               <Typography variant="caption">
                 Already have an account?
-                <Link to ="/login" underline="hover">
+                <Link to="/login" underline="hover">
                   Login
                 </Link>
               </Typography>
@@ -171,6 +182,7 @@ const Signup = () => {
           </form>
         </Paper>
       </Grid>
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
     </Grid>
   );
 };
