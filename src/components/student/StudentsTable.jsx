@@ -78,6 +78,7 @@ export default function StudentsTable() {
 
   // for modal to add new students
   const [open, setOpen] = React.useState(false);
+  const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
   const navigate = useNavigate();
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -93,6 +94,18 @@ export default function StudentsTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const filterData = (selectedName) => {
+    let filteredData = rows;
+
+    if (selectedName) {
+      filteredData = filteredData.filter((row) => row.name === selectedName);
+    }
+    setFilteredRows(filteredData);
+    setPage(0);
+  };
+
+  const uniqueName = Array.from(new Set(rows.map((row) => row.name)));
 
   
 
@@ -114,10 +127,10 @@ export default function StudentsTable() {
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={rows}
+              options={uniqueName}
               sx={{ width: 300 }}
-              onChange={(e, v) => filterData(v)}
-              getOptionLabel={(rows) => rows.name || ""}
+              onChange={(e, v) => filterData(v,null)}
+              getOptionLabel={(row) => row || ""}
               renderInput={(params) => (
                 <TextField {...params} size="small" label="Search Student" />
               )}
@@ -164,7 +177,7 @@ export default function StudentsTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {filteredRows
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
@@ -216,7 +229,7 @@ export default function StudentsTable() {
       <TablePagination
         rowsPerPageOptions={[5,8,10, 25, 100]}
         component="div"
-        count={rows.length}
+        count={filteredRows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
