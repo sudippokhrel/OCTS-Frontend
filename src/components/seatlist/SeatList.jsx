@@ -37,7 +37,7 @@ const columns = [
 ];
 
 function createData(name, program, semester, seats) {
-  return { name, program, semester, seats};
+  return { name, program, semester, seats };
 }
 
 const rows = [
@@ -62,6 +62,9 @@ export default function SeatList() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
+  const [selectedCollege, setSelectedCollege] = React.useState(null);
+  const [selectedProgram, setSelectedProgram] = React.useState(null);
+  const [selectedSemester, setSelectedSemester] = React.useState(null);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -72,20 +75,34 @@ export default function SeatList() {
     setPage(0);
   };
 
-  const filterData = (selectedCollege, selectedProgram) => {
+  const filterData = (selectedCollege, selectedProgram, selectedSemester) => {
     let filteredData = rows;
-    
+
     if (selectedCollege) {
-      filteredData = filteredData.filter((row) => row.name === selectedCollege.name);
+      filteredData = filteredData.filter((row) => row.name === selectedCollege);
     }
-    
+
     if (selectedProgram) {
-      filteredData = filteredData.filter((row) => row.program === selectedProgram.program);
+      filteredData = filteredData.filter((row) => row.program === selectedProgram);
+    }
+    if (selectedSemester){
+      filteredData = filteredData.filter((row) => row.semester === selectedSemester);
     }
 
     setFilteredRows(filteredData);
     setPage(0);
   };
+
+  const uniqueCollege = Array.from(new Set(rows.map((row) => row.name)));
+  const uniqueProgram = Array.from(new Set(rows.map((row) => row.program)));
+  const uniqueSemester = Array.from(new Set(rows.map((row) => row.semester)));
+  
+
+
+  const handleProgramChange = (event, value) => {
+    setSelectedProgram(value);
+  };
+  
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -103,10 +120,10 @@ export default function SeatList() {
         <Autocomplete
           disablePortal
           id="combo-box-college"
-          options={rows}
+          options={uniqueCollege}
           sx={{ width: 300 }}
-          onChange={(e, v) => filterData(v, null)}
-          getOptionLabel={(row) => row.name || ""}
+          onChange={(e, v) => setSelectedCollege(v)}
+          getOptionLabel={(row) => row || ""}
           renderInput={(params) => (
             <TextField {...params} size="small" label="Search College" />
           )}
@@ -114,16 +131,31 @@ export default function SeatList() {
         <Autocomplete
           disablePortal
           id="combo-box-program"
-          options={rows}
+          options={uniqueProgram}  
           sx={{ width: 300 }}
-          onChange={(e, v) => filterData(null, v)}
-          getOptionLabel={(row) => row.program || ""}
+          onChange={handleProgramChange} 
+          getOptionLabel={(options) => options|| ''}
           renderInput={(params) => (
             <TextField {...params} size="small" label="Search Program" />
           )}
-        />
-      </Stack>
 
+        />
+        <Autocomplete
+          disablePortal
+          id="combo-box-semester"
+          options={uniqueSemester}  
+          sx={{ width: 300 }}
+          onChange={(e, v) => setSelectedSemester(v)} 
+          getOptionLabel={(options) => options|| ''}
+          renderInput={(params) => (
+            <TextField {...params} size="small" label="Search Program" />
+          )}
+
+        />
+
+        <button onClick={() => filterData(selectedCollege, selectedProgram, selectedSemester)} >Search</button>
+      </Stack>
+      
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>

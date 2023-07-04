@@ -21,7 +21,7 @@ const Profile = () => {
       sx={{
         width: 450,
         height: 250,
-        backgroundColor: 'lightgray',
+        backgroundColor:'white',
         border: '2px solid gray',
         padding: 5,
         fontSize: 20,
@@ -58,13 +58,14 @@ export default function Home() {
 
   return (
     <>
-      <Appbar />
-      <Box height={30} />
+      <div className='bg-colour'>
+    <Appbar/>
+    <Box height={70}/>
       <Box sx={{ display: 'flex' }}>
-        <Navbar />
-
-        <Box component="main" sx={{ flexGrow: 1, p: '1rem' }}>
-          <h1> </h1>
+        
+       <Navbar/>    
+        <Box component="main" sx={{ flexGrow: 1, p: 3}}>
+        <h1> </h1>
           <TabContext value={value}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <TabList onChange={handleChange} aria-label="lab API tabs example">
@@ -86,8 +87,12 @@ export default function Home() {
               </Box>
             </TabPanel>
           </TabContext>
+        
+ 
         </Box>
       </Box>
+
+    </div>
     </>
   );
 }
