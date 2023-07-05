@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Modal from '@mui/material/Modal';
 
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -19,9 +20,9 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import {useNavigate} from 'react-router-dom';
+import AddDirectors from '../../../pages/directors/AddDirectors';
 
-import Modal from '@mui/material/Modal';
-import AddStudent from '../../pages/students/AddStudent';
+
 
 const style = {
   position: 'absolute',
@@ -74,12 +75,12 @@ const rows = [
   createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 7),
 ];
 
-export default function StudentsTable() {
+export default function DirectorsTable() {
 
-  // for modal to add new students
-  const [open, setOpen] = React.useState(false);
   const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
-  const navigate = useNavigate();
+  // for modal to add new directors
+  const [open, setOpen] = React.useState(false);
+  
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -119,7 +120,7 @@ export default function StudentsTable() {
             component="div"
             sx={{ padding: "20px" }}
           >
-            Students
+            Directors
       </Typography>
       <Divider />
       <Box height={10} />
@@ -140,7 +141,7 @@ export default function StudentsTable() {
               component="div"
               sx={{ flexGrow: 1 }}
             ></Typography>
-            <Button variant="contained" endIcon={<AddCircleIcon />} onClick={()=>{navigate("new")}}>
+            <Button variant="contained" endIcon={<AddCircleIcon />} onClick={handleOpen} >
               Add
             </Button>
             
@@ -155,7 +156,7 @@ export default function StudentsTable() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <AddStudent closeEvent={handleClose} />
+          <AddDirectors closeEvent={handleClose} />
         </Box>
       </Modal>
     </div>
@@ -242,3 +243,4 @@ export default function StudentsTable() {
     
   );
 }
+
