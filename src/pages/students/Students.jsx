@@ -11,7 +11,7 @@ import SeatList from '../../components/seatlist/SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import StudentsTable from '../../components/student/StudentsTable';
+import StudentsTable from '../../components/users/students/StudentsTable';
 
 function Students() {
 

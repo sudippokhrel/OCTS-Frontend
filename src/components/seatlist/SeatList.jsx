@@ -148,7 +148,7 @@ export default function SeatList() {
           onChange={(e, v) => setSelectedSemester(v)} 
           getOptionLabel={(options) => options|| ''}
           renderInput={(params) => (
-            <TextField {...params} size="small" label="Search Program" />
+            <TextField {...params} size="small" label="Search Semester" />
           )}
 
         />

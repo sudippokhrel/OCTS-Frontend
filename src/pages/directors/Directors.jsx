@@ -11,9 +11,9 @@ import SeatList from '../../components/seatlist/SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import StudentForm from '../../components/users/students/StudentForm';
+import DirectorsTable from '../../components/users/directors/DirectorsTable';
 
-function Home() {
+function Directors() {
 
   return (
     <>
@@ -24,7 +24,7 @@ function Home() {
         
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <StudentForm/>
+        <DirectorsTable/>
  
         </Box>
       </Box>
@@ -36,4 +36,4 @@ function Home() {
   )
 }
 
-export default Home;
+export default Directors;

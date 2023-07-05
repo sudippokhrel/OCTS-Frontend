@@ -18,6 +18,9 @@ import Logout from "./pages/logout/Logout";
 import Students from "./pages/students/Students";
 import StudentProfile from "./pages/students/studentProfile";
 import AddStudent from "./pages/students/AddStudent";
+import Directors from "./pages/directors/Directors"
+import DirectorProfile from "./pages/directors/DirectorProfile";
+import AddDirectors from "./pages/directors/AddDirectors";
 
 
 
@@ -43,14 +46,10 @@ function App() {
               />
          </Route>
 
-         {/* <Route path="/directors">
+         <Route path="/directors">
           <Route index element={<Directors />} />
               <Route path="profile" element={<DirectorProfile />} />
-              <Route
-                path="new"
-                element={<AddDirector />}
-              />
-         </Route> */}
+         </Route>
 
       </Routes>
     </UserAuthContextProvider>
