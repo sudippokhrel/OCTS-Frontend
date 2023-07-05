@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
 
-const AddDirectors = ({ closeEvent }) => {
+const AddCoordinators = ({ closeEvent }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Handle form submission logic here
@@ -25,7 +25,7 @@ const AddDirectors = ({ closeEvent }) => {
   return (
     <Box sx={{ p: 0 ,width: '100%' }}>
       <Typography variant="h5" align="center">
-        Add Director
+        Add Coordinator
       </Typography>
       <IconButton
         sx={{ position: "absolute", top: 0, right: 0 }}
@@ -84,7 +84,7 @@ const AddDirectors = ({ closeEvent }) => {
             
             <Grid item xs={12} align="center">
               <Button type="submit" variant="contained" color="primary">
-                Add Director
+                Add Coordinator
               </Button>
             </Grid>
           </Grid>
@@ -94,8 +94,8 @@ const AddDirectors = ({ closeEvent }) => {
   );
 };
 
-AddDirectors.propTypes = {
+AddCoordinators.propTypes = {
   closeEvent: PropTypes.func.isRequired,
 };
 
-export default AddDirectors;
+export default AddCoordinators;

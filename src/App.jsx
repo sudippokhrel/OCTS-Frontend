@@ -20,7 +20,8 @@ import StudentProfile from "./pages/students/studentProfile";
 import AddStudent from "./pages/students/AddStudent";
 import Directors from "./pages/directors/Directors"
 import DirectorProfile from "./pages/directors/DirectorProfile";
-import AddDirectors from "./pages/directors/AddDirectors";
+import Coordinators from "./pages/coordinators/Coordinators";
+import CoordinatorProfile from "./pages/coordinators/CoordinatorProfile";
 
 
 
@@ -49,6 +50,11 @@ function App() {
          <Route path="/directors">
           <Route index element={<Directors />} />
               <Route path="profile" element={<DirectorProfile />} />
+         </Route>
+
+         <Route path="/coordinators">
+          <Route index element={<Coordinators />} />
+              <Route path="profile" element={<CoordinatorProfile />} />
          </Route>
 
       </Routes>
