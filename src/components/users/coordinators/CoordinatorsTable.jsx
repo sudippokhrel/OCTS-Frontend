@@ -20,7 +20,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddDirectors from '../../../pages/directors/AddDirectors';
+import AddCoordinators from '../../../pages/coordinators/AddCoordinators.jsx';
 
 
 
@@ -68,10 +68,10 @@ const rows = [
 
 ];
 
-export default function DirectorsTable() {
+export default function CoordinatorsTable() {
 
   const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
-  // for modal to add new directors
+  // for modal to add new Coordinators
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -113,7 +113,7 @@ export default function DirectorsTable() {
             component="div"
             sx={{ padding: "20px" }}
           >
-            Directors
+            Coordinators
       </Typography>
       <Divider />
       <Box height={10} />
@@ -126,7 +126,7 @@ export default function DirectorsTable() {
               onChange={(e, v) => filterData(v,null)}
               getOptionLabel={(row) => row || ""}
               renderInput={(params) => (
-                <TextField {...params} size="small" label="Search Director of" />
+                <TextField {...params} size="small" label="Search Coordinator  of" />
               )}
             />
             <Typography
@@ -148,7 +148,7 @@ export default function DirectorsTable() {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description">
           <Box sx={style}>
-          <AddDirectors closeEvent={handleClose} />
+          <AddCoordinators closeEvent={handleClose} />
           </Box>
         </Modal>
       </div>
