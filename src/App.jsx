@@ -95,9 +95,7 @@ function App() {
           path="/collegehead"
           element={
           <ProtectedRoute >
-          <Navbar>
           <CollegeHeadDashboard />
-          </Navbar>
           </ProtectedRoute>
           }
         ></Route>

@@ -32,7 +32,7 @@ const Login = () => {
 
         // Redirect the user to their respective dashboard based on the role
       if (role === 'college_head') {
-        navigate('/collegehead');
+        navigate('/');
       // } else if (role === 'admin') {
       //   navigate('/admin');
       } else if (role === 'student') {

@@ -247,7 +247,7 @@ export default function Appbar() {
           <Typography variant="subtitle2" noWrap>
             {user.displayName}
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+          <Typography variant="body2" sx={{ color: 'white' }} noWrap>
             <div> User: {user.email}
             </div>
             Role: {userRole}
