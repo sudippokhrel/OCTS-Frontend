@@ -1,4 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
+import { db } from '../../firebase-config';
+import { useUserAuth } from '../../components/context/UserAuthContext';
+import { Typography } from '@mui/material';
+import { collection, getDocs, doc } from 'firebase/firestore';
 import Navbar from '../../components/sidebar/Navbar'
 import Appbar from '../../components/navbar/Appbar'
 import Box from '@mui/system/Box';
@@ -8,19 +13,49 @@ import { TabPanel, TabList, TabContext } from '@mui/lab';
 
 // Profile component
 const Profile = () => {
-  // Sample profile data
-  const profileData = {
-    name: 'Dr. Udaya Raj Dhungana',
-    email: 'udaya@example.com',
-    role: 'Program Coordinator',
-    college: 'School of Engineering',
-  };
+
+  const { user } = useUserAuth();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [faculty, setFaculty] = useState('');
+  const [college, setCollege] = useState('');
+  const [program, setProgram] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      const userId = user.uid;
+      const userRef = doc(db, 'users', userId);
+
+      getDocs(collection(db, 'users'))
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.id === userId) {
+              const userDetails = doc.data();
+              const nameValue = userDetails.name;
+              // const emailValue = userDetails.email;
+              const facultyValue = userDetails.faculty;
+              const collegeValue = userDetails.college;
+              const programValue = userDetails.program;
+
+              setName(nameValue);
+              // setEmail(emailValue);
+              setFaculty(facultyValue);
+              setCollege(collegeValue);
+              setProgram(programValue);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log('Error getting user document:', error);
+        });
+    }
+  }, [user]);
 
   return (
     <Box
       sx={{
         width: 450,
-        height: 250,
+        height: 350,
         backgroundColor:'white',
         border: '2px solid gray',
         padding: 5,
@@ -34,16 +69,19 @@ const Profile = () => {
       }}
     >
       <p>
-        <strong>Name:</strong> {profileData.name}
+        <strong>Name:</strong> {name}
       </p>
       <p>
-        <strong>Email:</strong> {profileData.email}
+        <strong>Email:</strong> {user.email}
       </p>
       <p>
-        <strong>Role:</strong> {profileData.role}
+        <strong>Faculty:</strong> {faculty}
       </p>
       <p>
-        <strong>College:</strong> {profileData.college}
+        <strong>College:</strong> {college}
+      </p>
+      <p>
+        <strong>Program:</strong> {program}
       </p>
     </Box>
   );

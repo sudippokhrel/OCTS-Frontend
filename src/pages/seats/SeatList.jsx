@@ -45,24 +45,28 @@ const style = {
 
 
 
-export default function UsersList() {
+export default function SeatsList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
-  const empCollectionRef = collection(db, "colleges");
+  const empCollectionRef = collection(db, "seats");
 
   // for modal to add new directors
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    getSeats(); // Fetch the updated data
+  };
 
   useEffect(() => {
-    getUsers();
+    getSeats();
   }, []);
 
-  const getUsers = async () => {
+  const getSeats = async () => {
     const data = await getDocs(empCollectionRef);
-    setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -91,10 +95,10 @@ export default function UsersList() {
   };
 
   const deleteApi = async (id) => {
-    const userDoc = doc(db, "colleges", id);
+    const userDoc = doc(db, "seats", id);
     await deleteDoc(userDoc);
     Swal.fire("Deleted!", "Your file has been deleted.", "success");
-    getUsers();
+    getSeats();
   };
 
   const filterData = (v) => {
@@ -104,7 +108,7 @@ export default function UsersList() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getUsers();
+      getSeats();
     }
   };
   

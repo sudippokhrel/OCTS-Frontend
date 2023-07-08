@@ -15,7 +15,7 @@ export default function studentProfile() {
             {user.email}
           </Typography>
         </Box>
-    <div>studentProfile</div>
+    <h1>studentProfile</h1>
     </>
     
   )
