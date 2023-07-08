@@ -11,21 +11,9 @@ import SeatList from '../../components/seatlist/SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DirectorsTable from '../../components/users/directors/DirectorsTable';
 
-
-const Home=()=> {
-  // const { logOut, user } = useUserAuth();
-  // const navigate = useNavigate();
-  // const handleLogout = async () => {
-  //   try {
-  //     await logOut();
-  //     toast.success('You have successfully logged out')
-  //     navigate("/login");
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
+function Directors() {
 
   return (
     <>
@@ -36,7 +24,7 @@ const Home=()=> {
         
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <SeatList/>
+        <DirectorsTable/>
  
         </Box>
       </Box>
@@ -48,4 +36,4 @@ const Home=()=> {
   )
 }
 
-export default Home;
+export default Directors;

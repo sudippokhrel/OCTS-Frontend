@@ -7,13 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../components/context/UserAuthContext';
 
 import '../../App.css';
-import SeatList from '../../components/seatlist/SeatList';
+import SeatList from './SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import StudentForm from '../../components/users/students/StudentForm';
 
-function Home() {
+function Seats() {
 
   return (
     <>
@@ -24,7 +23,7 @@ function Home() {
         
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <StudentForm/>
+        <SeatList/>
  
         </Box>
       </Box>
@@ -36,4 +35,4 @@ function Home() {
   )
 }
 
-export default Home;
+export default Seats;

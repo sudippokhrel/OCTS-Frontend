@@ -16,6 +16,11 @@ import Logout from "./pages/logout/Logout";
 import Students from "./pages/students/Students";
 import StudentProfile from "./pages/students/studentProfile";
 import AddStudent from "./pages/students/AddStudent";
+import Directors from "./pages/directors/Directors"
+import DirectorProfile from "./pages/directors/DirectorProfile";
+import Coordinators from "./pages/coordinators/Coordinators";
+import CoordinatorProfile from "./pages/coordinators/CoordinatorProfile";
+import SeatList from "./pages/seats/SeatList";
 import CollegeHeadDashboard from "./pages/Dashboard/CollegeHeadDashboard";
 
 
@@ -49,14 +54,21 @@ function App() {
         element={<CollegeHeadDashboard/>}>
        </Route>
 
-         {/* <Route path="/directors">
+
+
+         <Route path="/directors">
           <Route index element={<Directors />} />
               <Route path="profile" element={<DirectorProfile />} />
-              <Route
-                path="new"
-                element={<AddDirector />}
-              />
-         </Route> */}
+         </Route>
+
+         <Route path="/coordinators">
+          <Route index element={<Coordinators />} />
+              <Route path="profile" element={<CoordinatorProfile />} />
+         </Route>
+         
+         <Route path="/seats" element={<SeatList/>}>
+
+         </Route>
 
       </Routes>
     </UserAuthContextProvider>

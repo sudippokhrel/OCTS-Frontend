@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { Grid, Paper, Avatar, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { useUserAuth } from '../context/UserAuthContext';
+import { useUserAuth } from '../../context/UserAuthContext';
 import { Alert } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {  collection, getDocs, doc,  setDoc } from "firebase/firestore";
-import { db } from '../../firebase-config';
+import { db } from '../../../firebase-config';
 
 const StudentForm = () => {
   const [name, setName] = useState('');

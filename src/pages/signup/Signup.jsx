@@ -65,6 +65,7 @@ const Signup = () => {
         email:email,
         puRegNumber:puRegNumber,
         faculty:faculty,
+        college:college,,
         role: "college_head"
        });
 
