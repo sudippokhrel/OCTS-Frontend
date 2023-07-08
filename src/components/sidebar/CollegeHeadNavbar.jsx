@@ -19,7 +19,6 @@ import ListItemText from '@mui/material/ListItemText';
 // icons for home login transfer forms
 import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -30,11 +29,14 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AppsOutageIcon from '@mui/icons-material/AppsOutage';
 import AppsIcon from '@mui/icons-material/Apps';
 import MailIcon from '@mui/icons-material/Mail';
+
 import { toast } from 'react-toastify';
+
 // importing navigation to make events for navigation bar 
 import {useNavigate} from 'react-router-dom';
+
 import { useUserAuth } from '../context/UserAuthContext';
-import getUserRole from '../users/getUserRole';
+
 
 const drawerWidth = 240;
 
@@ -64,93 +66,61 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: 'nowrap',
-  boxSizing: 'border-box',
-  ...(open && {
-    ...openedMixin(theme),
-    '& .MuiDrawer-paper': openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    '& .MuiDrawer-paper': closedMixin(theme),
-  }),
-}));
 
-export default function Navbar() {
+const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+  ({ theme, open }) => ({
+    width: drawerWidth,
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
+    boxSizing: 'border-box',
+    ...(open && {
+      ...openedMixin(theme),
+      '& .MuiDrawer-paper': openedMixin(theme),
+    }),
+    ...(!open && {
+      ...closedMixin(theme),
+      '& .MuiDrawer-paper': closedMixin(theme),
+    }),
+  }),
+);
+
+export default function CollegeHeadNavbar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
+  //For navigation of pages
   const navigate = useNavigate();
-  const { logOut, user } = useUserAuth();
-  const [userRole, setUserRole] = React.useState(null);
 
-  React.useEffect(() => {
-    const fetchUserRole = async () => {
-      if (user) {
-        const role = await getUserRole(user.uid);
-        setUserRole(role);
-      }
-    };
-
-    fetchUserRole();
-  }, [user]);
-
+//for handling logout after being clicked 
+  const { logOut, user} = useUserAuth();
   const handleLogout = async () => {
     try {
       await logOut();
-      toast.success('You have successfully logged out');
-      navigate('/logout');
+      toast.success('You have successfully logged out')
+      navigate("/logout");
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  let navigationItems = [];
-
-  if (!user) {
-    navigationItems = [
-      { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
-      { key: 'signup', icon: <AppRegistrationIcon />, text: 'Sign Up', path: '/signup' },
-      { key: 'login', icon: <LoginIcon />, text: 'Login', path: '/login' },
-    ];
-  } else if (userRole === 'student') {
-    navigationItems = [
-      { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
-      { key: 'applytransfer', icon: <FormatAlignJustifyIcon />, text: 'Apply Transfer', path: '/applytransfer' },
-      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
-      { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
-    ];
-  } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean') {
-    navigationItems = [
-      { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
-      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
-      { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
-    ];
-  }
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
-          <IconButton onClick={() => setOpen(!open)}>
+          <IconButton onClick={()=>setOpen(!open)}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
         </DrawerHeader>
         <Divider />
         <List>
-          {navigationItems.map((item) => (
-            <ListItem
-              key={item.key}
-              disablePadding
-              sx={{ display: 'block' }}
-              onClick={() => navigate(item.path)}
-            >
+
+        {/*For home */}          
+            <ListItem key="home" disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/")}}>
               <ListItemButton
                 sx={{
                   minHeight: 48,
@@ -165,13 +135,64 @@ export default function Navbar() {
                     justifyContent: 'center',
                   }}
                 >
-                  {item.icon}
+                  <HomeIcon />
                 </ListItemIcon>
-                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary= "Home" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
-          ))}
-          {user && (
+
+            <Divider />
+
+            {/*For View Transfers */} 
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/viewtransfers")}}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <GradingIcon />
+                </ListItemIcon>
+                <ListItemText primary= "View Transfers" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+
+            <Divider/>
+            
+            
+            {user ? (
+            <>
+            {/*For Settings */} 
+            <ListItem  disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/settings")}}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : 'auto',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary= "Settings" sx={{ opacity: open ? 1 : 0 }} />
+              </ListItemButton>
+            </ListItem>
+
+            {/*For Logout */} 
             <ListItem disablePadding sx={{ display: 'block' }} onClick={handleLogout}>
               <ListItemButton
                 sx={{
@@ -189,13 +210,64 @@ export default function Navbar() {
                 >
                   <LogoutIcon />
                 </ListItemIcon>
-                <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary= "Logout" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
+            </>
+
+            ):(
+          <>
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/signup")}}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <AppRegistrationIcon />
+              </ListItemIcon>
+              <ListItemText primary= "Sign Up" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding sx={{ display: 'block' }} onClick={()=>{navigate("/login")}}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+                >
+                <LoginIcon />
+              </ListItemIcon>
+              <ListItemText primary= "Login" sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+            </ListItem>
+          </>
           )}
-        </List>
+        </List> 
       </Drawer>
     </Box>
   );
 }
+
+
+
+
+
 
