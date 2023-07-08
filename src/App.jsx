@@ -21,8 +21,8 @@ import Directors from "./pages/directors/Directors"
 import DirectorProfile from "./pages/directors/DirectorProfile";
 import Coordinators from "./pages/coordinators/Coordinators";
 import CoordinatorProfile from "./pages/coordinators/CoordinatorProfile";
-import SeatList from "./pages/seats/SeatList";
 import CollegeHeadDashboard from "./pages/Dashboard/CollegeHeadDashboard";
+import Seats from "./pages/seats/seats";
 
 
 
@@ -112,7 +112,7 @@ function App() {
               <Route path="profile" element={<CoordinatorProfile />} />
          </Route>
          
-         <Route path="/seats" element={<SeatList/>}>
+         <Route path="/seats" element={<Seats/>}>
 
          </Route>
 
