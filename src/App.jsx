@@ -1,10 +1,8 @@
 import React from "react";
 import Navbar from "./components/sidebar/Navbar";
-import { Routes, Route, BrowserRouter } from "react-router-dom"; //importing reactrouter dom for routing
+import { Routes, Route} from "react-router-dom"; //importing reactrouter dom for routing
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./components/context/UserAuthContext";
-
-
 
 //Importing pages for routing
 import Home from "./pages/home/Home";
@@ -18,11 +16,14 @@ import Logout from "./pages/logout/Logout";
 import Students from "./pages/students/Students";
 import StudentProfile from "./pages/students/studentProfile";
 import AddStudent from "./pages/students/AddStudent";
+import CollegeHeadDashboard from "./pages/Dashboard/CollegeHeadDashboard";
 
 
 
 function App() {
+
   return (
+    
     <UserAuthContextProvider>
       <Routes>
         <Route path ="/"  element={<Home/>}></Route>
@@ -42,6 +43,11 @@ function App() {
                 element={<AddStudent />}
               />
          </Route>
+
+         {/* Testing for CollegeHead Navbar */}
+        <Route path="/collegehead"
+        element={<CollegeHeadDashboard/>}>
+       </Route>
 
          {/* <Route path="/directors">
           <Route index element={<Directors />} />

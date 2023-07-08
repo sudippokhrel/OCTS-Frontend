@@ -3,6 +3,7 @@ import Navbar from '../../components/sidebar/Navbar'
 import Box from '@mui/material/Box';
 import Appbar from '../../components/navbar/Appbar';
 import { useUserAuth} from '../../components/context/UserAuthContext';
+
 export default function Home() {
 
   const { logOut, logIn} = useUserAuth();
