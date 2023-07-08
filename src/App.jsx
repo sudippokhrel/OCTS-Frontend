@@ -10,7 +10,7 @@ import { UserAuthContextProvider } from "./components/context/UserAuthContext";
 import Home from "./pages/home/Home";
 import "./App.css";
 import ApplyTransfer from "./pages/applytransfer/ApplyTransfer";
-import ViewTransfer from "./pages/viewtransfers/ViewTransfers";
+import ViewTransfers from "./pages/viewtransfers/ViewTransfers";
 import Settings from "./pages/settings/Settings";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
@@ -32,7 +32,7 @@ function App() {
       <Routes>
         <Route path ="/"  element={<Home/>}></Route>
         <Route  path ="/applytransfer"  element={<ProtectedRoute><ApplyTransfer/></ProtectedRoute>}></Route>
-        <Route path ="/viewtransfers"  element={<ProtectedRoute><ViewTransfer/></ProtectedRoute>}></Route>
+        <Route path ="/viewtransfers"  element={<ProtectedRoute><ViewTransfers/></ProtectedRoute>}></Route>
         <Route path ="/settings"  element={<ProtectedRoute><Settings/></ProtectedRoute>}></Route>
         <Route path ="/login"  element={<Login/>}></Route>
         <Route path="/signup" element={<Signup/>}></Route>

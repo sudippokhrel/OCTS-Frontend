@@ -26,8 +26,7 @@ const AddSeats = ({ closeEvent }) => {
   const [Program, setProgram] = useState('');
   const [Semester, setSemester] = useState('');
   const [Seats, setSeats] = useState('');
-  const [rows, setRows] = useState([]);
-  const empCollectionRef = collection(db, "colleges");
+  const empCollectionRef = collection(db, "seats");
 
   const handleCollegeChange =(event, value) => {
     setCollege(value.name)
@@ -49,28 +48,19 @@ const AddSeats = ({ closeEvent }) => {
     setSeats(event.target.value)
   };
 
-  const getUsers = async () => {
-    const data = await getDocs(empCollectionRef);
-    setRows(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-  };
-
-
-
   const handleSubmit = async () => {
-    await addDoc(empCollectionRef,{
+    const newSeat ={
       College:College,
       Program: Program,
       Semester: Semester,
       Seats: Seats,
-    });
-    getUsers();
-    closeEvent();
+      
+    };
+    await addDoc(empCollectionRef,newSeat);
+    closeEvent(newSeat);
     Swal.fire("submitted","Your File has been Submitted","sucess")
     // Handle form submission logic here
   };
-
-
-
 
 
   const colleges = [
@@ -166,3 +156,4 @@ AddSeats.propTypes = {
 };
 
 export default AddSeats;
+

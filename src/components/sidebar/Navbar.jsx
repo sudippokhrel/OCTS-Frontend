@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 // icons for home login transfer forms
 import HomeIcon from '@mui/icons-material/Home';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -203,9 +204,9 @@ export default function Navbar() {
                     justifyContent: 'center',
                   }}
                 >
-                  <SettingsIcon />
+                  <ManageAccountsIcon/>
                 </ListItemIcon>
-                <ListItemText primary= "Settings" sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary= "Profile" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
 
