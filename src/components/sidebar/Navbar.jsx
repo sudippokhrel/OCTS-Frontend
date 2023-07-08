@@ -131,6 +131,13 @@ export default function Navbar() {
       { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
       { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
     ];
+  } else if (userRole === 'admin') {
+    navigationItems = [
+      { key: 'seats', icon: <GradingIcon />, text: 'View Seats', path: '/seats' },
+      { key: 'coordinators', icon: <GradingIcon />, text: 'View Coordinators', path: '/coordinators' },
+      { key: 'directors', icon: <GradingIcon />, text: 'View Directors', path: '/directors' },
+      { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
+    ];
   }
 
   return (
