@@ -9,7 +9,7 @@ import Appbar from "./components/navbar/Appbar";
 import Home from "./pages/home/Home";
 import "./App.css";
 import ApplyTransfer from "./pages/applytransfer/ApplyTransfer";
-import ViewTransfer from "./pages/viewtransfers/ViewTransfers";
+import ViewTransfers from "./pages/viewtransfers/ViewTransfers";
 import Settings from "./pages/settings/Settings";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
