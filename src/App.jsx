@@ -49,7 +49,7 @@ function App() {
         <Route  path ="/viewtransfers"  
           element={
           <ProtectedRoute>
-          <ViewTransfer/>
+          <ViewTransfers/>
           </ProtectedRoute>}>
         </Route>
 
