@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../components/context/UserAuthContext';
 
 import '../../App.css';
-import SeatList from '../../components/seatlist/SeatList';
+import SeatTable from '../../components/seatlist/SeatList';
 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,7 +23,7 @@ function Home() {
         
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}>
-        <SeatList/>
+        <SeatTable/>
  
         </Box>
       </Box>
