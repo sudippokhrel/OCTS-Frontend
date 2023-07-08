@@ -18,6 +18,7 @@ import MoreIcon from '@mui/icons-material/MoreVert';
 
 //to import user
 import { useUserAuth } from '../context/UserAuthContext';
+import getUserRole from '../users/getUserRole';
 import { Divider } from '@mui/material';
 
 
@@ -73,6 +74,18 @@ export default function Appbar() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const {  user} = useUserAuth();//to display the profile bar according to user
+  const [userRole, setUserRole] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        setUserRole(role);
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -235,7 +248,9 @@ export default function Appbar() {
             {user.displayName}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {user.email}
+            <div> User: {user.email}
+            </div>
+            Role: {userRole}
           </Typography>
         </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

@@ -3,6 +3,7 @@ import Navbar from "./components/sidebar/Navbar";
 import { Routes, Route} from "react-router-dom"; //importing reactrouter dom for routing
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./components/context/UserAuthContext";
+import Appbar from "./components/navbar/Appbar";
 
 //Importing pages for routing
 import Home from "./pages/home/Home";
@@ -28,16 +29,56 @@ import CollegeHeadDashboard from "./pages/Dashboard/CollegeHeadDashboard";
 function App() {
 
   return (
-    
     <UserAuthContextProvider>
+    <Appbar/>
       <Routes>
-        <Route path ="/"  element={<Home/>}></Route>
-        <Route  path ="/applytransfer"  element={<ProtectedRoute><ApplyTransfer/></ProtectedRoute>}></Route>
-        <Route path ="/viewtransfers"  element={<ProtectedRoute><ViewTransfer/></ProtectedRoute>}></Route>
-        <Route path ="/settings"  element={<ProtectedRoute><Settings/></ProtectedRoute>}></Route>
-        <Route path ="/login"  element={<Login/>}></Route>
-        <Route path="/signup" element={<Signup/>}></Route>
-        <Route path="/logout" element={<Logout/>}></Route>
+        <Route path ="/"  
+        element={
+          <Home/>
+          }>
+        </Route>
+
+
+        <Route  path ="/applytransfer"  
+          element={
+          <ProtectedRoute>
+          <ApplyTransfer/>
+          </ProtectedRoute>}>
+        </Route>
+
+        <Route  path ="/viewtransfers"  
+          element={
+          <ProtectedRoute>
+          <ViewTransfer/>
+          </ProtectedRoute>}>
+        </Route>
+
+        <Route  path ="/settings"  
+          element={
+          <ProtectedRoute>
+          <Settings/>
+          </ProtectedRoute>}>
+        </Route>
+
+        <Route  path ="/login"  
+          element={
+          <Login/>
+          }>
+        </Route>
+
+        <Route  path ="/signup"  
+          element={
+          <Signup/>
+          }>
+        </Route>
+
+        <Route  path ="/logout"  
+          element={
+          <ProtectedRoute>
+          <Login/>
+          </ProtectedRoute>}>
+        </Route>
+
 
         {/* Add User for admin */}
         <Route path="/students">
@@ -49,10 +90,17 @@ function App() {
               />
          </Route>
 
-         {/* Testing for CollegeHead Navbar */}
-        <Route path="/collegehead"
-        element={<CollegeHeadDashboard/>}>
-       </Route>
+         {/*  for CollegeHead  */}
+        <Route
+          path="/collegehead"
+          element={
+          <ProtectedRoute >
+          <Navbar>
+          <CollegeHeadDashboard />
+          </Navbar>
+          </ProtectedRoute>
+          }
+        ></Route>
 
 
 
@@ -71,7 +119,7 @@ function App() {
          </Route>
 
       </Routes>
-    </UserAuthContextProvider>
+      </UserAuthContextProvider>
     
 
   )

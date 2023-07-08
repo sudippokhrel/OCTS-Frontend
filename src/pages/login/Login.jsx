@@ -8,7 +8,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useUserAuth } from '../../components/context/UserAuthContext';
-
+import getUserRole from '../../components/users/getUserRole';
 
 const Login = () => {
   const [error, setError] = useState('');
@@ -23,8 +23,22 @@ const Login = () => {
     try {
       await logIn(email, password);
       console.log('Logged in successfully!');
-      toast.success('Login successful!');      
-      navigate('/');
+      toast.success('Login successful!'); 
+      
+       // Retrieve the user's role from Firestore
+       const user = auth.currentUser;
+       const role = await getUserRole(user.uid);
+       console.log('User role:', role); // Log the user's role to the console
+
+        // Redirect the user to their respective dashboard based on the role
+      if (role === 'college_head') {
+        navigate('/collegehead');
+      // } else if (role === 'admin') {
+      //   navigate('/admin');
+      } else if (role === 'student') {
+        navigate('/');
+      }
+      
       
     } catch (error) {
       console.error('Error logging in:', error);

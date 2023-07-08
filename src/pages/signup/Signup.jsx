@@ -65,8 +65,8 @@ const Signup = () => {
         email:email,
         puRegNumber:puRegNumber,
         faculty:faculty,
-        college:college,,
-        role: "college_head"
+        college:college,
+        role: "student"
        });
 
       console.log('Successfully created an account');
