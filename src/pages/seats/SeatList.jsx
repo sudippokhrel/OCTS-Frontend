@@ -29,6 +29,7 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddSeats from "./AddSeats";
 import Modal from '@mui/material/Modal';
+import EditSeats from "./EditSeats";
 
 // Style for modal 
 const style = {
@@ -48,7 +49,7 @@ const style = {
 export default function SeatsList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]);  
   const empCollectionRef = collection(db, "seats");
 
   // for modal to add new directors
@@ -58,6 +59,16 @@ export default function SeatsList() {
     setOpen(false);
     getSeats(); // Fetch the updated data
   };
+
+  const [editopen, setEditOpen] = useState(false);
+  const handleEditOpen = () => setEditOpen(true);
+  const handleEditClose = () => {
+    setEditOpen(false);
+    getSeats(); // Fetch the updated data
+  };
+  // for Edit form
+  const [formid, setFormid] = useState("");  
+
 
   useEffect(() => {
     getSeats();
@@ -77,6 +88,20 @@ export default function SeatsList() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const EditData =(id,College,Program,Semester,TotalSeats,Seats) =>{
+    const editdata ={
+      id: id,
+      College:College,
+      Program: Program,
+      Semester: Semester,
+      TotalSeats: TotalSeats,
+      Seats: Seats,
+
+    };
+    setFormid(editdata);
+    handleEditOpen();
+  }
 
   const deleteUser = (id) => {
     Swal.fire({
@@ -162,6 +187,16 @@ export default function SeatsList() {
           </Box>
         </Modal>
 
+        <Modal
+          open={editopen}
+          // onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description">
+          <Box sx={style}>
+          <EditSeats closeEditEvent={handleEditClose} fid ={formid} /> {/*here EditSeats is component*/}
+          </Box>
+        </Modal>
+
 
           <Box height={10} />
           <TableContainer>
@@ -178,7 +213,10 @@ export default function SeatsList() {
                     Semester
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Seats
+                    Total Seats
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Filled Seats
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Action
@@ -199,6 +237,7 @@ export default function SeatsList() {
                         <TableCell align="left">{row.College}</TableCell>
                         <TableCell align="left">{row.Program}</TableCell>
                         <TableCell align="left">{row.Semester}</TableCell>
+                        <TableCell align="left">{row.TotalSeats}</TableCell>
                         <TableCell align="left">{row.Seats}</TableCell>
                         <TableCell align="left">
                           <Stack spacing={2} direction="row">
@@ -209,7 +248,9 @@ export default function SeatsList() {
                                 cursor: "pointer",
                               }}
                               className="cursor-pointer"
-                              // onClick={() => editUser(row.id)}
+                              onClick={() => {
+                                EditData(row.id,row.College, row.Program, row.Semester,row.TotalSeats,row.Seats);
+                              }}
                             />
                             <DeleteIcon
                               style={{

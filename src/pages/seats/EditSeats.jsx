@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -20,7 +20,7 @@ import {
   doc,
 } from "firebase/firestore";
 
-const AddSeats = ({ closeEvent }) => {
+const EditSeats = ({fid, closeEditEvent }) => {
 
   const [College, setCollege] = useState('');
   const [Program, setProgram] = useState('');
@@ -28,6 +28,21 @@ const AddSeats = ({ closeEvent }) => {
   const [TotalSeats, setTotalSeats] = useState('');
   const [Seats, setSeats] = useState('');
   const empCollectionRef = collection(db, "seats");
+
+
+  useEffect(() => {
+    console.log("FID: " + fid.id);
+    // const selectedCollege = colleges.find(option => option.name === fid.College);
+    // const selectedProgram = programs.find(option => option.name === fid.Program);
+  
+    setCollege(fid.College);
+    setProgram(fid.Program);
+    setSemester(fid.Semester);
+    setTotalSeats(fid.TotalSeats);
+    setSeats(fid.Seats);
+  }, []);
+  
+  
 
   const handleCollegeChange =(event, value) => {
     setCollege(value.name)
@@ -45,24 +60,26 @@ const AddSeats = ({ closeEvent }) => {
     setSemester(event.target.value)
   };
 
-  const handleSeatsChange =(event) => {
-    setSeats(event.target.value)
-  };
   const handleTotalSeatsChange =(event) => {
     setTotalSeats(event.target.value)
   };
+
+  const handleSeatsChange =(event) => {
+    setSeats(event.target.value)
+  };
+
 
   const handleSubmit = async () => {
     const newSeat ={
       College:College,
       Program: Program,
       Semester: Semester,
-      TotalSeats: TotalSeats,
+      TotalSeats:TotalSeats,
       Seats: Seats,
       
     };
     await addDoc(empCollectionRef,newSeat);
-    closeEvent(newSeat);
+    closeEditEvent(newSeat);
     Swal.fire("submitted","Your File has been Submitted","sucess")
     // Handle form submission logic here
   };
@@ -84,11 +101,11 @@ const AddSeats = ({ closeEvent }) => {
   return (
     <Box sx={{ p: 0 ,width: '100%' }}>
       <Typography variant="h5" align="center">
-        Add Seats
+        Edit Seat Details
       </Typography>
       <IconButton
         sx={{ position: "absolute", top: 0, right: 0 }}
-        onClick={closeEvent}
+        onClick={closeEditEvent}
       >
         <CloseIcon />
       </IconButton>
@@ -97,29 +114,27 @@ const AddSeats = ({ closeEvent }) => {
           <Grid container spacing={3}>
 
           <Grid item xs={12}  >
-              <Autocomplete
+              <TextField
                 fullWidth
                 required
-                options={colleges}
-                getOptionLabel={(option) => option.name}
+                label="College"
+                value={College}
                 onChange={handleCollegeChange}
-                renderInput={(params) => (
-                  <TextField {...params} label="College" variant="outlined" />
-                )}
+                variant="outlined"
               />
             </Grid>
-            <Grid item xs={12} sm={7}  >
-              <Autocomplete
+
+            <Grid item xs={12} sm={7}>
+              <TextField
                 fullWidth
                 required
-                options={programs}
-                onChange={handleProgramChange}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField {...params} label="Program" variant="outlined"  />
-                )}
+                label="Program"
+                value={Program}
+                onChange={handleSemesterChange}
+                variant="outlined"
               />
             </Grid>
+            
 
             <Grid item xs={12} sm={5}>
               <TextField
@@ -143,7 +158,6 @@ const AddSeats = ({ closeEvent }) => {
                 variant="outlined"
               />
             </Grid>
-
             <Grid item xs={12} sm={6} >
               <TextField
                 fullWidth
@@ -168,9 +182,9 @@ const AddSeats = ({ closeEvent }) => {
   );
 };
 
-AddSeats.propTypes = {
-  closeEvent: PropTypes.func.isRequired,
+EditSeats.propTypes = {
+  closeEditEvent: PropTypes.func.isRequired,
 };
 
-export default AddSeats;
+export default EditSeats;
 

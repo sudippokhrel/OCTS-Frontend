@@ -191,7 +191,10 @@ export default function SeatsList() {
                     Semester
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Seats
+                    Total Seats
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Filled Seats
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -212,6 +215,7 @@ export default function SeatsList() {
                         <TableCell align="left">{row.College}</TableCell>
                         <TableCell align="left">{row.Program}</TableCell>
                         <TableCell align="left">{row.Semester}</TableCell>
+                        <TableCell align="left">{row.TotalSeats}</TableCell>
                         <TableCell align="left">{row.Seats}</TableCell>
                       </TableRow>
                     );
