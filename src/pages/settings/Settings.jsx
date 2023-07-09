@@ -9,7 +9,8 @@ import Appbar from '../../components/navbar/Appbar'
 import Box from '@mui/system/Box';
 // import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { TabPanel, TabList, TabContext } from '@mui/lab';
+import { TabPanel, TabList, TabContext } from '@mui/lab'; 
+import PasswordUpdate from './Profile';
 
 // Profile component
 const Profile = () => {
@@ -111,7 +112,7 @@ export default function Home() {
                 <Tab label="Settings" value="settings" />
               </TabList>
             </Box>
-            <TabPanel value="settings">Settings content</TabPanel>
+            <TabPanel value="settings"><PasswordUpdate/></TabPanel>
             <TabPanel value="profile">
               <Box
                 sx={{
@@ -132,5 +133,6 @@ export default function Home() {
 
     </div>
     </>
+    
   );
 }
