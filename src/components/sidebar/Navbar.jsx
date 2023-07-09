@@ -26,6 +26,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import GradingIcon from '@mui/icons-material/Grading';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import GroupIcon from '@mui/icons-material/Group';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AppsOutageIcon from '@mui/icons-material/AppsOutage';
 import AppsIcon from '@mui/icons-material/Apps';
@@ -133,9 +134,10 @@ export default function Navbar() {
     ];
   } else if (userRole === 'admin') {
     navigationItems = [
-      { key: 'seats', icon: <GradingIcon />, text: 'View Seats', path: '/seats' },
-      { key: 'coordinators', icon: <GradingIcon />, text: 'View Coordinators', path: '/coordinators' },
-      { key: 'directors', icon: <GradingIcon />, text: 'View Directors', path: '/directors' },
+      { key: 'seats', icon: <HomeIcon />, text: 'Seats', path: '/seats' },
+      { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },
+      { key: 'coordinators', icon: <GroupIcon />, text: 'View Coordinators', path: '/coordinators' },
+      { key: 'directors', icon: <GroupIcon />, text: 'View Directors', path: '/directors' },
       { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
     ];
   }

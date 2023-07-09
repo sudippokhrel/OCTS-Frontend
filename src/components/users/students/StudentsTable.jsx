@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from "react";
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -11,7 +12,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-
+import Swal from "sweetalert2";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -22,66 +23,58 @@ import {useNavigate} from 'react-router-dom';
 
 import Modal from '@mui/material/Modal';
 import AddStudent from '../../../pages/students/AddStudent';
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-
-const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  {id:'puRegNumber',label:'Registration Number',minWidth:170},
-  {id:'college', label:'College',minWidth:170},
-  { id: 'program', label: 'Program', minWidth: 100 },
-  {
-    id: 'semester',
-    label: 'Semester',
-    minWidth: 170,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  { id: 'action', label: 'Action', minWidth: 100 },
-  
-  
-];
-
-function createData(name, puRegNumber,college,program, semester,action) {
-  return { name,puRegNumber,college, program, semester,action};
-}
-
-const rows = [
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Computer', 1 ),
-  createData('kalu ',19070120,'School Of Engineering', 'BE Computer', 2 ),
-  createData('don ',19070120,'School Of Engineering', 'BE Computer', 3 ),
-  createData('abc ',19070120,'School Of Engineering', 'BE Computer', 4 ),
-  createData('Bhatki ',19070120,'School Of Engineering', 'BE Computer', 5 ),
-  createData('Ram Shamundra',19070120,'School Of Engineering', 'BE Computer', 6 ),
-  createData('sanjay bhansali ',19070120,'School Of Engineering', 'BE Computer', 7 ),
-  createData('xyzRam ',19070120,'School Of Engineering', 'BE Computer', 8 ),
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 1 ),
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 2),
-  createData('Ram Sharma',19070120,'Pokhara Engineering college', 'BE Software', 3),
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 4),
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 5),
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 6),
-  createData('Ram Sharma',19070120,'School Of Engineering', 'BE Software', 7),
-];
+import { db } from "../../../firebase-config";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
 
 export default function StudentsTable() {
 
-  // for modal to add new students
-  const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
   const navigate = useNavigate();
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const empCollectionRef = collection(db, "users");
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  useEffect(() => {
+    getUsers();
+  }, []);
+
+  const getUsers = async () => {
+    const data = await getDocs(query(empCollectionRef, where("role", "==", "student")));
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+  };
+
+  const deleteUser = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.value) {
+        deleteApi(id);
+      }
+    });
+  };
+
+  const deleteApi = async (id) => {
+    const userDoc = doc(db, "users", id);
+    await deleteDoc(userDoc);
+    Swal.fire("Deleted!", "Your file has been deleted.", "success");
+    getUsers();
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -92,14 +85,15 @@ export default function StudentsTable() {
     setPage(0);
   };
 
-  const filterData = (selectedName) => {
-    let filteredData = rows;
-
-    if (selectedName) {
-      filteredData = filteredData.filter((row) => row.name === selectedName);
+  const filterData = (v) => {
+    if (v) {
+      // Filter the rows based on the selected value
+      const filteredRows = rows.filter((row) => row.name === v);
+      setRows(filteredRows);
+    } else {
+      // Reset the rows to the original data
+      getUsers();
     }
-    setFilteredRows(filteredData);
-    setPage(0);
   };
 
   const uniqueName = Array.from(new Set(rows.map((row) => row.name)));
@@ -109,6 +103,8 @@ export default function StudentsTable() {
   return (
   <>
 
+  {rows.length > 0 && (
+
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <Typography
             gutterBottom
@@ -116,7 +112,7 @@ export default function StudentsTable() {
             component="div"
             sx={{ padding: "20px" }}
           >
-            Students
+            Students List
       </Typography>
       <Divider />
       <Box height={10} />
@@ -126,7 +122,7 @@ export default function StudentsTable() {
               id="combo-box-demo"
               options={uniqueName}
               sx={{ width: 300 }}
-              onChange={(e, v) => filterData(v,null)}
+              onChange={(e, v) => filterData(v)}
               getOptionLabel={(row) => row || ""}
               renderInput={(params) => (
                 <TextField {...params} size="small" label="Search Student" />
@@ -143,88 +139,87 @@ export default function StudentsTable() {
             
             
           </Stack>
-          <div>
-          <div>
-    </div>
-          </div>
 
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
+          <TableContainer>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Name
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Registration No
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    College
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Program
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Semester
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Action
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.code}
+                      >
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.puRegNumber}</TableCell>
+                        <TableCell align="left">{row.college}</TableCell>
+                        <TableCell align="left">{row.program}</TableCell>
+                        <TableCell align="left">{row.semester}</TableCell>
+                        <TableCell align="left">
+                          <Stack spacing={2} direction="row">
+                            <EditIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "blue",
+                                cursor: "pointer",
+                              }}
+                              className="cursor-pointer"
+                              // onClick={() => editUser(row.id)}
+                            />
+                            <DeleteIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "darkred",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                deleteUser(row.id);
+                              }}
+                            />
+                          </Stack>
                         </TableCell>
-                        
-
-                      );
-                      
-                      
-                    })}
-                    <div>
-                        <Stack spacing={2} direction="row">
-                          <EditIcon
-                            style={{
-                              fontSize: "20px",
-                              color: "blue",
-                              cursor: "pointer",
-                            }}
-                            className="cursor-pointer"
-                            // onClick={() => editUser(row.id)}
-                          />
-                          <DeleteIcon
-                            style={{
-                              fontSize: "20px",
-                              color: "darkred",
-                              cursor: "pointer",
-                            }}
-                            // onClick={() => {
-                            //   link('/');
-                            // }}
-                          />
-                        </Stack>
-
-                      </div>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5,8,10, 25, 100]}
         component="div"
-        count={filteredRows.length}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
-
-
+  )}
   </>
     
   );
