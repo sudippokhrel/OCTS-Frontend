@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Paper, Avatar, TextField, Button, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,9 +7,9 @@ import { Alert } from '@mui/material';
 import { ToastContainer } from 'react-toastify';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {  collection, getDocs, doc,  setDoc } from "firebase/firestore";
+import { doc,  setDoc } from "firebase/firestore";
 import { db } from '../../firebase-config';
-
+import getColleges from '../../components/users/getColleges'; // Import the getColleges function
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -20,33 +20,21 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp ,logIn} = useUserAuth();
+  const { signUp, logIn } = useUserAuth();
   const navigate = useNavigate();
+  const [colleges, setColleges] = useState([]); // State to store the colleges
+
+  useEffect(() => {
+    // Fetch colleges from Firestore
+    const fetchColleges = async () => {
+      const fetchedColleges = await getColleges();
+      console.log('Fetched colleges:', fetchedColleges);
+      setColleges(fetchedColleges);
+    };
+    fetchColleges();
+  }, []);
 
   const faculties = ['Faculty of Science and Technology'];
-
-  const colleges = [
-    'School of Engineering, Pokhara Lekhnath-30, Kaski',
-    'Madan Bhandari Memorial Academy Nepal, Urlabari-3, Morang',
-    'Nepal Engineering College, Changunarayan, Bhaktapur',
-    'School of Environmental Science & Management (SchEMS), Mid Baneshwor, Kathmandu',
-    'Gandaki College of Engineering and Science, Lamachaur, Pokhara-16, Kaski',
-    'Pokhara Engineering College, Phirke, Pokhara, Kaski',
-    'Universal Engineering College, Chakupat, Lalitpur',
-    'Crimson College of Technology, Devinagar, Rupandehi',
-    'Oxford College of Engineering and Management, Gaidakot, Nawalparasi',
-    'Lumbini Engineering, Management and Science College, Bhalwari, Butwal, Rupandehi',
-    'National Academy of Science and Technology Dhangadi, Kailali',
-    'Nepal College of Information Technology, Balkumari, Lalitpur',
-    'Cosmos College of Management and Technology, Tutepani-14, Lalitpur',
-    'Everest Engineering College, Sanepa-2, Lalitpur',
-    'Rapti Engineering College, Ghorahi-01, Saniambapur, Dang',
-    'United Technical College, Bharatpur-11, Chitwan',
-    'College of Engineering & Management, Nepalgung, Banke',
-    'LA Grande International College, Simalchaur, Pokhara, Kaski',
-    'Citizen College, Satdobato, Lalitpur',
-    'Ritz College of Engineering and Management, Balkumari, Lalitpur',
-  ];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,24 +47,24 @@ const Signup = () => {
 
     try {
       const { user: authUser } = await signUp(email, password);
-      const userRef = doc(db, "users", authUser.uid);
-      await setDoc(userRef, { 
-        name:name,
-        email:email,
-        puRegNumber:puRegNumber,
-        faculty:faculty,
-        college:college,
-        role: "student"
-       });
+      const userRef = doc(db, 'users', authUser.uid);
+      await setDoc(userRef, {
+        name: name,
+        email: email,
+        puRegNumber: puRegNumber,
+        faculty: faculty,
+        college: college,
+        role: 'student'
+      });
 
       console.log('Successfully created an account');
       toast.success('Successfully Created an account');
-      
+
       navigate('/login');
     } catch (error) {
       console.error('Error creating account:', error);
       setError('Invalid email or password');
-      toast.error('Error creating an account. Please try again!')
+      toast.error('Error creating an account. Please try again!');
     }
   };
 
@@ -114,7 +102,7 @@ const Signup = () => {
               placeholder="Email address"
               onChange={(e) => setEmail(e.target.value)}
             />
-            
+
             <TextField
               variant="outlined"
               label="PU Registration Number"
@@ -147,11 +135,17 @@ const Signup = () => {
                 label="College"
               >
                 <MenuItem value="">Select College</MenuItem>
-                {colleges.map((college) => (
-                  <MenuItem key={college} value={college}>
-                    {college}
+                {colleges && colleges.length > 0 ? (
+                  colleges.map((college) => (
+                    <MenuItem key={college.id} value={college.id}>
+                      {college.collegeName}, {college.collegeAddress}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem value="" disabled>
+                    Loading colleges...
                   </MenuItem>
-                ))}
+                )}
               </Select>
             </FormControl>
             <TextField
