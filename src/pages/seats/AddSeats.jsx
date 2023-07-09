@@ -27,10 +27,11 @@ import getSemesters from '../../components/users/getSemesters';
 const AddSeats = ({ closeEvent }) => {
   const [colleges, setColleges] = useState([]);
   const [programs, setPrograms] = useState([]);
-  const [college, setCollege] = useState('');
-  const [program, setProgram] = useState('');
-  const [semester, setSemester] = useState('');
-  const [seats, setSeats] = useState('');
+  const [College, setCollege] = useState('');
+  const [Program, setProgram] = useState('');
+  const [Semester, setSemester] = useState('');
+  const [Seats, setSeats] = useState('');
+  const [TotalSeats, setTotalSeats] = useState('');
   const empCollectionRef = collection(db, 'seats');
 
   useEffect(() => {
@@ -74,12 +75,18 @@ const AddSeats = ({ closeEvent }) => {
     setSeats(event.target.value);
   };
 
+  const handleTotalSeatsChange = (event) => {
+    setTotalSeats(event.target.value);
+  };
+
   const handleSubmit = async () => {
-    const newSeat = {
-      College: college,
-      Program: program,
-      Semester: semester,
-      Seats: seats,
+    const newSeat ={
+      College:College,
+      Program: Program,
+      Semester: Semester,
+      TotalSeats: TotalSeats,
+      Seats: Seats,
+      
     };
     await addDoc(empCollectionRef, newSeat);
     closeEvent(newSeat);
@@ -108,7 +115,7 @@ const AddSeats = ({ closeEvent }) => {
                 renderInput={(params) => <TextField {...params} label="College" variant="outlined" />}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={7}  >
               <Autocomplete
                 fullWidth
                 required
@@ -124,18 +131,30 @@ const AddSeats = ({ closeEvent }) => {
                 required
                 label="Semester"
                 type="number"
-                value={semester}
+                value={Semester}
                 onChange={handleSemesterChange}
                 variant="outlined"
               />
             </Grid>
-            <Grid item xs={12} sm={7}>
+
+            <Grid item xs={12} sm={5}>
               <TextField
                 fullWidth
                 required
-                label="Seats"
+                label="Total Seats"
                 type="number"
-                value={seats}
+                value={TotalSeats}
+                onChange={handleTotalSeatsChange}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item xs={12} sm={7} >
+              <TextField
+                fullWidth
+                required
+                label="Filled Seats"
+                type="number"
+                value={Seats}
                 onChange={handleSeatsChange}
                 variant="outlined"
               />
