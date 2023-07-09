@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import { useState } from 'react';
 import PropTypes from 'prop-types';
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -8,19 +9,50 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from '../../firebase-config';
+import getColleges from '../../components/users/getColleges';
 
 const AddDirectors = ({ closeEvent }) => {
+  const [colleges, setColleges] = useState([]);
+  const [selectedCollege, setSelectedCollege] = useState(null);
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    // Fetch colleges from Firestore
+    const fetchColleges = async () => {
+      const fetchedColleges = await getColleges();
+      console.log('Fetched colleges:', fetchedColleges);
+      setColleges(fetchedColleges);
+    };
+
+    fetchColleges();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCollege) {
+      setAddress(selectedCollege.collegeAddress);
+    } else {
+      setAddress('');
+    }
+  }, [selectedCollege]);
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // Handle form submission logic here
   };
 
-  const colleges = [
-    { name: 'College A' },
-    { name: 'College B' },
-    { name: 'College C' },
-    // Add more college options here
-  ];
+  const handleCollegeChange = (event, value) => {
+    setSelectedCollege(value);
+  };
+
 
   return (
     <Box sx={{ p: 0 ,width: '100%' }}>
@@ -54,14 +86,16 @@ const AddDirectors = ({ closeEvent }) => {
             </Grid>
             <Grid item xs={12}  >
               <Autocomplete
-                fullWidth
-                required
-                options={colleges}
-                getOptionLabel={(option) => option.name}
-                renderInput={(params) => (
-                  <TextField {...params} label="College" variant="outlined" />
-                )}
-              />
+            fullWidth
+            required
+            options={colleges}
+            getOptionLabel={(option) => option.collegeName}
+            value={selectedCollege}
+            onChange={handleCollegeChange}
+            renderInput={(params) => (
+              <TextField {...params} label="College" variant="outlined" />
+            )}
+          />
             </Grid>
             <Grid item xs={12} >
               <TextField
@@ -69,6 +103,8 @@ const AddDirectors = ({ closeEvent }) => {
                 required
                 label="Address"
                 variant="outlined"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
               />
             </Grid>
             

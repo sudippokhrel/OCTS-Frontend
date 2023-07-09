@@ -1,4 +1,5 @@
-// import React from 'react';
+import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { 
   TextField, 
   Button,
@@ -12,8 +13,29 @@ import {
 } from '@mui/material';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import getColleges from '../users/getColleges';
+import { getPrograms } from '../users/getPrograms';
 
 const TransferForm = () => {
+  const [colleges, setColleges] = useState([]);
+  const [programs, setPrograms] = useState([]);
+
+  useEffect(() => {
+    const fetchCollegesAndPrograms = async () => {
+      const fetchedColleges = await getColleges();
+      console.log('Fetched colleges:', fetchedColleges);
+
+      const fetchedPrograms = await getPrograms();
+      console.log('Fetched programs:', fetchedPrograms);
+
+
+      setColleges(fetchedColleges || []);
+      setPrograms(fetchedPrograms || []);
+    };
+
+    fetchCollegesAndPrograms();
+  }, []);
+
   const initialValues = {
     fullName: '',
     registrationNumber: '',
@@ -67,7 +89,7 @@ const TransferForm = () => {
               name="fullName"
               margin="normal"
             />
-            <ErrorMessage name="fullName" component="div" className="error" />
+            <ErrorMessage name="fullName" component="div" className="error-red" />
 
             <Field
               as={TextField}
@@ -77,7 +99,7 @@ const TransferForm = () => {
               name="registrationNumber"
               margin="normal"
             />
-            <ErrorMessage name="registrationNumber" component="div" className="error" />
+            <ErrorMessage name="registrationNumber" component="div" className="error-red" />
 
             <Field
               as={TextField}
@@ -87,64 +109,32 @@ const TransferForm = () => {
               name="examRollNumber"
               margin="normal"
             />
-            <ErrorMessage name="examRollNumber" component="div" className="error" />
+            <ErrorMessage name="examRollNumber" component="div" className="error-red" />
 
             <FormControl fullWidth margin="normal">
               <InputLabel>Source College Name</InputLabel>
               <Field as={Select} name="sourceCollegeName" required>
                 <MenuItem value="">Select Source College</MenuItem>
-                <MenuItem value="School of Engineering">School of Engineering</MenuItem>
-                <MenuItem value="Madan Bhandari Memorial Academy Nepal">Madan Bhandari Memorial Academy Nepal</MenuItem>
-                <MenuItem value="Nepal Engineering College">Nepal Engineering College</MenuItem>
-                <MenuItem value="Gandaki College of Engineering and Science">Gandaki College of Engineering and Science</MenuItem>
-                <MenuItem value="Pokhara Engineering College">Pokhara Engineering College</MenuItem>
-                <MenuItem value="Lumbini Engineering, Management and Science College">Lumbini Engineering, Management and Science College</MenuItem>
-                <MenuItem value="Rapti Engineering College">Rapti Engineering College</MenuItem>
-                <MenuItem value="United Technical College">United Technical College</MenuItem>
-                <MenuItem value="College of Engineering & Management">College of Engineering & Management</MenuItem>
-                <MenuItem value="Universal Engineering & Science College">Universal Engineering & Science College</MenuItem>
-                <MenuItem value="School of Environmental Science and Management (SchEMS)">School of Environmental Science and Management (SchEMS)</MenuItem>
-                <MenuItem value="Crimson College of Technology">Crimson College of Technology</MenuItem>
-                <MenuItem value="Oxford College of Engineering and Management">Oxford College of Engineering and Management</MenuItem>
-                <MenuItem value="National Academy of Science &Technology">National Academy of Science &Technology</MenuItem>
-                <MenuItem value="Nepal College of Information Technology">Nepal College of Information Technology</MenuItem>
-                <MenuItem value="Cosmos College of Management and Technology">Cosmos College of Management and Technology</MenuItem>
-                <MenuItem value="Everest Engineering College">Everest Engineering College</MenuItem>
-                <MenuItem value="LA Grande International College">LA Grande International College</MenuItem>
-                <MenuItem value="Citizen College">Citizen College</MenuItem>
-                <MenuItem value="Tillottama College">Tillottama College</MenuItem>
-                <MenuItem value="Ritz College of Engineering and Management">Ritz College of Engineering and Management</MenuItem>
+                {colleges.map((college) => (
+                  <MenuItem key={college.id} value={college.id}>
+                    {college.collegeName}
+                  </MenuItem>
+                ))}
               </Field>
-              <ErrorMessage name="sourceCollegeName" component="div" className="error" />
+              <ErrorMessage name="sourceCollegeName" component="div" className="error-red" />
             </FormControl>
 
             <FormControl fullWidth margin="normal">
               <InputLabel>Destination College Name</InputLabel>
               <Field as={Select} name="destinationCollegeName" required>
                 <MenuItem value="">Select Destination College</MenuItem>
-                <MenuItem value="School of Engineering">School of Engineering</MenuItem>
-                <MenuItem value="Madan Bhandari Memorial Academy Nepal">Madan Bhandari Memorial Academy Nepal</MenuItem>
-                <MenuItem value="Nepal Engineering College">Nepal Engineering College</MenuItem>
-                <MenuItem value="Gandaki College of Engineering and Science">Gandaki College of Engineering and Science</MenuItem>
-                <MenuItem value="Pokhara Engineering College">Pokhara Engineering College</MenuItem>
-                <MenuItem value="Lumbini Engineering, Management and Science College">Lumbini Engineering, Management and Science College</MenuItem>
-                <MenuItem value="Rapti Engineering College">Rapti Engineering College</MenuItem>
-                <MenuItem value="United Technical College">United Technical College</MenuItem>
-                <MenuItem value="College of Engineering & Management">College of Engineering & Management</MenuItem>
-                <MenuItem value="Universal Engineering & Science College">Universal Engineering & Science College</MenuItem>
-                <MenuItem value="School of Environmental Science and Management (SchEMS)">School of Environmental Science and Management (SchEMS)</MenuItem>
-                <MenuItem value="Crimson College of Technology">Crimson College of Technology</MenuItem>
-                <MenuItem value="Oxford College of Engineering and Management">Oxford College of Engineering and Management</MenuItem>
-                <MenuItem value="National Academy of Science &Technology">National Academy of Science &Technology</MenuItem>
-                <MenuItem value="Nepal College of Information Technology">Nepal College of Information Technology</MenuItem>
-                <MenuItem value="Cosmos College of Management and Technology">Cosmos College of Management and Technology</MenuItem>
-                <MenuItem value="Everest Engineering College">Everest Engineering College</MenuItem>
-                <MenuItem value="LA Grande International College">LA Grande International College</MenuItem>
-                <MenuItem value="Citizen College">Citizen College</MenuItem>
-                <MenuItem value="Tillottama College">Tillottama College</MenuItem>
-                <MenuItem value="Ritz College of Engineering and Management">Ritz College of Engineering and Management</MenuItem>
+                {colleges.map((college) => (
+                  <MenuItem key={college.id} value={college.id}>
+                    {college.collegeName}
+                  </MenuItem>
+                ))}
               </Field>
-              <ErrorMessage name="destinationCollegeName" component="div" className="error" />
+              <ErrorMessage name="destinationCollegeName" component="div" className="error-red" />
             </FormControl>
 
             <Field
@@ -155,7 +145,7 @@ const TransferForm = () => {
               name="email"
               margin="normal"
             />
-            <ErrorMessage name="email" component="div" className="error" />
+            <ErrorMessage name="email" component="div" className="error-red" />
 
             <Field
               as={TextField}
@@ -165,26 +155,19 @@ const TransferForm = () => {
               name="contactNumber"
               margin="normal"
             />
-            <ErrorMessage name="contactNumber" component="div" className="error" />
+            <ErrorMessage name="contactNumber" component="div" className="error-red" />
 
             <FormControl fullWidth margin="normal">
               <InputLabel>Program Enrolled</InputLabel>
               <Field as={Select} name="programEnrolled" required>
                 <MenuItem value="">Select Program Enrolled</MenuItem>
-                <MenuItem value="Bachelor of Civil Engineering">Bachelor of Civil Engineering</MenuItem>
-                <MenuItem value="Bachelor of Civil & Rural Engineering">Bachelor of Civil & Rural Engineering</MenuItem>
-                <MenuItem value="Bachelor of Civil Engineering for Diploma Holders">Bachelor of Civil Engineering for Diploma Holders</MenuItem>
-                <MenuItem value="Bachelor of Electrical and Electronics Engineering">Bachelor of Electrical and Electronics Engineering</MenuItem>
-                <MenuItem value="Bachelor of Electronics & Communication Engineering">Bachelor of Electronics & Communication Engineering</MenuItem>
-                <MenuItem value="Bachelor of Computer Engineering">Bachelor of Computer Engineering</MenuItem>
-                <MenuItem value="Bachelor of Engineering in Information Technology">Bachelor of Engineering in Information Technology</MenuItem>
-                <MenuItem value="Bachelor of Software Engineering">Bachelor of Software Engineering</MenuItem>
-                <MenuItem value="Bachelor of Architecture">Bachelor of Architecture</MenuItem>
-                <MenuItem value="Bachelor of Science in Environmental Management">Bachelor of Science in Environmental Management</MenuItem>
-                <MenuItem value="Bachelor of Computer Application">Bachelor of Computer Application</MenuItem>
-                
+                {programs.map((program) => (
+                  <MenuItem key={program.id} value={program.id}>
+                    {program.name}
+                  </MenuItem>
+                ))}
               </Field>
-              <ErrorMessage name="programEnrolled" component="div" className="error" />
+              <ErrorMessage name="programEnrolled" component="div" className="error-red" />
             </FormControl>
 
             <Field
@@ -195,7 +178,7 @@ const TransferForm = () => {
               name="currentSemester"
               margin="normal"
             />
-            <ErrorMessage name="currentSemester" component="div" className="error" />
+            <ErrorMessage name="currentSemester" component="div" className="error-red" />
 
             <input
               type="file"
@@ -209,7 +192,7 @@ const TransferForm = () => {
               style={{ marginBottom: '1rem' }}
               name="gradeSheet"
             />
-            <ErrorMessage name="gradeSheet" component="div" className="error" />
+            <ErrorMessage name="gradeSheet" component="div" className="error-red" />
 
             <Field
               as={TextField}
@@ -220,7 +203,7 @@ const TransferForm = () => {
               name="remarks"
               margin="normal"
             />
-            <ErrorMessage name="remarks" component="div" className="error" />
+            <ErrorMessage name="remarks" component="div" className="error-red" />
 
             <Button variant="contained" color="primary" type="submit">
               Submit

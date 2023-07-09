@@ -265,9 +265,3 @@ export default function CollegeHeadNavbar() {
     </Box>
   );
 }
-
-
-
-
-
-
