@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from "react";
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,17 +12,26 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Swal from "sweetalert2";
 import Modal from '@mui/material/Modal';
-
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import AddDirectors from '../../../pages/directors/AddDirectors';
-
-
+import AddDirectors from '../../../pages/Directors/AddDirectors.jsx';
+import { db } from "../../../firebase-config";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  doc,
+} from "firebase/firestore";
 
 const style = {
   position: 'absolute',
@@ -36,49 +45,53 @@ const style = {
   p: 4,
 };
 
-const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  {id:'college', label:'College',minWidth:170},
-  { id: 'address', label: 'Address', minWidth: 170 },
-  { id: 'action', label: 'Action', minWidth: 100 },
-  
-  
-];
+export default function DirectorssTable() {
 
-function createData(name, college,address, action) {
-  return { name, college,address, action};
-}
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rows, setRows] = useState([]);
+  const empCollectionRef = collection(db, "users");
 
-const rows = [
-  createData('Ram Sharma','School Of Engineering', 'Dhungepatan,Pokhara'),
-  createData('kalu ','Madan Bhandari Memorial Academy Nepal', 'Urlabari-3, Morang' ),
-  createData('don ','Nepal Engineering College', 'Changunarayan, Bhaktapur' ),
-  createData('abc ','School of Environmental Science & Management (SchEMS)', ' Mid Baneshwor, Kathmandu' ),
-  createData('Bhatki ','Gandaki College of Engineering and Science', 'Lamachaur, Pokhara-16' ),
-  createData('Ram Shamundra','Universal Engineering College',' Chakupat, Lalitpur' ),
-  createData('xyzRam ','Crimson College of Technology', 'Devinagar, Rupandehi'),
-  createData('Ram Sharma','Oxford College of Engineering and Management', 'Gaidakot,Nawalparasi'),
-  createData('Ram Sharma','Lumbini Engineering, Management and Science College', 'Bhalwari, Butwal, Rupandehi'),
-  createData('Ram Sharma','Pokhara Engineering college', 'Firke, Pokhara'),
-  createData('Ram Sharma','National Academy of Science and Technology Dhangadi', 'Kailali'),
-  createData('Ram Sharma','Nepal College of Information Technology', 'Balkumari, Lalitpur'),
-  createData('Ram Sharma','Cosmos College of Management and Technology', 'Tutepani-14, Lalitpur'),
-
-
-
-];
-
-export default function DirectorsTable() {
-
-  const [filteredRows, setFilteredRows] = React.useState(rows); // State to store the filtered rows
   // for modal to add new directors
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    getDirectors(); // Fetch the updated data
+  };
 
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  useEffect(() => {
+    getDirectors();
+  }, []);
+
+  const getDirectors = async () => {
+    const data = await getDocs(query(empCollectionRef, where("role", "==", "director")));
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+  };
+
+  const deleteUser = (id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.value) {
+        deleteApi(id);
+      }
+    });
+  };
+
+  const deleteApi = async (id) => {
+    const userDoc = doc(db, "users", id);
+    await deleteDoc(userDoc);
+    Swal.fire("Deleted!", "Your file has been deleted.", "success");
+    getDirectors();
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -89,14 +102,15 @@ export default function DirectorsTable() {
     setPage(0);
   };
 
-  const filterData = (selectedName) => {
-    let filteredData = rows;
-
-    if (selectedName) {
-      filteredData = filteredData.filter((row) => row.college === selectedName);
+  const filterData = (v) => {
+    if (v) {
+      // Filter the rows based on the selected value
+      const filteredRows = rows.filter((row) => row.college === v);
+      setRows(filteredRows);
+    } else {
+      // Reset the rows to the original data
+      getDirectors();
     }
-    setFilteredRows(filteredData);
-    setPage(0);
   };
 
   const uniqueName = Array.from(new Set(rows.map((row) => row.college)));
@@ -105,6 +119,8 @@ export default function DirectorsTable() {
 
   return (
   <>
+
+  
 
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <Typography
@@ -123,10 +139,10 @@ export default function DirectorsTable() {
               id="combo-box-demo"
               options={uniqueName}
               sx={{ width: 300 }}
-              onChange={(e, v) => filterData(v,null)}
+              onChange={(e, v) => filterData(v)}
               getOptionLabel={(row) => row || ""}
               renderInput={(params) => (
-                <TextField {...params} size="small" label="Search Director of" />
+                <TextField {...params} size="small" label="Search Director of " />
               )}
             />
             <Typography
@@ -140,7 +156,7 @@ export default function DirectorsTable() {
             
             
           </Stack>
-      <div>
+          <div>
           
         <Modal
           open={open}
@@ -153,85 +169,84 @@ export default function DirectorsTable() {
         </Modal>
       </div>
 
-      <TableContainer sx={{ maxHeight: 440 }}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredRows
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format && typeof value === 'number'
-                            ? column.format(value)
-                            : value}
+          <TableContainer>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Name
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    College
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Program
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Role
+                  </TableCell>
+                  
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Action
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.code}
+                      >
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.college}</TableCell>
+                        <TableCell align="left">{row.program}</TableCell>
+                        <TableCell align="left">College {row.role}</TableCell>
+                        <TableCell align="left">
+                          <Stack spacing={2} direction="row">
+                            <EditIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "blue",
+                                cursor: "pointer",
+                              }}
+                              className="cursor-pointer"
+                              // onClick={() => editUser(row.id)}
+                            />
+                            <DeleteIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "darkred",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                deleteUser(row.id);
+                              }}
+                            />
+                          </Stack>
                         </TableCell>
-                        
-
-                      );
-                      
-                      
-                    })}
-                    <div>
-                        <Stack spacing={2} direction="row">
-                          <EditIcon
-                            style={{
-                              fontSize: "20px",
-                              color: "blue",
-                              cursor: "pointer",
-                            }}
-                            className="cursor-pointer"
-                            // onClick={() => editUser(row.id)}
-                          />
-                          <DeleteIcon
-                            style={{
-                              fontSize: "20px",
-                              color: "darkred",
-                              cursor: "pointer",
-                            }}
-                            // onClick={() => {
-                            //   link('/');
-                            // }}
-                          />
-                        </Stack>
-
-                    </div>
-                  </TableRow>
-                );
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                      </TableRow>
+                    );
+                  })}
+              </TableBody>
+            </Table>
+          </TableContainer>
       <TablePagination
         rowsPerPageOptions={[5,8,10, 25, 100]}
         component="div"
-        count={filteredRows.length}
+        count={rows.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
     </Paper>
-
-
+  
   </>
     
   );
 }
-
