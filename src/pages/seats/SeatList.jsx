@@ -122,7 +122,7 @@ export default function SeatsList() {
   const deleteApi = async (id) => {
     const userDoc = doc(db, "seats", id);
     await deleteDoc(userDoc);
-    Swal.fire("Deleted!", "Your file has been deleted.", "success");
+    Swal.fire("Deleted!", "Your Seat Data has been deleted.", "success");
     getSeats();
   };
 
