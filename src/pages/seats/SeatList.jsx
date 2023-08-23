@@ -80,7 +80,7 @@ export default function SeatsList() {
         const role = await getUserRole(user.uid);
         setUserRole(role);
 
-        if (role !== "admin") {
+        if (role !== "admin" || role != "dean") {
           const college = await getUserCollege(user.uid);
           setUserCollege(college);
           const program = await getUserProgram(user.uid);
@@ -102,7 +102,7 @@ export default function SeatsList() {
 
   useEffect(() => {
     if (!isLoading) {
-      if (userRole === "admin") {
+      if (userRole === "admin"|| userRole== "dean") {
         getSeats();
       } else {
         getSeats(userCollege,userProgram);
@@ -134,7 +134,7 @@ export default function SeatsList() {
   const getSeats = async (userCollege,userProgram) => {
 
     const empCollectionRef = collection(db, "seats");
-    if (userRole=='admin'){
+    if (userRole=='admin' || userRole=='dean'){
       const q = query(empCollectionRef); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
@@ -244,7 +244,7 @@ export default function SeatsList() {
           <Divider />
           <Box height={10} />
           <Stack direction="row" spacing={2} className="my-2 mb-2">
-            {userRole == "admin" || userRole=="college_head" ? (
+            {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
               <Autocomplete
               disablePortal
               id="combo-box-demo"
