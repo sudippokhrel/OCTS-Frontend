@@ -90,7 +90,7 @@ const AddSeats = ({ closeEvent }) => {
     };
     await addDoc(empCollectionRef, newSeat);
     closeEvent(newSeat);
-    Swal.fire('Submitted', 'Your File has been Submitted', 'success');
+    Swal.fire('Submitted', ' New Seats has been Added', 'success');
     // Handle form submission logic here
   };
 

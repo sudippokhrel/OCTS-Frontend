@@ -126,7 +126,7 @@ const EditSeats = ({fid, closeEditEvent }) => {
     const seatDocRef = doc(db, "seats", fid.id);
     await updateDoc(seatDocRef, editedSeat);
     closeEditEvent();
-    Swal.fire("submitted","Your File has been Submitted","sucess")
+    Swal.fire("submitted","Seat has been Edited","sucess")
     // Handle form submission logic here
   };
 
