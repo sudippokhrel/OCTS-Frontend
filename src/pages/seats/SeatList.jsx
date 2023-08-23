@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -21,6 +22,8 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  where,
+  query,
 } from "firebase/firestore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,6 +33,12 @@ import Autocomplete from "@mui/material/Autocomplete";
 import AddSeats from "./AddSeats";
 import Modal from '@mui/material/Modal';
 import EditSeats from "./EditSeats";
+
+// Role based  add option
+import { useUserAuth } from '../../components/context/UserAuthContext';
+import getUserRole from '../../components/users/getUserRole';
+import getUserCollege from '../../components/users/getUserCollege';
+import getUserProgram from '../../components/users/getUserProgram';
 
 // Style for modal 
 const style = {
@@ -50,7 +59,7 @@ export default function SeatsList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);  
-  const empCollectionRef = collection(db, "seats");
+  const [isLoading, setIsLoading] = useState(true); // Add a loading state
 
   // for modal to add new directors
   const [open, setOpen] = useState(false);
@@ -60,24 +69,91 @@ export default function SeatsList() {
     getSeats(); // Fetch the updated data
   };
 
+  const {  user} = useUserAuth();//to display the profile bar according to user
+  const [userRole, setUserRole] = React.useState(null);
+  const [userCollege, setUserCollege] = React.useState(null);
+  const [userProgram, setUserProgram] = React.useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        setUserRole(role);
+
+        if (role !== "admin") {
+          const college = await getUserCollege(user.uid);
+          setUserCollege(college);
+          const program = await getUserProgram(user.uid);
+          setUserProgram(program);
+
+          // Fetch seats based on userCollege here
+          getSeats(college,program);
+        } else {
+          // Fetch seats for admin
+          getSeats();
+        }
+
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (userRole === "admin") {
+        getSeats();
+      } else {
+        getSeats(userCollege,userProgram);
+      }
+    }
+  }, [userRole, userCollege,userProgram, isLoading]);
+
   const [editopen, setEditOpen] = useState(false);
   const handleEditOpen = () => setEditOpen(true);
   const handleEditClose = () => {
     setEditOpen(false);
-    getSeats(); // Fetch the updated data
+    getSeats(userCollege,userProgram); // Fetch the updated data
   };
   // for Edit form
   const [formid, setFormid] = useState("");  
 
 
-  useEffect(() => {
-    getSeats();
-  }, []);
+  // useEffect(() => {
+  //   if (!isLoading) {
+  //   if(userRole=='admin'){
+  //     getSeats();
+  //   }else{
+  //     getSeats(userCollege);
+  //   }
+  // }
+    
+  // }, []);
 
-  const getSeats = async () => {
-    const data = await getDocs(empCollectionRef);
+  const getSeats = async (userCollege,userProgram) => {
+
+    const empCollectionRef = collection(db, "seats");
+    if (userRole=='admin'){
+      const q = query(empCollectionRef); // Use query() function here
+      const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
+    }else if (userRole=='college_head'){
+      const q = query(empCollectionRef, where("College", "==", userCollege)); // Use query() function here
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+
+    }
+    else if (userRole=='program_coordinator'){
+      const q = query(empCollectionRef, where("College", "==", userCollege),
+      where("Program", "==", userProgram)); // Use query() function here
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+    }
+
   };
 
   const handleChangePage = (event, newPage) => {
@@ -122,8 +198,19 @@ export default function SeatsList() {
   const deleteApi = async (id) => {
     const userDoc = doc(db, "seats", id);
     await deleteDoc(userDoc);
-    Swal.fire("Deleted!", "Your file has been deleted.", "success");
+    Swal.fire("Deleted!", "Your Seat Data has been deleted.", "success");
     getSeats();
+  };
+
+  const filterDataSemester = (v) => {
+    if (v) {
+      // Filter the rows based on the selected value
+      const filteredRows = rows.filter((row) => row.Semester === v);
+      setRows(filteredRows);
+    } else {
+      // Reset the rows to the original data
+      getSeats(userCollege);
+    }
   };
 
   const filterData = (v) => {
@@ -133,12 +220,13 @@ export default function SeatsList() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getSeats();
+      getSeats(userCollege);
     }
   };
   
   
   const uniqueName = Array.from(new Set(rows.map((rows) => rows.Program)));
+  const uniqueSemester = Array.from(new Set(rows.map((rows) => rows.Semester)));
 
   return (
     <>
@@ -150,12 +238,14 @@ export default function SeatsList() {
             component="div"
             sx={{ padding: "20px" }}
           >
-            Students Seat List
+            Students Seat List                         <br></br>  {userCollege} <br></br>
+            {userProgram}
           </Typography>
           <Divider />
           <Box height={10} />
           <Stack direction="row" spacing={2} className="my-2 mb-2">
-            <Autocomplete
+            {userRole == "admin" || userRole=="college_head" ? (
+              <Autocomplete
               disablePortal
               id="combo-box-demo"
               options={uniqueName}
@@ -163,17 +253,41 @@ export default function SeatsList() {
               onChange={(e, v) => filterData(v)}
               getOptionLabel={(row) => row  || ""}
               renderInput={(params) => (
+                
                 <TextField {...params} size="small" label="Search Program" />
               )}
             />
+
+            ): null }
+
+              {userRole == "program_coordinator" && (
+              <Autocomplete
+              disablePortal
+              id="combo-box-demo"
+              options={uniqueSemester}
+              sx={{ width: 300 }}
+              onChange={(e, v) => filterDataSemester(v)}
+              getOptionLabel={(row) => row  || ""}
+              renderInput={(params) => (
+                
+                <TextField {...params} size="small" label="Search Semester" />
+              )}
+            />
+
+            )}
+            
             <Typography
               variant="h6"
               component="div"
               sx={{ flexGrow: 1 }}
             ></Typography>
+            
+
+            {userRole=='admin'  &&(   // the add seat button is seen only if the user is admin
             <Button onClick={handleOpen} variant="contained" endIcon={<AddCircleIcon />}>
               Add
             </Button>
+            )}
           </Stack>
 
           {/* to add seats of respective college we have used model */}
@@ -252,6 +366,8 @@ export default function SeatsList() {
                                 EditData(row.id,row.College, row.Program, row.Semester,row.TotalSeats,row.Seats);
                               }}
                             />
+
+                            {userRole=='admin'  &&( // detele seat icon is only seen if the user is admin
                             <DeleteIcon
                               style={{
                                 fontSize: "20px",
@@ -262,6 +378,7 @@ export default function SeatsList() {
                                 deleteUser(row.id);
                               }}
                             />
+                            )}
                           </Stack>
                         </TableCell>
                       </TableRow>

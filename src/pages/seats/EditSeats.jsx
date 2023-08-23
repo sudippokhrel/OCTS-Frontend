@@ -20,6 +20,10 @@ import {
   doc,
 } from "firebase/firestore";
 
+// Role based edit and add option
+import { useUserAuth } from '../../components/context/UserAuthContext';
+import getUserRole from '../../components/users/getUserRole';
+
 const EditSeats = ({fid, closeEditEvent }) => {
 
   const [College, setCollege] = useState('');
@@ -27,7 +31,22 @@ const EditSeats = ({fid, closeEditEvent }) => {
   const [Semester, setSemester] = useState('');
   const [TotalSeats, setTotalSeats] = useState('');
   const [Seats, setSeats] = useState('');
-  const empCollectionRef = collection(db, "seats");
+  const [filledSeatsError, setFilledSeatsError] = useState(false);
+  const [semesterError, setSemesterError] = useState(false);
+
+  const {  user} = useUserAuth();//to display the profile bar according to user
+  const [userRole, setUserRole] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        setUserRole(role);
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
 
   useEffect(() => {
@@ -41,36 +60,62 @@ const EditSeats = ({fid, closeEditEvent }) => {
     setTotalSeats(fid.TotalSeats);
     setSeats(fid.Seats);
   }, []);
-  
-  
 
+  
+  
   const handleCollegeChange =(event, value) => {
-    setCollege(value.name)
-  };
-
-  const handleProgramChange =(event, value) => {
-    if (value) {
-      setProgram(value.name);
-    } else {
-      setProgram("");
+    if (userRole === 'admin') {
+      setCollege(event.target.value);
+    } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
+      setCollege(value.name);
     }
   };
 
-  const handleSemesterChange =(event) => {
-    setSemester(event.target.value)
+  const handleProgramChange =(event, value) => {
+    if (userRole === 'admin') {
+      setProgram(event.target.value);
+    } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
+      setProgram(value.name);
+    }
   };
 
-  const handleTotalSeatsChange =(event) => {
-    setTotalSeats(event.target.value)
+  const handleTotalSeatsChange =(event, value) => {
+    if (userRole === 'admin') {
+      setTotalSeats(event.target.value);
+    } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
+      setTotalSeats(value.name);
+    }
   };
+
+  const handleSemesterChange = (event) => {
+    const semesterValue = parseInt(event.target.value);
+    if (!isNaN(semesterValue) && semesterValue >= 1 && semesterValue <= 8) {
+      setSemester(semesterValue);
+      setSemesterError(false);
+    } else {
+      setSemesterError(true);
+    }
+  };
+
+  
 
   const handleSeatsChange =(event) => {
-    setSeats(event.target.value)
+    const filledSeatsValue = parseInt(event.target.value);
+  if (
+    !isNaN(filledSeatsValue) &&
+    filledSeatsValue >= 0 &&
+    filledSeatsValue <= TotalSeats
+  ) {
+    setSeats(filledSeatsValue);
+    setFilledSeatsError(false);
+  } else {
+    setFilledSeatsError(true);
+  }
   };
 
 
-  const handleSubmit = async () => {
-    const newSeat ={
+  const handleEdit = async () => {
+    const editedSeat ={
       College:College,
       Program: Program,
       Semester: Semester,
@@ -78,25 +123,13 @@ const EditSeats = ({fid, closeEditEvent }) => {
       Seats: Seats,
       
     };
-    await addDoc(empCollectionRef,newSeat);
-    closeEditEvent(newSeat);
-    Swal.fire("submitted","Your File has been Submitted","sucess")
+    const seatDocRef = doc(db, "seats", fid.id);
+    await updateDoc(seatDocRef, editedSeat);
+    closeEditEvent();
+    Swal.fire("submitted","Seat has been Edited","sucess")
     // Handle form submission logic here
   };
 
-
-  const colleges = [
-    { name: 'School of Engineering' },
-    { name: 'Pokhara Engineering College' },
-    { name: 'Nepal Engineering College' },
-    // Add more college options here
-  ];
-  const programs=[
-    {name:'BE Computer'},
-    {name:'BE Software'},
-    {name:'BE Civil'},
-    {name:'BE Electrical'},
-  ];
 
   return (
     <Box sx={{ p: 0 ,width: '100%' }}>
@@ -110,7 +143,7 @@ const EditSeats = ({fid, closeEditEvent }) => {
         <CloseIcon />
       </IconButton>
       <Box sx={{ mt: 5 }}>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleEdit}>
           <Grid container spacing={3}>
 
           <Grid item xs={12}  >
@@ -130,7 +163,7 @@ const EditSeats = ({fid, closeEditEvent }) => {
                 required
                 label="Program"
                 value={Program}
-                onChange={handleSemesterChange}
+                onChange={handleProgramChange}
                 variant="outlined"
               />
             </Grid>
@@ -145,6 +178,10 @@ const EditSeats = ({fid, closeEditEvent }) => {
                 value={Semester}
                 onChange={handleSemesterChange}
                 variant="outlined"
+                error={semesterError}
+                helperText={
+                semesterError ? "Semester must be between 1 and 8" : ""
+                }
               />
             </Grid>
             <Grid item xs={12} sm={6} >
@@ -167,12 +204,16 @@ const EditSeats = ({fid, closeEditEvent }) => {
                 value={Seats}
                 onChange={handleSeatsChange}
                 variant="outlined"
+                error={filledSeatsError}
+                helperText={
+                filledSeatsError ? "Filled Seats can be only between 0 and Total Seats" : ""
+                }
               />
             </Grid>
             
             <Grid item xs={12} align="center">
-              <Button  variant="contained" color="primary" onClick={handleSubmit}>
-                Add College Seats
+              <Button  variant="contained" color="primary" onClick={handleEdit}>
+                Edit College Seats
               </Button>
             </Grid>
           </Grid>
