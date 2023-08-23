@@ -20,6 +20,10 @@ import {
   doc,
 } from "firebase/firestore";
 
+// Role based edit and add option
+import { useUserAuth } from '../../components/context/UserAuthContext';
+import getUserRole from '../../components/users/getUserRole';
+
 const EditSeats = ({fid, closeEditEvent }) => {
 
   const [College, setCollege] = useState('');
@@ -28,6 +32,20 @@ const EditSeats = ({fid, closeEditEvent }) => {
   const [TotalSeats, setTotalSeats] = useState('');
   const [Seats, setSeats] = useState('');
   const empCollectionRef = collection(db, "seats");
+
+  const {  user} = useUserAuth();//to display the profile bar according to user
+  const [userRole, setUserRole] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        setUserRole(role);
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
 
   useEffect(() => {
@@ -41,18 +59,30 @@ const EditSeats = ({fid, closeEditEvent }) => {
     setTotalSeats(fid.TotalSeats);
     setSeats(fid.Seats);
   }, []);
-  
-  
 
+  
+  
   const handleCollegeChange =(event, value) => {
-    setCollege(value.name)
+    if (userRole === 'admin') {
+      setProgram(event.target.value);
+    } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
+      setProgram(value.name);
+    }
   };
 
   const handleProgramChange =(event, value) => {
-    if (value) {
+    if (userRole === 'admin') {
+      setProgram(event.target.value);
+    } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
       setProgram(value.name);
-    } else {
-      setProgram("");
+    }
+  };
+
+  const handleTotalSeatsChange =(event, value) => {
+    if (userRole === 'admin') {
+      setProgram(event.target.value);
+    } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
+      setProgram(value.name);
     }
   };
 
@@ -60,9 +90,7 @@ const EditSeats = ({fid, closeEditEvent }) => {
     setSemester(event.target.value)
   };
 
-  const handleTotalSeatsChange =(event) => {
-    setTotalSeats(event.target.value)
-  };
+  
 
   const handleSeatsChange =(event) => {
     setSeats(event.target.value)
@@ -84,19 +112,6 @@ const EditSeats = ({fid, closeEditEvent }) => {
     // Handle form submission logic here
   };
 
-
-  const colleges = [
-    { name: 'School of Engineering' },
-    { name: 'Pokhara Engineering College' },
-    { name: 'Nepal Engineering College' },
-    // Add more college options here
-  ];
-  const programs=[
-    {name:'BE Computer'},
-    {name:'BE Software'},
-    {name:'BE Civil'},
-    {name:'BE Electrical'},
-  ];
 
   return (
     <Box sx={{ p: 0 ,width: '100%' }}>
@@ -130,7 +145,7 @@ const EditSeats = ({fid, closeEditEvent }) => {
                 required
                 label="Program"
                 value={Program}
-                onChange={handleSemesterChange}
+                onChange={handleProgramChange}
                 variant="outlined"
               />
             </Grid>
