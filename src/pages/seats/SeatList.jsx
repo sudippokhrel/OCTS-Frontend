@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -31,6 +32,10 @@ import AddSeats from "./AddSeats";
 import Modal from '@mui/material/Modal';
 import EditSeats from "./EditSeats";
 
+// Role based  add option
+import { useUserAuth } from '../../components/context/UserAuthContext';
+import getUserRole from '../../components/users/getUserRole';
+
 // Style for modal 
 const style = {
   position: 'absolute',
@@ -59,6 +64,20 @@ export default function SeatsList() {
     setOpen(false);
     getSeats(); // Fetch the updated data
   };
+
+  const {  user} = useUserAuth();//to display the profile bar according to user
+  const [userRole, setUserRole] = React.useState(null);
+
+  React.useEffect(() => {
+    const fetchUserRole = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        setUserRole(role);
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
   const [editopen, setEditOpen] = useState(false);
   const handleEditOpen = () => setEditOpen(true);
@@ -171,9 +190,13 @@ export default function SeatsList() {
               component="div"
               sx={{ flexGrow: 1 }}
             ></Typography>
+            
+
+            {userRole=='admin'  &&(   // the add seat button is seen only if the user is admin
             <Button onClick={handleOpen} variant="contained" endIcon={<AddCircleIcon />}>
               Add
             </Button>
+            )}
           </Stack>
 
           {/* to add seats of respective college we have used model */}
@@ -252,6 +275,8 @@ export default function SeatsList() {
                                 EditData(row.id,row.College, row.Program, row.Semester,row.TotalSeats,row.Seats);
                               }}
                             />
+
+                            {userRole=='admin'  &&( // detele seat icon is only seen if the user is admin
                             <DeleteIcon
                               style={{
                                 fontSize: "20px",
@@ -262,6 +287,7 @@ export default function SeatsList() {
                                 deleteUser(row.id);
                               }}
                             />
+                            )}
                           </Stack>
                         </TableCell>
                       </TableRow>
