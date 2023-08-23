@@ -64,9 +64,9 @@ const EditSeats = ({fid, closeEditEvent }) => {
   
   const handleCollegeChange =(event, value) => {
     if (userRole === 'admin') {
-      setProgram(event.target.value);
+      setCollege(event.target.value);
     } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
-      setProgram(value.name);
+      setCollege(value.name);
     }
   };
 
@@ -80,9 +80,9 @@ const EditSeats = ({fid, closeEditEvent }) => {
 
   const handleTotalSeatsChange =(event, value) => {
     if (userRole === 'admin') {
-      setProgram(event.target.value);
+      setTotalSeats(event.target.value);
     } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
-      setProgram(value.name);
+      setTotalSeats(value.name);
     }
   };
 
