@@ -4,31 +4,26 @@ import { auth } from "../firebase-config";
 
 export function useAuthState() {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
+    console.log("useAuthState useEffect fired");
+
+    setLoading(true); // Set loading to true when starting to fetch auth state
+    
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       console.log("Auth", currentUser);
-      if (currentUser) {
-        // Check if the user is newly registered (just signed up)
-        const isNewUser = currentUser.metadata.creationTime === currentUser.metadata.lastSignInTime;
-        
-        if (isNewUser) {
-          // If the user is newly registered, do not set the user state
-          setUser(null);
-        } else {
-          // If the user is not newly registered, set the user state
-          setUser(currentUser);
-        }
-      } else {
-        // If there is no user, set the user state to null
-        setUser(user);
-      }
+      setUser(currentUser);
+      
+      setLoading(false); // Set loading to false when auth state is fetched
     });
 
+
     return () => {
+      console.log("useAuthState useEffect cleanup");
       unsubscribe();
     };
   }, []);
 
-  return user;
+  return {user,loading};
 }

@@ -12,22 +12,26 @@ import PropTypes from "prop-types";
 const userAuthContext = createContext();
 
 export function UserAuthContextProvider({ children }) {
-  const user = useAuthState();
+  const {user,loading} = useAuthState();
+  
 
-  function logIn(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
 
   function signUp(email, password) {
     return createUserWithEmailAndPassword(auth, email, password);
   }
 
+
+  function logIn(email, password) {
+    return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  
   function logOut() {
     return signOut(auth);
   }
 
   return (
-    <userAuthContext.Provider value={{ user, logIn, signUp, logOut }}>
+    <userAuthContext.Provider value={{ user, signUp, logIn, logOut, loading }}>
       {children}
     </userAuthContext.Provider>
   );

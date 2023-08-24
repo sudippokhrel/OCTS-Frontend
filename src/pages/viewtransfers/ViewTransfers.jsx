@@ -3,6 +3,7 @@ import Navbar from '../../components/sidebar/Navbar'
 import Box from '@mui/material/Box';
 import Appbar from '../../components/navbar/Appbar';
 import { useUserAuth} from '../../components/context/UserAuthContext';
+import ViewTransferForm from '../../components/viewtransferform/ViewTransferForm';
 
 export default function Home() {
 
@@ -14,13 +15,13 @@ export default function Home() {
     <>
 
       <Appbar/>
-      <Box height={30}/>
+      <Box height={80}/>
       <Box sx={{ display: 'flex' }}>
        <Navbar/>
     
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <h1>View Transfers</h1>
-        
+          <ViewTransferForm/>
         </Box>
       </Box>
      
