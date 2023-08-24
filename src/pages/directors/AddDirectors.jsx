@@ -9,6 +9,11 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Button from '@mui/material/Button';
+import Swal from 'sweetalert2';
+import { ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { Alert } from '@mui/material';
+import { useUserAuth } from '../../components/context/UserAuthContext';
 import {
   collection,
   getDocs,
@@ -16,14 +21,24 @@ import {
   updateDoc,
   deleteDoc,
   doc,
+  setDoc,
 } from "firebase/firestore";
 import { db } from '../../firebase-config';
 import getColleges from '../../components/users/getColleges';
 
 const AddDirectors = ({ closeEvent }) => {
+
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
+  const [collegeName, setCollegeName] = useState(null);
   const [address, setAddress] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { signUp, logIn } = useUserAuth();
+
+  const empCollectionRef = collection(db, 'users');
 
   useEffect(() => {
     // Fetch colleges from Firestore
@@ -39,18 +54,45 @@ const AddDirectors = ({ closeEvent }) => {
   useEffect(() => {
     if (selectedCollege) {
       setAddress(selectedCollege.collegeAddress);
+      setCollegeName(selectedCollege.collegeName);
     } else {
       setAddress('');
     }
   }, [selectedCollege]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
+    setError('');
+
+    try {
+      const { user: authUser } = await signUp(email, password);
+      const userRef = doc(db, 'users', authUser.uid);
+      const newUser = {
+        name: name,
+        email: email,
+        college: collegeName,
+        role: 'college_head',
+
+      };
+      await setDoc(userRef, newUser);
+
+      console.log('Successfully created an account');
+      toast.success('Successfully Created an account');
+      closeEvent(newUser);
+      Swal.fire('Submitted', ' New Director has been Added', 'success');
+    } 
+    catch (error) {
+      console.error('Error creating account:', error);
+      setError('Invalid email or password');
+      toast.error('Error creating an account. Please try again!');
+    }
+  
     // Handle form submission logic here
   };
 
   const handleCollegeChange = (event, value) => {
     setSelectedCollege(value);
+    console.log(selectedCollege);
   };
 
 
@@ -74,6 +116,7 @@ const AddDirectors = ({ closeEvent }) => {
                 required
                 label="Name"
                 variant="outlined"
+                onChange={(e) => setName(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={7} >
@@ -82,6 +125,7 @@ const AddDirectors = ({ closeEvent }) => {
                 required
                 label="Email"
                 variant="outlined"
+                onChange={(e) => setEmail(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}  >
@@ -115,6 +159,7 @@ const AddDirectors = ({ closeEvent }) => {
                 type="password"
                 label="Password"
                 variant="outlined"
+                onChange={(e) => setPassword(e.target.value)}
               />
             </Grid>
             
