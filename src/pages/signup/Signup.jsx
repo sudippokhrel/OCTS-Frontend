@@ -20,7 +20,7 @@ const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp, logIn } = useUserAuth();
+  const { signUp,logIn,logOut} = useUserAuth();
   const navigate = useNavigate();
   const [colleges, setColleges] = useState([]); // State to store the colleges
 
@@ -60,7 +60,10 @@ const Signup = () => {
       console.log('Successfully created an account');
       toast.success('Successfully Created an account');
 
+      // Explicitly sign out the user before redirecting to the login page
+      await logOut(); 
       navigate('/login');
+
     } catch (error) {
       console.error('Error creating account:', error);
       setError('Invalid email or password');

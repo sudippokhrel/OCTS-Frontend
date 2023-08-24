@@ -15,6 +15,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { logIn } = useUserAuth();
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -23,13 +24,11 @@ const Login = () => {
     try {
       await logIn(email, password);
       console.log('Logged in successfully!');
-      toast.success('Login successful!'); 
       
        // Retrieve the user's role from Firestore
        const user = auth.currentUser;
        const role = await getUserRole(user.uid);
        console.log('User role:', role); // Log the user's role to the console
-
         // Redirect the user to their respective dashboard based on the role
       if (role === 'college_head') {
         navigate('/');
@@ -38,6 +37,7 @@ const Login = () => {
       } else if (role === 'student') {
         navigate('/');
       }
+      toast.success('Login successful!'); 
       
       
     } catch (error) {
@@ -58,6 +58,16 @@ const Login = () => {
       toast.error('Error sending password reset email');
     }
   };
+
+  // if (isAuthenticated) {
+  //   // The user is authenticated
+  //   // Do not render the login page
+  //   return null;
+  //   } else {
+  //     navigate('/login');
+  //   }
+
+  
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>

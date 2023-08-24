@@ -1,76 +1,130 @@
-import React from 'react'
-import Navbar from "../../components/sidebar/Navbar";
-import Appbar from "../../components/navbar/Appbar";
-import Box from "@mui/system/Box";
-// import Tabs from '@mui/material/Tab';
+import React, { useEffect, useState } from 'react';
+import { db } from '../../firebase-config';
+import { useUserAuth } from '../../components/context/UserAuthContext';
+import { Typography, Box, Paper } from '@mui/material';
+import { collection, getDocs, doc } from 'firebase/firestore';
+import Navbar from '../../components/sidebar/Navbar';
+import Appbar from '../../components/navbar/Appbar';
 import Tab from "@mui/material/Tab";
-import { TabPanel, TabList, TabContext } from "@mui/lab";
-import { Formik, Field, Form, ErrorMessage } from 'formik';
-import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@mui/material';
+import {TabPanel, TabList, TabContext } from '@mui/lab';
+import PasswordUpdate from './PasswordUpdate';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { blue } from '@mui/material/colors';
 
-const PasswordUpdate = () => {
+// Profile component
+const Profile = () => {
+  const { user } = useUserAuth();
+  const [name, setName] = useState('');
+  const [faculty, setFaculty] = useState('');
+  const [college, setCollege] = useState('');
+  const [program, setProgram] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      const userId = user.uid;
+      const userRef = doc(db,'users',userId);
+
+      getDocs(collection(db, 'users'))
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.id === userId) {
+              const userDetails = doc.data();
+              const nameValue = userDetails.name;
+              // const emailValue = userDetails.email;
+              const facultyValue = userDetails.faculty;
+              const collegeValue = userDetails.college;
+              const programValue = userDetails.program;
+
+              setName(nameValue);
+              // setEmail(emailValue);
+              setFaculty(facultyValue);
+              setCollege(collegeValue);
+              setProgram(programValue);
+            }
+          });
+        })
+        .catch((error) => {
+          console.log('Error getting user document:', error);
+        });
+    }
+  }, [user]);
+
+
   return (
-    <Box
+    <Paper
+      elevation={3}
       sx={{
-        width: 450,
-        height: 350,
-        backgroundColor:'white',
-        border: '2px solid gray',
-        padding: 5,
-        fontSize: 20,
-        display: 'flex',
-        justifyContent: 'flex-start',
-        alignItems: 'flex-start',
-        flexDirection: 'column',
-        borderRadius: 8,
-        textAlign: 'left',
+        p: 3,
+        backgroundColor: 'white',
+        borderRadius: 0,
+        boxShadow: 3,
+        marginBottom: 4, // Added spacing
       }}
     >
-    <div>
-      <h2>Change Password</h2>
-      <Formik
-      >
-        <Form>
-          <div>
-            <label htmlFor="oldPassword">Old Password:</label>
-            <Field
-              type="password"
-              id="oldPassword"
-              name="oldPassword"
-              placeholder="Enter old password"
-            />
-            <ErrorMessage name="oldPassword" component="div" />
-          </div>
-          <div>
-            <label htmlFor="newPassword">New Password:</label>
-            <Field
-              type="password"
-              id="newPassword"
-              name="newPassword"
-              placeholder="Enter new password"
-            />
-            <ErrorMessage name="newPassword" component="div" />
-          </div>
-          <div>
-            <label htmlFor="confirmPassword">Confirm Password:</label>
-            <Field
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              placeholder="Confirm new password"
-            />
-            <ErrorMessage name="confirmPassword" component="div" />
-          </div>
-          <Grid item>
-                <Button variant="contained" type="submit" fullWidth>
-                  Change Password
-                </Button>
-              </Grid>
-        </Form>
-      </Formik>
-    </div>
-    </Box>
-  )
-}
+      <Typography variant="h4" color={blue} gutterBottom>
+        Profile Information
+      </Typography>
+      <Typography variant="body1" paragraph>
+        <strong>Name:</strong> {name}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        <strong>Email:</strong> {user.email}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        <strong>Faculty:</strong> {faculty}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        <strong>College:</strong> {college}
+      </Typography>
+      <Typography variant="body1" paragraph>
+        <strong>Program:</strong> {program}
+      </Typography>
+    </Paper>
+  );
+};
 
-export default PasswordUpdate
+const Home = () => {
+  const [value, setValue] = useState('profile');
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  return (
+    <div className='bg-colour'>
+      <Appbar />
+      <Box height={70} />
+      <Box sx={{ display: 'flex' }}>
+        <Navbar />
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <TabContext value={value}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider',marginBottom: 4 }}>
+              <TabList onChange={handleChange} aria-label="lab API tabs example">
+                <Tab label="Profile" icon={<AccountCircleIcon />} value="profile" />
+                <Tab label="Settings" icon={<SettingsIcon />} value="settings" />
+              </TabList>
+            </Box>
+            <TabPanel value="settings">
+              <PasswordUpdate />
+            </TabPanel>
+            <TabPanel value="profile">
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100%',
+                }}
+              >
+                <Profile />
+              </Box>
+            </TabPanel>
+          </TabContext>
+        </Box>
+      </Box>
+    </div>
+  );
+};
+
+export default Home;
