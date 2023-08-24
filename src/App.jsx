@@ -3,6 +3,7 @@ import Navbar from "./components/sidebar/Navbar";
 import { Routes, Route} from "react-router-dom"; //importing reactrouter dom for routing
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./components/context/UserAuthContext";
+import { TransferProvider } from "./components/context/TransferContext";
 import Appbar from "./components/navbar/Appbar";
 
 //Importing pages for routing
@@ -10,9 +11,10 @@ import Home from "./pages/home/Home";
 import "./App.css";
 import ApplyTransfer from "./pages/applytransfer/ApplyTransfer";
 import ViewTransfers from "./pages/viewtransfers/ViewTransfers";
-import Settings from "./pages/settings/Settings";
+//import Settings from "./pages/settings/Settings";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
+import Profile from "./pages/settings/Profile";
 import Logout from "./pages/logout/Logout";
 import Students from "./pages/students/Students";
 import StudentProfile from "./pages/students/studentProfile";
@@ -30,6 +32,7 @@ function App() {
 
   return (
     <UserAuthContextProvider>
+    <TransferProvider>
     <Appbar/>
       <Routes>
         <Route path ="/"  
@@ -56,7 +59,7 @@ function App() {
         <Route  path ="/settings"  
           element={
           <ProtectedRoute>
-          <Settings/>
+          <Profile/>
           </ProtectedRoute>}>
         </Route>
 
@@ -117,6 +120,7 @@ function App() {
          </Route>
 
       </Routes>
+      </TransferProvider>
       </UserAuthContextProvider>
     
 

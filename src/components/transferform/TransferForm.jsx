@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useTransferContext } from '../context/TransferContext';
 import { 
   TextField, 
   Button,
@@ -20,9 +21,11 @@ import { storage } from '../../firebase-config';
 import { uploadBytes, ref } from 'firebase/storage';
 
 const TransferForm = () => {
+  const { addTransferRequest } = useTransferContext();
+
   const [colleges, setColleges] = useState([]);
   const [programs, setPrograms] = useState([]);
-
+  
   useEffect(() => {
     const fetchCollegesAndPrograms = async () => {
       const fetchedColleges = await getColleges();
@@ -81,10 +84,14 @@ const TransferForm = () => {
       await uploadBytes(storageRef, file);
   
       // Handle other form submissions here
+      
+      // Add transfer request to context
+      addTransferRequest(values);
       console.log(values);
     } catch (error) {
       console.error('Error uploading Application Letter:', error);
     }
+
   };
 
   return (
