@@ -65,7 +65,7 @@ export default function DirectorssTable() {
   }, []);
 
   const getDirectors = async () => {
-    const data = await getDocs(query(empCollectionRef, where("role", "==", "director")));
+    const data = await getDocs(query(empCollectionRef, where("role", "in", ["college_head", "director"])));
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
   };
@@ -180,7 +180,7 @@ export default function DirectorssTable() {
                     College
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Program
+                    Email
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Role
@@ -203,9 +203,9 @@ export default function DirectorssTable() {
                         key={row.code}
                       >
                         <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">{row.college}</TableCell>
-                        <TableCell align="left">{row.program}</TableCell>
-                        <TableCell align="left">College {row.role}</TableCell>
+                        <TableCell align="left">{row.role}</TableCell>
                         <TableCell align="left">
                           <Stack spacing={2} direction="row">
                             <EditIcon

@@ -34,6 +34,11 @@ import {
   where,
   doc,
 } from "firebase/firestore";
+// Role based  add option
+import { useUserAuth } from '../../context/UserAuthContext';
+import getUserRole from '../getUserRole';
+import getUserCollege from '../getUserCollege';
+import getUserProgram from '../getUserProgram';
 
 export default function StudentsTable() {
 
@@ -43,14 +48,77 @@ export default function StudentsTable() {
   const [rows, setRows] = useState([]);
   const empCollectionRef = collection(db, "users");
 
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const {  user} = useUserAuth();//to display the profile bar according to user
+  const [userRole, setUserRole] = React.useState(null);
+  const [userCollege, setUserCollege] = React.useState(null);
+  const [userProgram, setUserProgram] = React.useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add a loading state
 
-  const getUsers = async () => {
-    const data = await getDocs(query(empCollectionRef, where("role", "==", "student")));
+  useEffect(() => {
+    const fetchData = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        const program = await getUserProgram(user.uid);
+        setUserProgram(program);
+        setUserRole(role);
+
+        if (role !== "admin" || role != "dean") {
+          const college = await getUserCollege(user.uid);
+          const program = await getUserProgram(user.uid);
+          setUserCollege(college);
+          setUserProgram(program);
+
+          // Fetch seats based on userCollege here
+          getUsers(college,program);
+        } else {
+          // Fetch seats for admin
+          getUsers();
+        }
+
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+  console.log("userCollege:", userCollege);
+  console.log("userProgram:", userProgram);
+  console.log("userRole:", userRole);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (userRole === "admin"|| userRole== "dean") {
+        getUsers();
+      } else {
+        getUsers(userCollege,userProgram);
+      }
+    }
+  }, [userRole, userCollege,userProgram, isLoading]);
+
+  const getUsers = async (userCollege,userProgram) => {
+
+    const empCollectionRef = collection(db, "users");
+    if (userRole=='admin' || userRole=='dean'){
+      const q = query(empCollectionRef, where("role","==", "student")); // Use query() function here
+      const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
+    }else if (userRole=='college_head'|| userRole=='director'){
+      const q = query(empCollectionRef, where("role","==", "student"), where("college", "==", userCollege)); // Use query() function here
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+
+    }
+    else if (userRole=='program_coordinator'|| userRole=='coordinator'){
+      const q = query(empCollectionRef, where("role","==", "student"),  where("college", "==", userCollege), where("program","==",userProgram)
+      ); // Use query() function here
+      console.log("User Program is", userProgram);
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+    }
+
   };
 
   const deleteUser = (id) => {
@@ -73,7 +141,7 @@ export default function StudentsTable() {
     const userDoc = doc(db, "users", id);
     await deleteDoc(userDoc);
     Swal.fire("Deleted!", "Your file has been deleted.", "success");
-    getUsers();
+    getUsers(userCollege, userProgram);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -92,7 +160,7 @@ export default function StudentsTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getUsers();
+      getUsers(userCollege, userProgram);
     }
   };
 
@@ -112,7 +180,9 @@ export default function StudentsTable() {
             component="div"
             sx={{ padding: "20px" }}
           >
+            {userCollege}     {userProgram} <br></br>
             Students List
+            
       </Typography>
       <Divider />
       <Box height={10} />
