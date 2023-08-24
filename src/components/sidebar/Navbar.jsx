@@ -27,6 +27,7 @@ import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 import GradingIcon from '@mui/icons-material/Grading';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import GroupIcon from '@mui/icons-material/Group';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AppsOutageIcon from '@mui/icons-material/AppsOutage';
 import AppsIcon from '@mui/icons-material/Apps';
@@ -126,13 +127,31 @@ export default function Navbar() {
       { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
       { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
     ];
-  } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean') {
+  } else if (userRole === 'coordinator' || userRole === 'program_coordinator' ) {
+    navigationItems = [
+      { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
+      { key: 'seats', icon: <EditNoteIcon />, text: 'Edit Seats', path: '/seats' },
+      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
+      { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },
+      { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
+    ];
+  } else if (userRole === 'college_head' || userRole === 'director' ) {
     navigationItems = [
       { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
       { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
+      { key: 'seats', icon: <EditNoteIcon />, text: 'Edit Seats', path: '/seats' },
+      { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },
+      { key: 'coordinators', icon: <GroupIcon />, text: 'View Coordinators', path: '/coordinators' },
       { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
     ];
-  } else if (userRole === 'admin') {
+  } else if (userRole === 'dean') {
+    navigationItems = [
+      { key: 'seats', icon: <HomeIcon />, text: 'Seats', path: '/seats' },
+      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
+      { key: 'directors', icon: <GroupIcon />, text: 'View Directors', path: '/directors' },
+      { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
+    ];
+  } else if (userRole === 'admin'|| userRole === 'dean') {
     navigationItems = [
       { key: 'seats', icon: <HomeIcon />, text: 'Seats', path: '/seats' },
       { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },

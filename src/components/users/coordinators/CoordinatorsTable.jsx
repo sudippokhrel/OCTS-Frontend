@@ -20,8 +20,10 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import {useNavigate} from 'react-router-dom';
 import AddCoordinators from '../../../pages/coordinators/AddCoordinators.jsx';
 import { db } from "../../../firebase-config";
+
 import {
   collection,
   getDocs,
@@ -32,6 +34,12 @@ import {
   where,
   doc,
 } from "firebase/firestore";
+
+// Role based  add option
+import { useUserAuth } from '../../context/UserAuthContext';
+import getUserRole from '../getUserRole';
+import getUserCollege from '../getUserCollege';
+import getUserProgram from '../getUserProgram';
 
 const style = {
   position: 'absolute',
@@ -52,6 +60,12 @@ export default function CoordinatorsTable() {
   const [rows, setRows] = useState([]);
   const empCollectionRef = collection(db, "users");
 
+  // they are used to filter data accessed on the base of program role college
+  const {  user} = useUserAuth();
+  const [userRole, setUserRole] = React.useState(null);
+  const [userCollege, setUserCollege] = React.useState(null);
+  const [isLoading, setIsLoading] = useState(true); // Add a loading state
+
   // for modal to add new directors
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -61,13 +75,54 @@ export default function CoordinatorsTable() {
   };
 
   useEffect(() => {
-    getCoordinators();
-  }, []);
+    const fetchData = async () => {
+      if (user) {
+        const role = await getUserRole(user.uid);
+        setUserRole(role);
 
-  const getCoordinators = async () => {
-    const data = await getDocs(query(empCollectionRef, where("role", "==", "coordinator")));
+        if (role !== "admin" || role != "dean") {
+          const college = await getUserCollege(user.uid);
+          
+          setUserCollege(college);
+
+          // Fetch seats based on userCollege here
+          getCoordinators(college);
+        } else {
+          // Fetch seats for admin
+          getCoordinators();
+        }
+
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (userRole === "admin"|| userRole== "dean") {
+        getCoordinators();
+      } else {
+        getCoordinators(userCollege);
+      }
+    }
+  }, [userRole, userCollege, isLoading]);
+
+  const getCoordinators = async (userCollege) => {
+    const empCollectionRef = collection(db, "users");
+    if (userRole=='admin' || userRole=='dean'){
+      const q = query(empCollectionRef, where("role","in", ["program_coordinator", "coordinator"])); // Use query() function here
+      const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
+    }else if (userRole=='college_head'|| userRole=='director'){
+      const q = query(empCollectionRef, where("role","in", ["program_coordinator", "coordinator"]), where("college", "==", userCollege)); // Use query() function here
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+
+    }
   };
 
   const deleteUser = (id) => {
@@ -90,7 +145,7 @@ export default function CoordinatorsTable() {
     const userDoc = doc(db, "users", id);
     await deleteDoc(userDoc);
     Swal.fire("Deleted!", "Your file has been deleted.", "success");
-    getCoordinators();
+    getCoordinators(userCollege);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -105,15 +160,15 @@ export default function CoordinatorsTable() {
   const filterData = (v) => {
     if (v) {
       // Filter the rows based on the selected value
-      const filteredRows = rows.filter((row) => row.name === v);
+      const filteredRows = rows.filter((row) => row.program === v);
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getCoordinators();
+      getCoordinators(userCollege);
     }
   };
 
-  const uniqueName = Array.from(new Set(rows.map((row) => row.name)));
+  const uniqueName = Array.from(new Set(rows.map((row) => row.program)));
 
   
 
@@ -129,7 +184,8 @@ export default function CoordinatorsTable() {
             component="div"
             sx={{ padding: "20px" }}
           >
-            Coordinators
+            Coordinators Table<br></br>
+            {userCollege}
       </Typography>
       <Divider />
       <Box height={10} />
@@ -142,7 +198,7 @@ export default function CoordinatorsTable() {
               onChange={(e, v) => filterData(v)}
               getOptionLabel={(row) => row || ""}
               renderInput={(params) => (
-                <TextField {...params} size="small" label="Search Coordinator" />
+                <TextField {...params} size="small" label="Search Coordinator of" />
               )}
             />
             <Typography
@@ -205,7 +261,7 @@ export default function CoordinatorsTable() {
                         <TableCell align="left">{row.name}</TableCell>
                         <TableCell align="left">{row.college}</TableCell>
                         <TableCell align="left">{row.program}</TableCell>
-                        <TableCell align="left">program {row.role}</TableCell>
+                        <TableCell align="left"> {row.role}</TableCell>
                         <TableCell align="left">
                           <Stack spacing={2} direction="row">
                             <EditIcon

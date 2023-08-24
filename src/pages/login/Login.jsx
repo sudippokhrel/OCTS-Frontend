@@ -31,9 +31,12 @@ const Login = () => {
        console.log('User role:', role); // Log the user's role to the console
 
         // Redirect the user to their respective dashboard based on the role
-      if (role === 'college_head') {
+      if (role === 'college_head' || role== 'director') {
         navigate('/');
-      } else if (role === 'admin') {
+      }else if (role === 'program_coordinator' || role== 'coordinator') {
+        navigate('/');
+      } 
+      else if (role === 'admin'|| role =='dean') {
         navigate('/seats');
       } else if (role === 'student') {
         navigate('/');
