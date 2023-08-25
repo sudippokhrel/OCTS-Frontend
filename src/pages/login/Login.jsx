@@ -62,15 +62,6 @@ const Login = () => {
     }
   };
 
-  // if (isAuthenticated) {
-  //   // The user is authenticated
-  //   // Do not render the login page
-  //   return null;
-  //   } else {
-  //     navigate('/login');
-  //   }
-
-  
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
