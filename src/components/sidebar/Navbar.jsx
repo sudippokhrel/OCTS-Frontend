@@ -131,14 +131,14 @@ export default function Navbar() {
     navigationItems = [
       { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
       { key: 'seats', icon: <EditNoteIcon />, text: 'Edit Seats', path: '/seats' },
-      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
+      { key: 'approvetransfer', icon: <GradingIcon />, text: 'Approve Transfers', path: '/approvetransfer' },
       { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },
       { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
     ];
   } else if (userRole === 'college_head' || userRole === 'director' ) {
     navigationItems = [
       { key: 'home', icon: <HomeIcon />, text: 'Home', path: '/' },
-      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
+      { key: 'approvetransfer', icon: <GradingIcon />, text: 'Approve Transfers', path: '/approvetransfer' },
       { key: 'seats', icon: <EditNoteIcon />, text: 'Edit Seats', path: '/seats' },
       { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },
       { key: 'coordinators', icon: <GroupIcon />, text: 'View Coordinators', path: '/coordinators' },
