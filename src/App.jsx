@@ -11,6 +11,7 @@ import Home from "./pages/home/Home";
 import "./App.css";
 import ApplyTransfer from "./pages/applytransfer/ApplyTransfer";
 import ViewTransfers from "./pages/viewtransfers/ViewTransfers";
+import ApproveTransfer from "./pages/approvetransfer/ApproveTransfer";
 //import Settings from "./pages/settings/Settings";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
@@ -46,6 +47,13 @@ function App() {
           element={
           <ProtectedRoute>
           <ApplyTransfer/>
+          </ProtectedRoute>}>
+        </Route>
+
+        <Route  path ="/approvetransfer"  
+          element={
+          <ProtectedRoute>
+          <ApproveTransfer/>
           </ProtectedRoute>}>
         </Route>
 
