@@ -168,7 +168,7 @@ const TransferForm = () => {
             <Field as={Select} name="sourceCollegeName" required>
               <MenuItem value="">Select Source College</MenuItem>
               {colleges.map((college) => (
-                <MenuItem key={college.id} value={college.id}>
+                <MenuItem key={college.id} value={college.collegeName}>
                   {college.collegeName}
                 </MenuItem>
               ))}
@@ -181,7 +181,7 @@ const TransferForm = () => {
             <Field as={Select} name="destinationCollegeName" required>
               <MenuItem value="">Select Destination College</MenuItem>
               {colleges.map((college) => (
-                <MenuItem key={college.id} value={college.id}>
+                <MenuItem key={college.id} value={college.collegeName}>
                   {college.collegeName}
                 </MenuItem>
               ))}
@@ -214,7 +214,7 @@ const TransferForm = () => {
             <Field as={Select} name="program" required>
               <MenuItem value="">Select Program Enrolled</MenuItem>
               {programs.map((program) => (
-                <MenuItem key={program.id} value={program.id}>
+                <MenuItem key={program.id} value={program.name}>
                   {program.name}
                 </MenuItem>
               ))}

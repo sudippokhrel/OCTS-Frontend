@@ -11,7 +11,9 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Switch from '@mui/material/Switch';
 import { collection, getDocs } from '@firebase/firestore';
-import { db } from '../../firebase-config';
+import { db ,storage} from '../../firebase-config';
+import { ref , getDownloadURL } from '@firebase/storage';
+import { useUserAuth } from '../context/UserAuthContext';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
@@ -22,18 +24,41 @@ const columns = [
   { id: 'semester', label: 'Semester', minWidth: 170, align: 'right' },
   //{ id: 'action', label: 'Action', minWidth: 100 },
   { id: 'status', label: 'Status', minWidth: 100 },
+  { id: 'ApplicationLetter', label: 'Application Letter', minWidth: 100 },
 ];
 
 
 
 const ViewTransfer = () => {
 
+  const { user } = useUserAuth(); // Assuming currentUser contains the user's information
+
   const [transferApplications, setTransferApplications] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [downloadUrls, setDownloadUrls] = useState({});
 
 
   useEffect(() => {
+
+    const fetchDownloadUrls = async () => {
+      try {
+        const urls = {};
+
+        for (const application of transferApplications) {
+          if (application.ApplicationLetterPath) {
+            const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
+            urls[application.id] = url;
+          }
+        }
+
+        setDownloadUrls(urls);
+      } catch (error) {
+        console.error('Error fetching download URLs:', error);
+      }
+    };
+
+
     const fetchTransferApplications = async () => {
       try {
         const transferApplicationsCollection = collection(db, 'TransferApplications');
@@ -41,7 +66,10 @@ const ViewTransfer = () => {
         
         const applicationsData = [];
         transferApplicationsSnapshot.forEach((doc) => {
-          applicationsData.push({ id: doc.id, ...doc.data() });
+          const applicationData = doc.data();
+          if (applicationData.email === user.email) { // Filter applications by user email
+            applicationsData.push({ id: doc.id, ...applicationData });
+          }
         });
 
         setTransferApplications(applicationsData);
@@ -50,8 +78,12 @@ const ViewTransfer = () => {
       }
     };
 
-    fetchTransferApplications();
-  }, []);
+    fetchDownloadUrls();
+
+    if (user) { // Ensure currentUser is defined before fetching applications
+      fetchTransferApplications();
+    }
+  }, [transferApplications,user]);
 
 
   const handleChangePage = (event, newPage) => {
@@ -62,6 +94,7 @@ const ViewTransfer = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
 
 
   
@@ -84,10 +117,24 @@ const ViewTransfer = () => {
           </TableHead>
           <TableBody>
             {transferApplications
+              
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                   {columns.map((column) => {
+                    if (column.id === 'ApplicationLetter') {
+                      return (
+                        <TableCell key={column.id} align={column.align}>
+                    {row.ApplicationLetterPath && downloadUrls[row.id] ? (
+                      <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
+                        View Application Letter
+                      </a>
+                    ) : (
+                      'No application letter'
+                    )}
+                  </TableCell>
+                      );
+                    }
                     const value = row[column.id];
                     return (
                       <TableCell key={column.id} align={column.align}>
