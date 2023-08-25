@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -10,13 +10,14 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Switch from '@mui/material/Switch';
-import { useTransferContext } from '../context/TransferContext';
+import { collection, getDocs } from '@firebase/firestore';
+import { db } from '../../firebase-config';
 
 const columns = [
   { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'registrationNumber', label: 'Registration Number', minWidth: 170 },
-  { id: 'sourceCollege', label: 'Source College', minWidth: 170 },
-  { id: 'destinationCollege', label: 'Destination College', minWidth: 170 },
+  { id: 'puRegNumber', label: 'Registration Number', minWidth: 170 },
+  { id: 'sourceCollegeName', label: 'Source College', minWidth: 170 },
+  { id: 'destinationCollegeName', label: 'Destination College', minWidth: 170 },
   { id: 'program', label: 'Program', minWidth: 100 },
   { id: 'semester', label: 'Semester', minWidth: 170, align: 'right' },
   //{ id: 'action', label: 'Action', minWidth: 100 },
@@ -27,10 +28,31 @@ const columns = [
 
 const ViewTransfer = () => {
 
-  const { transferRequests } = useTransferContext();
-
+  const [transferApplications, setTransferApplications] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+
+  useEffect(() => {
+    const fetchTransferApplications = async () => {
+      try {
+        const transferApplicationsCollection = collection(db, 'TransferApplications');
+        const transferApplicationsSnapshot = await getDocs(transferApplicationsCollection);
+        
+        const applicationsData = [];
+        transferApplicationsSnapshot.forEach((doc) => {
+          applicationsData.push({ id: doc.id, ...doc.data() });
+        });
+
+        setTransferApplications(applicationsData);
+      } catch (error) {
+        console.error('Error fetching transfer applications:', error);
+      }
+    };
+
+    fetchTransferApplications();
+  }, []);
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -61,7 +83,7 @@ const ViewTransfer = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {transferRequests
+            {transferApplications
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
@@ -69,11 +91,7 @@ const ViewTransfer = () => {
                     const value = row[column.id];
                     return (
                       <TableCell key={column.id} align={column.align}>
-                        {column.id === 'status' ? (
-                          <span>{row.approval ? 'Approved' : 'Pending'}</span>
-                        ) : (
-                          column.format && typeof value === 'number' ? column.format(value) : value
-                        )}
+                        {column.format && typeof value === 'number' ? column.format(value) : value}
                       </TableCell>
                     );
                   })}
@@ -85,7 +103,7 @@ const ViewTransfer = () => {
       <TablePagination
         rowsPerPageOptions={[5, 8, 10, 25, 100]}
         component="div"
-        count={transferRequests.length}
+        count={transferApplications.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

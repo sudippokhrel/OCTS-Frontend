@@ -141,7 +141,7 @@ const Signup = () => {
                 {colleges && colleges.length > 0 ? (
                   colleges.map((college) => (
                     <MenuItem key={college.id} value={college.id}>
-                      {college.collegeName}, {college.collegeAddress}
+                      {college.collegeName}
                     </MenuItem>
                   ))
                 ) : (
