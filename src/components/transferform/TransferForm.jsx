@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useTransferContext } from '../context/TransferContext';
 import { 
   TextField, 
   Button,
@@ -19,9 +18,11 @@ import { getPrograms } from '../users/getPrograms';
 import ApplicationLetterPDF from '../../../pdf/FinalApplicationTemplate _fillable.pdf'
 import { storage } from '../../firebase-config';
 import { uploadBytes, ref } from 'firebase/storage';
+import { collection, addDoc } from '@firebase/firestore';
+import { db } from '../../firebase-config';
 
 const TransferForm = () => {
-  const { addTransferRequest } = useTransferContext();
+
 
   const [colleges, setColleges] = useState([]);
   const [programs, setPrograms] = useState([]);
@@ -42,22 +43,22 @@ const TransferForm = () => {
   }, []);
 
   const initialValues = {
-    fullName: '',
-    registrationNumber: '',
+    name: '',
+    puRegNumber: '',
     examRollNumber: '',
     sourceCollegeName: '',
     destinationCollegeName: '',
     email: '',
     contactNumber: '',
-    programEnrolled: '',
-    currentSemester: '',
+    program: '',
+    semester: '',
     ApplicationLetter: null,
     remarks: '',
   };
 
   const validationSchema = Yup.object({
-    fullName: Yup.string().required('Full Name is required'),
-    registrationNumber: Yup.string().required('Registration Number is required'),
+    name: Yup.string().required('Full Name is required'),
+    puRegNumber: Yup.string().required('Registration Number is required'),
     examRollNumber: Yup.number().required('Exam Roll Number is required'),
     sourceCollegeName: Yup.string().required('Source College Name is required'),
     destinationCollegeName: Yup.string()
@@ -66,8 +67,8 @@ const TransferForm = () => {
     email: Yup.string().email('Invalid email address').required('Email is required'),
     contactNumber: Yup.number()
       .required('Contact Number is required'),
-    programEnrolled: Yup.string().required('Program Enrolled is required'),
-    currentSemester: Yup.string().required('Current Semester is required'),
+    program: Yup.string().required('Program Enrolled is required'),
+    semester: Yup.string().required('Current Semester is required'),
     ApplicationLetter: Yup.mixed().required('Application Letter is required').test(
       'fileFormat',
       'Invalid file format. Please upload a PDF file.',
@@ -82,14 +83,34 @@ const TransferForm = () => {
       const file = values.ApplicationLetter;
       const storageRef = ref(storage, 'edited-pdfs/' + file.name);
       await uploadBytes(storageRef, file);
+
+       // Add transfer application to Firestore collection
+       const transferApplicationData = {
+        name: values.name,
+        puRegNumber: values.puRegNumber,
+        examRollNumber: values.examRollNumber,
+        sourceCollegeName: values.sourceCollegeName,
+        destinationCollegeName: values.destinationCollegeName,
+        email: values.email,
+        contactNumber: values.contactNumber,
+        program: values.program,
+        semester: values.semester,
+        ApplicationLetterPath: storageRef.fullPath, // Update this to the correct field name
+        remarks: values.remarks,
+        status: 'Pending Source College Approval', // Initial status
+      };
+
+      const transferApplicationsCollection = collection(db, 'TransferApplications');
+      await addDoc(transferApplicationsCollection, transferApplicationData);
+
   
       // Handle other form submissions here
-      
-      // Add transfer request to context
-      addTransferRequest(values);
+
+
       console.log(values);
+      console.log('Transfer application submitted:', transferApplicationData);
     } catch (error) {
-      console.error('Error uploading Application Letter:', error);
+      console.error('Error uploading transfer application:', error);
     }
 
   };
@@ -117,20 +138,20 @@ const TransferForm = () => {
             required
             fullWidth
             label="Full Name"
-            name="fullName"
+            name="name"
             margin="normal"
           />
-          <ErrorMessage name="fullName" component="div" className="error-red" />
+          <ErrorMessage name="name" component="div" className="error-red" />
 
           <Field
             as={TextField}
             required
             fullWidth
             label="Registration Number"
-            name="registrationNumber"
+            name="puRegNumber"
             margin="normal"
           />
-          <ErrorMessage name="registrationNumber" component="div" className="error-red" />
+          <ErrorMessage name="puRegNumber" component="div" className="error-red" />
 
           <Field
             as={TextField}
@@ -147,7 +168,7 @@ const TransferForm = () => {
             <Field as={Select} name="sourceCollegeName" required>
               <MenuItem value="">Select Source College</MenuItem>
               {colleges.map((college) => (
-                <MenuItem key={college.id} value={college.id}>
+                <MenuItem key={college.id} value={college.collegeName}>
                   {college.collegeName}
                 </MenuItem>
               ))}
@@ -160,7 +181,7 @@ const TransferForm = () => {
             <Field as={Select} name="destinationCollegeName" required>
               <MenuItem value="">Select Destination College</MenuItem>
               {colleges.map((college) => (
-                <MenuItem key={college.id} value={college.id}>
+                <MenuItem key={college.id} value={college.collegeName}>
                   {college.collegeName}
                 </MenuItem>
               ))}
@@ -190,15 +211,15 @@ const TransferForm = () => {
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Program Enrolled</InputLabel>
-            <Field as={Select} name="programEnrolled" required>
+            <Field as={Select} name="program" required>
               <MenuItem value="">Select Program Enrolled</MenuItem>
               {programs.map((program) => (
-                <MenuItem key={program.id} value={program.id}>
+                <MenuItem key={program.id} value={program.name}>
                   {program.name}
                 </MenuItem>
               ))}
             </Field>
-            <ErrorMessage name="programEnrolled" component="div" className="error-red" />
+            <ErrorMessage name="program" component="div" className="error-red" />
           </FormControl>
 
           <Field
@@ -206,10 +227,10 @@ const TransferForm = () => {
             required
             fullWidth
             label="Current Semester"
-            name="currentSemester"
+            name="semester"
             margin="normal"
           />
-          <ErrorMessage name="currentSemester" component="div" className="error-red" />
+          <ErrorMessage name="semester" component="div" className="error-red" />
 
           <Field name="ApplicationLetter">
           {({ form }) => (

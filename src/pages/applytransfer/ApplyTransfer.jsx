@@ -4,16 +4,21 @@ import Box from '@mui/material/Box';
 import Appbar from '../../components/navbar/Appbar';
 import TransferForm from '../../components/transferform/TransferForm';
 import {Button } from '@mui/material';
+import { useNavigate } from 'react-router';
 import '../../App.css';
 
 const Home = () => {
   const [showAdditionalComponent, setShowAdditionalComponent] = useState(false);
-  
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+
 
   const handleApplyTransferClick = () => {
     setShowAdditionalComponent(!showAdditionalComponent);
-    
-};
+  };
+
+  const handleViewStatusClick = () => {
+    navigate('/viewtransfers'); // Navigate to the ViewTransfer component
+  };
 
 
 
@@ -31,7 +36,7 @@ const Home = () => {
               Apply for Transfer
             </Button>
       
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={handleViewStatusClick}>
               View Status
             </Button>
           </Box>
