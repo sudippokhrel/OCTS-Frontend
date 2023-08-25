@@ -10,6 +10,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { doc,  setDoc } from "firebase/firestore";
 import { db } from '../../firebase-config';
 import getColleges from '../../components/users/getColleges'; // Import the getColleges function
+import { getPrograms } from '../../components/users/getPrograms';
+import Autocomplete from '@mui/material/Autocomplete';
+
 
 const Signup = () => {
   const [name, setName] = useState('');
@@ -17,6 +20,9 @@ const Signup = () => {
   const [puRegNumber, setPuRegNumber] = useState('');
   const [faculty, setFaculty] = useState('');
   const [college, setCollege] = useState('');
+  const [programs, setPrograms] = useState([]);
+  const [program, setProgram] = useState('');
+  const [semester, setSemester] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -25,16 +31,31 @@ const Signup = () => {
   const [colleges, setColleges] = useState([]); // State to store the colleges
 
   useEffect(() => {
-    // Fetch colleges from Firestore
+    // Fetch colleges and programs from Firestore
     const fetchColleges = async () => {
       const fetchedColleges = await getColleges();
       console.log('Fetched colleges:', fetchedColleges);
       setColleges(fetchedColleges);
     };
+    const fetchPrograms = async () => {
+      const fetchedPrograms = await getPrograms();
+      console.log('Fetched programs:', fetchedPrograms);
+      setPrograms(fetchedPrograms);
+    };
+
     fetchColleges();
+    fetchPrograms();
   }, []);
 
   const faculties = ['Faculty of Science and Technology'];
+
+  const handleProgramChange = (event, value) => {
+    if (value) {
+      setProgram(value.name);
+    } else {
+      setProgram('');
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,6 +75,9 @@ const Signup = () => {
         puRegNumber: puRegNumber,
         faculty: faculty,
         college: college,
+        program: program,
+        semester: semester,
+
         role: 'student'
       });
 
@@ -151,6 +175,25 @@ const Signup = () => {
                 )}
               </Select>
             </FormControl>
+            <FormControl variant="outlined" fullWidth margin="normal">
+            <Autocomplete
+                fullWidth
+                required
+                options={programs}
+                onChange={handleProgramChange}
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => <TextField {...params} label="Program" variant="outlined" />}
+              />
+            </FormControl>
+            <TextField
+              variant="outlined"
+              label="Semester"
+              name="semester"
+              fullWidth
+              margin="normal"
+              placeholder="Semester"
+              onChange={(e) => setSemester(e.target.value)}
+            />
             <TextField
               variant="outlined"
               label="Password"

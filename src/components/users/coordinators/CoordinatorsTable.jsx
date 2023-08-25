@@ -66,12 +66,12 @@ export default function CoordinatorsTable() {
   const [userCollege, setUserCollege] = React.useState(null);
   const [isLoading, setIsLoading] = useState(true); // Add a loading state
 
-  // for modal to add new directors
+  // for modal to add new coordinators
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
-    getCoordinators(); // Fetch the updated data
+    getCoordinators(userCollege); // Fetch the updated data
   };
 
   useEffect(() => {
