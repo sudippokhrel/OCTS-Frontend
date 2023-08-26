@@ -9,40 +9,50 @@ import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import Swal from 'sweetalert2';
-import { ToastContainer } from 'react-toastify';
 import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
 import { Alert } from '@mui/material';
-import { useUserAuth } from '../../components/context/UserAuthContext';
 import {
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
   doc,
   setDoc,
 } from "firebase/firestore";
 import { db } from '../../firebase-config';
 import getColleges from '../../components/users/getColleges';
 import {getPrograms} from '../../components/users/getPrograms';
+import { getAuth } from '@firebase/auth';
+import { createUserWithEmailAndPassword } from '@firebase/auth';
+import { initializeApp } from '@firebase/app';
 
 
-const AddCoordinators = ({ closeEvent }) => {
+const AddCoordinators = ({ closeEvent, userCollege, getCoordinators  }) => {
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
   const [collegeName, setCollegeName] = useState(null);
   const [address, setAddress] = useState('');
   const [programs, setPrograms] = useState([]);
   const [program, setProgram] = useState('');
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp, logIn } = useUserAuth();
 
-  const empCollectionRef = collection(db, 'users');
+
+  const [secondaryApp, setSecondaryApp] = useState(null);
+
+  useEffect(() => {
+    const secondaryConfig = {
+      apiKey: "AIzaSyC-q2_dwLpsPj5kyJJ5mq9WyAjmw2diCkY",
+      authDomain: "octs-37cd6.firebaseapp.com",
+      projectId: "octs-37cd6",
+      storageBucket: "octs-37cd6.appspot.com",
+      messagingSenderId: "791843106649",
+      appId: "1:791843106649:web:e9bab3648144a2f97da648",
+      measurementId: "G-EVYDTQVSKZ"
+    };
+
+    const secondaryFirebase = initializeApp(secondaryConfig, "Secondary");
+    setSecondaryApp(secondaryFirebase);
+  }, []);
 
   useEffect(() => {
     const fetchCollegesAndPrograms = async () => {
@@ -74,7 +84,11 @@ const AddCoordinators = ({ closeEvent }) => {
     setError('');
 
     try {
-      const { user: authUser } = await signUp(email, password);
+      const secondaryAuth = getAuth(secondaryApp);
+
+      // Sign up the new coordinator using the secondary auth instance
+      const { user: authUser } = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+
       const userRef = doc(db, 'users', authUser.uid);
       const newUser = {
         name: name,
@@ -88,6 +102,10 @@ const AddCoordinators = ({ closeEvent }) => {
 
       console.log('Successfully created an account');
       toast.success('Successfully Created an account');
+
+      // Fetch coordinators again after successfully adding a new coordinator
+      getCoordinators(userCollege);
+
       closeEvent(newUser);
       Swal.fire('Submitted', ' New Coordinator has been Added', 'success');
     } 
@@ -202,6 +220,8 @@ const AddCoordinators = ({ closeEvent }) => {
 
 AddCoordinators.propTypes = {
   closeEvent: PropTypes.func.isRequired,
+  userCollege: PropTypes.string.isRequired,
+  getCoordinators: PropTypes.func.isRequired,
 };
 
 export default AddCoordinators;

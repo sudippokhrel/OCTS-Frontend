@@ -20,15 +20,12 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import {useNavigate} from 'react-router-dom';
 import AddCoordinators from '../../../pages/coordinators/AddCoordinators.jsx';
 import { db } from "../../../firebase-config";
 
 import {
   collection,
   getDocs,
-  addDoc,
-  updateDoc,
   deleteDoc,
   query,
   where,
@@ -39,7 +36,6 @@ import {
 import { useUserAuth } from '../../context/UserAuthContext';
 import getUserRole from '../getUserRole';
 import getUserCollege from '../getUserCollege';
-import getUserProgram from '../getUserProgram';
 
 const style = {
   position: 'absolute',
@@ -58,7 +54,6 @@ export default function CoordinatorsTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [rows, setRows] = useState([]);
-  const empCollectionRef = collection(db, "users");
 
   // they are used to filter data accessed on the base of program role college
   const {  user} = useUserAuth();
@@ -115,6 +110,7 @@ export default function CoordinatorsTable() {
       const q = query(empCollectionRef, where("role","in", ["program_coordinator", "coordinator"])); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    console.log(fetchedRows); // Add this line
     setRows(fetchedRows);
     }else if (userRole=='college_head'|| userRole=='director'){
       const q = query(empCollectionRef, where("role","in", ["program_coordinator", "coordinator"]), where("college", "==", userCollege)); // Use query() function here
@@ -175,8 +171,6 @@ export default function CoordinatorsTable() {
   return (
   <>
 
-  
-
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
       <Typography
             gutterBottom
@@ -220,7 +214,7 @@ export default function CoordinatorsTable() {
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description">
           <Box sx={style}>
-          <AddCoordinators closeEvent={handleClose} />
+          <AddCoordinators closeEvent={handleClose} userCollege={userCollege} getCoordinators={getCoordinators} />
           </Box>
         </Modal>
       </div>
@@ -253,10 +247,11 @@ export default function CoordinatorsTable() {
                   .map((row) => {
                     return (
                       <TableRow
+                        key={row.id} // Add this key prop
                         hover
                         role="checkbox"
                         tabIndex={-1}
-                        key={row.code}
+                       
                       >
                         <TableCell align="left">{row.name}</TableCell>
                         <TableCell align="left">{row.college}</TableCell>

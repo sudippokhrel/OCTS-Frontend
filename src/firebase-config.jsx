@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth, setPersistence,  browserLocalPersistence } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import {getFirestore} from "firebase/firestore"
 import { getStorage } from "firebase/storage";
 // Your web app's Firebase configuration
@@ -24,6 +24,6 @@ export const storage = getStorage(app)
 // Initialize Firebase Authentication and get a reference to the service
 export const auth = getAuth(app);
 
-setPersistence(auth,browserLocalPersistence);
+
 
 
