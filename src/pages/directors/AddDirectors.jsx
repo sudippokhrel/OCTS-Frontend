@@ -16,10 +16,6 @@ import { Alert } from '@mui/material';
 import { useUserAuth } from '../../components/context/UserAuthContext';
 import {
   collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
   doc,
   setDoc,
 } from "firebase/firestore";

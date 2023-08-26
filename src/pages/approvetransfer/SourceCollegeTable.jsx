@@ -16,13 +16,7 @@ import Stack from "@mui/material/Stack";
 import { db } from "../../firebase-config";
 import {
   collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  deleteDoc,
   doc,
-  where,
-  query,
 } from "firebase/firestore";
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';

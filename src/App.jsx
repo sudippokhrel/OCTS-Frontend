@@ -3,7 +3,7 @@ import Navbar from "./components/sidebar/Navbar";
 import { Routes, Route} from "react-router-dom"; //importing reactrouter dom for routing
 import ProtectedRoute from "./components/ProtectedRoute";
 import { UserAuthContextProvider } from "./components/context/UserAuthContext";
-import { TransferProvider } from "./components/context/TransferContext";
+//import { TransferProvider } from "./components/context/TransferContext";
 import Appbar from "./components/navbar/Appbar";
 
 //Importing pages for routing
@@ -33,7 +33,6 @@ function App() {
 
   return (
     <UserAuthContextProvider>
-    <TransferProvider>
     <Appbar/>
       <Routes>
         <Route path ="/"  
@@ -128,7 +127,6 @@ function App() {
          </Route>
 
       </Routes>
-      </TransferProvider>
       </UserAuthContextProvider>
     
 
