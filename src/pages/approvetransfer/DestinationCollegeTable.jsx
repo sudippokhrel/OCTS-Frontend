@@ -13,7 +13,9 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { db } from "../../firebase-config";
+import { db, storage } from "../../firebase-config";
+
+import { ref , getDownloadURL } from '@firebase/storage';
 import {
   collection,
   doc,
@@ -35,17 +37,21 @@ import getUserProgram from '../../components/users/getUserProgram';
 
 export default function SourceCollegeTable() {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
   const [rows, setRows] = useState([]);  
   const [isLoading, setIsLoading] = useState(true); // Add a loading state
-
+  const [isLink, setIsLink] = useState(true);
 
   const {  user} = useUserAuth();//to display the profile bar according to user
   const [userRole, setUserRole] = React.useState(null);
   const [userCollege, setUserCollege] = React.useState(null);
   const [userProgram, setUserProgram] = React.useState(null);
+  const [downloadUrls, setDownloadUrls] = useState({});
+
+  
 
   useEffect(() => {
+
     const fetchData = async () => {
       if (user) {
         const role = await getUserRole(user.uid);
@@ -57,19 +63,36 @@ export default function SourceCollegeTable() {
           const program = await getUserProgram(user.uid);
           setUserProgram(program);
 
-          // Fetch seats based on userCollege here
+          // Fetch form based on userCollege here
           getForms(college,program);
         } else {
-          // Fetch seats for admin
-          getForms();
+          // Fetch form for admin
+          getForms(userCollege, userProgram);
         }
 
         setIsLoading(false);
       }
     };
-
     fetchData();
+
   }, [user]);
+
+  const fetchDownloadUrls = async () => {
+    try {
+      const urls = {};
+
+      for (const application of rows) {
+        if (application.ApplicationLetterPath) {
+          const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
+          urls[application.id] = url;
+        }
+      }
+
+      setDownloadUrls(urls);
+    } catch (error) {
+      console.error('Error fetching download URLs:', error);
+    }
+  };
 
   useEffect(() => {
     if (!isLoading) {
@@ -78,37 +101,40 @@ export default function SourceCollegeTable() {
       } else {
         getForms(userCollege,userProgram);
       }
+      
+        fetchDownloadUrls(rows);
+      
     }
-  }, [userRole, userCollege,userProgram, isLoading]);
+  }, [userRole, userCollege,userProgram, isLoading, rows]);
 
 
 
   const getForms = async (userCollege,userProgram) => {
 
-    const empCollectionRef = collection(db, "seats");
+    const empCollectionRef = collection(db, "transferApplications");
 
     // Enter the Logic here to render the Application Forms
 
 
-    // if (userRole=='admin' || userRole=='dean'){
-    //   const q = query(empCollectionRef); // Use query() function here
-    //   const data = await getDocs(q);
-    // const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    // setRows(fetchedRows);
-    // }else if (userRole=='college_head'){
-    //   const q = query(empCollectionRef, where("College", "==", userCollege)); // Use query() function here
-    // const data = await getDocs(q);
-    // const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    // setRows(fetchedRows);
+    if (userRole=='admin' || userRole=='dean'){
+      const q = query(empCollectionRef); // Use query() function here
+      const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+    }else if (userRole=='college_head' || userRole=='director'){
+      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege)); // Use query() function here
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
 
-    // }
-    // else if (userRole=='program_coordinator'){
-    //   const q = query(empCollectionRef, where("College", "==", userCollege),
-    //   where("Program", "==", userProgram)); // Use query() function here
-    // const data = await getDocs(q);
-    // const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    // setRows(fetchedRows);
-    // }
+    }
+    else if (userRole=='program_coordinator' || userRole=='coordinator'){
+      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege),
+      where("program", "==", userProgram)); // Use query() function here
+    const data = await getDocs(q);
+    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+    setRows(fetchedRows);
+    }
 
   };
 
@@ -165,7 +191,7 @@ export default function SourceCollegeTable() {
   };
 
   const rejectApi = async (id) => {
-    const userDoc = doc(db, "TransferApplications", id);
+    const userDoc = doc(db, "transferApplications", id);
 
     // Logic For Rejecting  the student
 
@@ -190,7 +216,7 @@ export default function SourceCollegeTable() {
   const filterData = (v) => {
     if (v) {
       // Filter the rows based on the selected value
-      const filteredRows = rows.filter((row) => row.Program === v);
+      const filteredRows = rows.filter((row) => row.program === v);
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
@@ -199,20 +225,20 @@ export default function SourceCollegeTable() {
   };
   
   
-  const uniqueName = Array.from(new Set(rows.map((rows) => rows.Program)));
+  const uniqueName = Array.from(new Set(rows.map((rows) => rows.program)));
   const uniqueSemester = Array.from(new Set(rows.map((rows) => rows.Semester)));
 
   return (
     <>
-      {/* {rows.length > 0 && ( */}
+      {rows.length > 0 && (
         <Paper sx={{ width: "98%", overflow: "hidden", padding: "12px" }}>
           <Typography
             gutterBottom
             variant="h5"
             component="div"
-            sx={{ padding: "20px" }}
+            sx={{ padding: "15px" }}
           >
-            Transfer Request of Students To go to Come into Our college                        
+            Transfer Request of Students To get into Our College                     
           </Typography>
           <Divider />
           <Box height={10} />
@@ -294,11 +320,19 @@ export default function SourceCollegeTable() {
                         tabIndex={-1}
                         key={row.code}
                       >
-                        <TableCell align="left">{row.College}</TableCell>
-                        <TableCell align="left">{row.Program}</TableCell>
-                        <TableCell align="left">{row.Semester}</TableCell>
-                        <TableCell align="left">{row.TotalSeats}</TableCell>
-                        <TableCell align="left">{row.Seats}</TableCell>
+                        <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.puRegNumber}</TableCell>
+                        <TableCell align="left">{row.sourceCollegeName}</TableCell>
+                        <TableCell align="left">{row.destinationCollegeName}</TableCell>
+                        <TableCell align="left">{row.program}</TableCell>
+                        <TableCell align="left">{row.semester}</TableCell>
+                        <TableCell align="left">{row.ApplicationLetterPath && downloadUrls[row.id] ? (
+                      <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
+                        View Application Letter
+                      </a>
+                    ) : (
+                      'No application letter'
+                    )}</TableCell>
                         <TableCell align="left">
                           <Stack spacing={2} direction="row">
                             <VerifiedIcon
@@ -333,7 +367,7 @@ export default function SourceCollegeTable() {
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
+            rowsPerPageOptions={[2,5, 10, 25]}
             component="div"
             count={rows.length}
             rowsPerPage={rowsPerPage}
@@ -342,7 +376,7 @@ export default function SourceCollegeTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-      {/* )} */}
+      )} 
     </>
   );
 }
