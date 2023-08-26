@@ -18,7 +18,13 @@ import { db, storage } from "../../firebase-config";
 import { ref , getDownloadURL } from '@firebase/storage';
 import {
   collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
   doc,
+  where,
+  query,
 } from "firebase/firestore";
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
