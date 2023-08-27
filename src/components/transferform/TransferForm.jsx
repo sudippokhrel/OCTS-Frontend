@@ -18,6 +18,7 @@ import { getPrograms } from '../users/getPrograms';
 import ApplicationLetterPDF from '../../../pdf/FinalApplicationTemplate _fillable.pdf'
 import { storage } from '../../firebase-config';
 import { uploadBytes, ref } from 'firebase/storage';
+import {  getDownloadURL } from '@firebase/storage';
 import { collection, addDoc } from '@firebase/firestore';
 import { db } from '../../firebase-config';
 
@@ -84,6 +85,8 @@ const TransferForm = () => {
       const storageRef = ref(storage, 'edited-pdfs/' + file.name);
       await uploadBytes(storageRef, file);
 
+      const downloadURL = await getDownloadURL(storageRef);
+
        // Add transfer application to Firestore collection
        const transferApplicationData = {
         name: values.name,
@@ -95,7 +98,7 @@ const TransferForm = () => {
         contactNumber: values.contactNumber,
         program: values.program,
         semester: values.semester,
-        ApplicationLetterPath: storageRef.fullPath, // Update this to the correct field name
+        ApplicationLetterPath: downloadURL, // Update this to the correct field name
         remarks: values.remarks,
         status: 'Pending Source College Approval', // Initial status
       };

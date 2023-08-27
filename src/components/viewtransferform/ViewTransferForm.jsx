@@ -11,8 +11,8 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Switch from '@mui/material/Switch';
 import { collection, getDocs } from '@firebase/firestore';
-import { db ,storage} from '../../firebase-config';
-import { ref , getDownloadURL } from '@firebase/storage';
+import { db} from '../../firebase-config';
+
 import { useUserAuth } from '../context/UserAuthContext';
 
 const columns = [
@@ -41,23 +41,6 @@ const ViewTransfer = () => {
 
   useEffect(() => {
 
-    const fetchDownloadUrls = async () => {
-      try {
-        const urls = {};
-
-        for (const application of transferApplications) {
-          if (application.ApplicationLetterPath) {
-            const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
-            urls[application.id] = url;
-          }
-        }
-
-        setDownloadUrls(urls);
-      } catch (error) {
-        console.error('Error fetching download URLs:', error);
-      }
-    };
-
 
     const fetchTransferApplications = async () => {
       try {
@@ -77,8 +60,6 @@ const ViewTransfer = () => {
         console.error('Error fetching transfer applications:', error);
       }
     };
-
-    fetchDownloadUrls();
 
     if (user) { // Ensure currentUser is defined before fetching applications
       fetchTransferApplications();
@@ -125,8 +106,8 @@ const ViewTransfer = () => {
                     if (column.id === 'ApplicationLetter') {
                       return (
                         <TableCell key={column.id} align={column.align}>
-                    {row.ApplicationLetterPath && downloadUrls[row.id] ? (
-                      <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
+                    {row.ApplicationLetterPath  ? (
+                      <a href={row.ApplicationLetterPath} target="_blank" rel="noopener noreferrer">
                         View Application Letter
                       </a>
                     ) : (
