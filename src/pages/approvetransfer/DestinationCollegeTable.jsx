@@ -15,7 +15,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { db, storage } from "../../firebase-config";
 
-import { ref , getDownloadURL } from '@firebase/storage';
+//import { ref , getDownloadURL } from '@firebase/storage';
 import {
   collection,
   getDocs,
@@ -52,7 +52,7 @@ export default function SourceCollegeTable() {
   const [userRole, setUserRole] = React.useState(null);
   const [userCollege, setUserCollege] = React.useState(null);
   const [userProgram, setUserProgram] = React.useState(null);
-  const [downloadUrls, setDownloadUrls] = useState({});
+  //const [downloadUrls, setDownloadUrls] = useState({});
 
   
 
@@ -83,22 +83,22 @@ export default function SourceCollegeTable() {
 
   }, [user]);
 
-  const fetchDownloadUrls = async () => {
-    try {
-      const urls = {};
+  // const fetchDownloadUrls = async () => {
+  //   try {
+  //     const urls = {};
 
-      for (const application of rows) {
-        if (application.ApplicationLetterPath) {
-          const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
-          urls[application.id] = url;
-        }
-      }
+  //     for (const application of rows) {
+  //       if (application.ApplicationLetterPath) {
+  //         const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
+  //         urls[application.id] = url;
+  //       }
+  //     }
 
-      setDownloadUrls(urls);
-    } catch (error) {
-      console.error('Error fetching download URLs:', error);
-    }
-  };
+  //     setDownloadUrls(urls);
+  //   } catch (error) {
+  //     console.error('Error fetching download URLs:', error);
+  //   }
+  // };
 
   useEffect(() => {
     if (!isLoading) {
@@ -108,10 +108,10 @@ export default function SourceCollegeTable() {
         getForms(userCollege,userProgram);
       }
       
-        fetchDownloadUrls(rows);
+        //fetchDownloadUrls(rows);
       
     }
-  }, [userRole, userCollege,userProgram, isLoading, rows]);
+  }, [userRole, userCollege,userProgram, isLoading]);
 
 
 
@@ -332,13 +332,13 @@ export default function SourceCollegeTable() {
                         <TableCell align="left">{row.destinationCollegeName}</TableCell>
                         <TableCell align="left">{row.program}</TableCell>
                         <TableCell align="left">{row.semester}</TableCell>
-                        <TableCell align="left">{row.ApplicationLetterPath && downloadUrls[row.id] ? (
-                      <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
-                        View Application Letter
-                      </a>
-                    ) : (
-                      'No application letter'
-                    )}</TableCell>
+                    {/*<TableCell align="left">{row.ApplicationLetterPath && downloadUrls[row.id] ? (
+                    //   <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
+                    //     View Application Letter
+                    //   </a>
+                    // ) : (
+                    //   'No application letter'
+                    // )}</TableCell>*/}
                         <TableCell align="left">
                           <Stack spacing={2} direction="row">
                             <VerifiedIcon

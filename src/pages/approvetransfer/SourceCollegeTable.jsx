@@ -13,12 +13,18 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { db, storage } from "../../firebase-config";
+import { db} from "../../firebase-config";
 
-import { ref , getDownloadURL } from '@firebase/storage';
+//import { ref , getDownloadURL } from '@firebase/storage';
 import {
   collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
   doc,
+  where,
+  query,
 } from "firebase/firestore";
 import VerifiedIcon from '@mui/icons-material/Verified';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -46,7 +52,7 @@ export default function SourceCollegeTable() {
   const [userRole, setUserRole] = React.useState(null);
   const [userCollege, setUserCollege] = React.useState(null);
   const [userProgram, setUserProgram] = React.useState(null);
-  const [downloadUrls, setDownloadUrls] = useState({});
+  //const [downloadUrls, setDownloadUrls] = useState({});
 
   
 
@@ -57,17 +63,15 @@ export default function SourceCollegeTable() {
         const role = await getUserRole(user.uid);
         setUserRole(role);
 
-        if (role !== "admin" || role != "dean") {
+        if (role !== "admin" && role != "dean") {
           const college = await getUserCollege(user.uid);
           setUserCollege(college);
           const program = await getUserProgram(user.uid);
           setUserProgram(program);
 
           // Fetch form based on userCollege here
-          getForms(college,program);
         } else {
           // Fetch form for admin
-          getForms(userCollege, userProgram);
         }
 
         setIsLoading(false);
@@ -77,22 +81,22 @@ export default function SourceCollegeTable() {
 
   }, [user]);
 
-  const fetchDownloadUrls = async () => {
-    try {
-      const urls = {};
+  // const fetchDownloadUrls = async (rows) => {
+  //   try {
+  //     const urls = {};
 
-      for (const application of rows) {
-        if (application.ApplicationLetterPath) {
-          const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
-          urls[application.id] = url;
-        }
-      }
+  //     for (const application of rows) {
+  //       if (application.ApplicationLetterPath) {
+  //         const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
+  //         urls[application.id] = url;
+  //       }
+  //     }
 
-      setDownloadUrls(urls);
-    } catch (error) {
-      console.error('Error fetching download URLs:', error);
-    }
-  };
+  //     setDownloadUrls(urls);
+  //   } catch (error) {
+  //     console.error('Error fetching download URLs:', error);
+  //   }
+  // };
 
   useEffect(() => {
     if (!isLoading) {
@@ -102,10 +106,8 @@ export default function SourceCollegeTable() {
         getForms(userCollege,userProgram);
       }
       
-        fetchDownloadUrls(rows);
-      
     }
-  }, [userRole, userCollege,userProgram, isLoading, rows]);
+  }, [userRole, userCollege,userProgram, isLoading]);
 
 
 
@@ -135,6 +137,8 @@ export default function SourceCollegeTable() {
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
+    // fetchDownloadUrls(rows);
+    
 
   };
 
@@ -205,7 +209,7 @@ export default function SourceCollegeTable() {
   const filterDataSemester = (v) => {
     if (v) {
       // Filter the rows based on the selected value
-      const filteredRows = rows.filter((row) => row.Semester === v);
+      const filteredRows = rows.filter((row) => row.semester === v);
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
@@ -220,13 +224,13 @@ export default function SourceCollegeTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getForms(userCollege);
+      getForms(userCollege, userProgram);
     }
   };
   
   
   const uniqueName = Array.from(new Set(rows.map((rows) => rows.program)));
-  const uniqueSemester = Array.from(new Set(rows.map((rows) => rows.Semester)));
+  const uniqueSemester = Array.from(new Set(rows.map((rows) => rows.semester)));
 
   return (
     <>
@@ -304,9 +308,11 @@ export default function SourceCollegeTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
+                  {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Action
                   </TableCell>
+                  ): null }
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -326,15 +332,19 @@ export default function SourceCollegeTable() {
                         <TableCell align="left">{row.destinationCollegeName}</TableCell>
                         <TableCell align="left">{row.program}</TableCell>
                         <TableCell align="left">{row.semester}</TableCell>
-                        <TableCell align="left">{row.ApplicationLetterPath && downloadUrls[row.id] ? (
-                      <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
-                        View Application Letter
-                      </a>
-                    ) : (
-                      'No application letter'
-                    )}</TableCell>
-                        <TableCell align="left">
+                    {/*   <TableCell align="left">{row.ApplicationLetterPath && downloadUrls[row.id] ? (
+                    //   <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
+                    //     View Application Letter
+                    //   </a>
+                    // ) : (
+                    //   'No application letter'
+                    // )}</TableCell>*/}
+                    
+                          {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
+                          <TableCell align="left">
+                        
                           <Stack spacing={2} direction="row">
+                           
                             <VerifiedIcon
                               style={{
                                 fontSize: "20px",
@@ -343,7 +353,7 @@ export default function SourceCollegeTable() {
                               }}
                               className="cursor-pointer"
                               onClick={() => {
-                                accpetUser(row.id,row.College, row.Program, row.Semester,row.TotalSeats,row.Seats);
+                              accpetUser(row.name,row.puRegNumber, row.sourceCollegeName, row.destinationCollegeName,row.program,row.semester);
                               }}
                             />
 
@@ -359,7 +369,10 @@ export default function SourceCollegeTable() {
                               }}
                             />
                           </Stack>
+                        
                         </TableCell>
+                        ): null }
+                    
                       </TableRow>
                     );
                   })}
