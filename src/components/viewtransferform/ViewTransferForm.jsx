@@ -38,7 +38,6 @@ const ViewTransfer = () => {
   const [transferApplications, setTransferApplications] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
- const [downloadUrls, setDownloadUrls] = useState({});
 
 
   useEffect(() => {

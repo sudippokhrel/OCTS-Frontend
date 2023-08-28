@@ -131,7 +131,7 @@ export default function SourceCollegeTable() {
 
     }
 
-    
+
   };
 
   const handleChangePage = (event, newPage) => {
@@ -161,13 +161,20 @@ export default function SourceCollegeTable() {
   };
 
   const approveApi = async (id) => {
-    // Logic for  Approving the form/ students
+    try {
+    const transferApplicationDocRef = doc(db, "TransferApplications", id);
+    await updateDoc(transferApplicationDocRef, {
+      sourceCollegeStatus: 'Approved by Source College'
+    });
 
-
+   // You can add additional logic here if needed
 
     Swal.fire("Approved!", "Form has been Approved", "success");
     getForms();
-  };
+  }catch (error) {
+    console.error('Error approving application:', error);
+  }
+};
 
 
   const rejectUser = (id) => {
@@ -187,14 +194,19 @@ export default function SourceCollegeTable() {
   };
 
   const rejectApi = async (id) => {
-    const userDoc = doc(db, "TransferApplications", id);
-
-    // Logic For Rejecting  the student
-
-
-
-    Swal.fire("Rejected!", "Form has been rejected.", "success");
-    getForms();
+    try {
+      const transferApplicationDocRef = doc(db, "TransferApplications", id);
+      await updateDoc(transferApplicationDocRef, {
+        sourceCollegeStatus: 'Rejected by Source College'
+      });
+  
+      // You can add additional logic here if needed
+  
+      Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
+      getForms();
+    } catch (error) {
+      console.error('Error rejecting application:', error);
+    }
   };
 
 
@@ -344,9 +356,9 @@ export default function SourceCollegeTable() {
                                 cursor: "pointer",
                               }}
                               className="cursor-pointer"
-                              // onClick={() => {
-                              //   accpetUser(row.name,row.puRegNumber, row.sourceCollegeName, row.destinationCollegeName,row.program,row.semester);
-                              // }}
+                              onClick={() => {
+                                accpetUser(row.id);
+                              }}
                             />
 
                             
@@ -356,9 +368,9 @@ export default function SourceCollegeTable() {
                                 color: "darkred",
                                 cursor: "pointer",
                               }}
-                              // onClick={() => {
-                              //   rejectUser(row.id);
-                              // }}
+                              onClick={() => {
+                                rejectUser(row.id);
+                              }}
                             />
                           </Stack>
                         
