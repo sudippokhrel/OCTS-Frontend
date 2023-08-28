@@ -8,7 +8,11 @@ import { Card, CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { minHeight } from '@mui/system';
 import SourceCollegeTable from './SourceCollegeTable';
+import SourceCollegeApprovedTable from './SourceCollegeApprovedTable';
+import SourceCollegeRejectedTable from './SourceCollegeRejectedTable';
 import DestinationCollegeTable from './DestinationCollegeTable';
+import DestinationCollegeApprovedTable from './DestinationCollegeApprovedTable';
+import DestinationCollegeRejectedTable from './DestinationCollegeRejectedTable';
 
 const StyledTabs = styled((props) => (
   <Tabs
@@ -96,9 +100,17 @@ export default function BasicTabs() {
           </Box>
           <Lists value={value} index={0}>
             <SourceCollegeTable/>
+            <br></br>
+            <SourceCollegeApprovedTable/>
+            <br></br>
+            <SourceCollegeRejectedTable/>
           </Lists>
           <Lists value={value} index={1}>
             <DestinationCollegeTable/>
+            <br></br>
+            <DestinationCollegeApprovedTable/>
+            <br></br>
+            <DestinationCollegeRejectedTable/>
           </Lists>
         </Box>
      </CardContent>
