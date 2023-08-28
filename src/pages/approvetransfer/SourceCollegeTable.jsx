@@ -145,7 +145,7 @@ export default function SourceCollegeTable() {
 
   const accpetUser = (id) =>{
     Swal.fire({
-      title: "Are you sure?",
+      title: "Are you sure to Approve the Transfer?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
@@ -160,8 +160,8 @@ export default function SourceCollegeTable() {
 
   };
 
-  const approveApi = async (id) => {
-    try {
+  const approveApi = async (id) => { 
+     try {
     const transferApplicationDocRef = doc(db, "TransferApplications", id);
     await updateDoc(transferApplicationDocRef, {
       sourceCollegeStatus: 'Approved by Source College'
@@ -170,7 +170,7 @@ export default function SourceCollegeTable() {
    // You can add additional logic here if needed
 
     Swal.fire("Approved!", "Form has been Approved", "success");
-    getForms();
+    getForms(userCollege, userProgram);
   }catch (error) {
     console.error('Error approving application:', error);
   }
@@ -179,7 +179,7 @@ export default function SourceCollegeTable() {
 
   const rejectUser = (id) => {
     Swal.fire({
-      title: "Are you sure?",
+      title: "Are you sure to Reject the Transfer?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
@@ -203,7 +203,7 @@ export default function SourceCollegeTable() {
       // You can add additional logic here if needed
   
       Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
-      getForms();
+      getForms(userCollege, userProgram);
     } catch (error) {
       console.error('Error rejecting application:', error);
     }

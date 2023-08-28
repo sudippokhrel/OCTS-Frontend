@@ -170,7 +170,7 @@ export default function SourceCollegeTable() {
      // You can add additional logic here if needed
   
       Swal.fire("Approved!", "Form has been Approved", "success");
-      getForms();
+      getForms(userCollege, userProgram);
     }catch (error) {
       console.error('Error approving application:', error);
     }
@@ -204,7 +204,7 @@ export default function SourceCollegeTable() {
       // You can add additional logic here if needed
   
       Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
-      getForms();
+      getForms(userCollege, userProgram);
     } catch (error) {
       console.error('Error rejecting application:', error);
     }
