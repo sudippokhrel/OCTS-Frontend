@@ -70,13 +70,13 @@ export default function SourceCollegeTable() {
           console.log("user Program is :",userProgram);
           console.log("user Program is :",userCollege);
 
-          // Fetch form based on userCollege here
+         // Fetch form based on userCollege here
           // getForms(college,program);
           
         } else {Print("I was here")
-          // Fetch form for admin
-          // getForms(userCollege, userProgram);
-        }
+        // Fetch form for admin
+        // getForms(userCollege, userProgram);
+      }
 
         setIsLoading(false);
       }
@@ -130,7 +130,7 @@ export default function SourceCollegeTable() {
     setRows(fetchedRows);
 
     }
-    
+
 
   };
 
@@ -160,16 +160,21 @@ export default function SourceCollegeTable() {
 
   };
 
-  const approveApi = async (id) => {
-    // Logic for  Approving the form/ students
-    const userDoc = doc(db, "TransferApplications", id);
-    await updateDoc(userDoc,{
+  const approveApi = async (id) => { 
+     try {
+    const transferApplicationDocRef = doc(db, "TransferApplications", id);
+    await updateDoc(transferApplicationDocRef, {
       sourceCollegeStatus: 'Approved by Source College'
     });
 
+   // You can add additional logic here if needed
+
     Swal.fire("Approved!", "Form has been Approved", "success");
     getForms(userCollege, userProgram);
-  };
+  }catch (error) {
+    console.error('Error approving application:', error);
+  }
+};
 
 
   const rejectUser = (id) => {
@@ -189,13 +194,19 @@ export default function SourceCollegeTable() {
   };
 
   const rejectApi = async (id) => {
-    const userDoc = doc(db, "TransferApplications", id);
-    await updateDoc(userDoc,{
-      sourceCollegeStatus: 'Rejected by Source College'
-    });
-    // Logic For Rejecting  the student
-    Swal.fire("Rejected!", "Form has been rejected.", "success");
-    getForms(userCollege, userProgram);
+    try {
+      const transferApplicationDocRef = doc(db, "TransferApplications", id);
+      await updateDoc(transferApplicationDocRef, {
+        sourceCollegeStatus: 'Rejected by Source College'
+      });
+  
+      // You can add additional logic here if needed
+  
+      Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
+      getForms(userCollege, userProgram);
+    } catch (error) {
+      console.error('Error rejecting application:', error);
+    }
   };
 
 
@@ -336,7 +347,6 @@ export default function SourceCollegeTable() {
                         </TableCell>                  
                           {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
                           <TableCell align="left">
-                        
                           <Stack spacing={2} direction="row">
                            
                             <VerifiedIcon

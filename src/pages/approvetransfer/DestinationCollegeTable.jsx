@@ -161,17 +161,21 @@ export default function SourceCollegeTable() {
   };
 
   const approveApi = async (id) => {
-    // Logic for  Approving the form/ students
-    const userDoc = doc(db, "TransferApplications", id);
-    await updateDoc(userDoc,{
-      sourceCollegeStatus: 'Approved by Source College'
-    });
-
-
-
-    Swal.fire("Approved!", "Form has been Approved", "success");
-    getForms();
+    try {
+      const transferApplicationDocRef = doc(db, "TransferApplications", id);
+      await updateDoc(transferApplicationDocRef, {
+        destinationCollegeStatus: 'Approved by Destination College'
+      });
+  
+     // You can add additional logic here if needed
+  
+      Swal.fire("Approved!", "Form has been Approved", "success");
+      getForms(userCollege, userProgram);
+    }catch (error) {
+      console.error('Error approving application:', error);
+    }
   };
+  
 
 
   const rejectUser = (id) => {
@@ -191,18 +195,21 @@ export default function SourceCollegeTable() {
   };
 
   const rejectApi = async (id) => {
-    const userDoc = doc(db, "TransferApplications", id);
-    await updateDoc(userDoc,{
-      sourceCollegeStatus: 'Rejected by Source College'
-    });
-
-    // Logic For Rejecting  the student
-
-
-
-    Swal.fire("Rejected!", "Form has been rejected.", "success");
-    getForms();
+    try {
+      const transferApplicationDocRef = doc(db, "TransferApplications", id);
+      await updateDoc(transferApplicationDocRef, {
+        destinationCollegeStatus: 'Rejected by Destination College'
+      });
+  
+      // You can add additional logic here if needed
+  
+      Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
+      getForms(userCollege, userProgram);
+    } catch (error) {
+      console.error('Error rejecting application:', error);
+    }
   };
+
 
 
   const filterDataSemester = (v) => {
