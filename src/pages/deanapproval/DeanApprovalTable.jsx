@@ -35,12 +35,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 // Role based  add option
 import { useUserAuth } from '../../components/context/UserAuthContext';
 import getUserRole from '../../components/users/getUserRole';
-import getUserCollege from '../../components/users/getUserCollege';
-import getUserProgram from '../../components/users/getUserProgram';
-import { Print } from '@mui/icons-material';
 
 
-export default function SourceCollegeTable() {
+export default function DeanApprovalTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [rows, setRows] = useState([]);  
@@ -48,8 +45,6 @@ export default function SourceCollegeTable() {
 
   const {  user} = useUserAuth();//to display the profile bar according to user
   const [userRole, setUserRole] = React.useState(null);
-  const [userCollege, setUserCollege] = React.useState(null);
-  const [userProgram, setUserProgram] = React.useState(null);
 
   
 
@@ -60,38 +55,18 @@ export default function SourceCollegeTable() {
         const role = await getUserRole(user.uid);
         setUserRole(role);
 
-        if (role !== "admin" && role != "dean") {
-          const college = await getUserCollege(user.uid);
-          setUserCollege(college);
-          const program = await getUserProgram(user.uid);
-          
-
-          setUserProgram(program);
-          console.log("user Program is :",userProgram);
-          console.log("user Program is :",userCollege);
-
-         // Fetch form based on userCollege here
-          // getForms(college,program);
-          
-        } else {
-        // Fetch form for admin
-        // getForms(userCollege, userProgram);
-      }
-
         setIsLoading(false);
       }
       if (!isLoading) {
         if (userRole === "admin" || userRole== "dean") {
           getForms();
-        } else {
-          getForms(userCollege,userProgram);
         }
         
       }
     };
     fetchData();
 
-  }, [user,userRole, userCollege, userProgram, isLoading]);
+  }, [user,userRole, isLoading]);
 
   // useEffect(() => {
     
@@ -99,11 +74,9 @@ export default function SourceCollegeTable() {
 
 
 
-  const getForms = async (userCollege,userProgram) => {
+  const getForms = async () => {
 
     const empCollectionRef = collection(db, "TransferApplications");
-    console.log("user Program inside is :",userProgram);
-          console.log("user College inside is :",userCollege);
           console.log("user isloading inside is :",isLoading);
           console.log("userRole is ", userRole);
 
@@ -112,23 +85,12 @@ export default function SourceCollegeTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'),where("destinationCollegeStatus", "==", 'Approved by Destination College')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege),
-      ); // Use query() function here
-    const data = await getDocs(q);
-    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setRows(fetchedRows);
-    }
-    else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
-    const data = await getDocs(q);
-    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setRows(fetchedRows);
-
+    }else {
+      console.log(" Yo are not dean and can't access the data")
     }
 
 
@@ -164,13 +126,13 @@ export default function SourceCollegeTable() {
      try {
     const transferApplicationDocRef = doc(db, "TransferApplications", id);
     await updateDoc(transferApplicationDocRef, {
-      sourceCollegeStatus: 'Approved by Source College'
+      deanStatus: 'Approved by dean'
     });
 
    // You can add additional logic here if needed
 
     Swal.fire("Approved!", "Form has been Approved", "success");
-    getForms(userCollege, userProgram);
+    getForms();
   }catch (error) {
     console.error('Error approving application:', error);
   }
@@ -197,13 +159,13 @@ export default function SourceCollegeTable() {
     try {
       const transferApplicationDocRef = doc(db, "TransferApplications", id);
       await updateDoc(transferApplicationDocRef, {
-        sourceCollegeStatus: 'Rejected by Source College'
+        deanStatus: 'Rejected by Dean'
       });
   
       // You can add additional logic here if needed
   
       Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
-      getForms(userCollege, userProgram);
+      getForms();
     } catch (error) {
       console.error('Error rejecting application:', error);
     }
@@ -217,7 +179,7 @@ export default function SourceCollegeTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getForms(userCollege, userProgram);
+      getForms();
     }
   };
 
@@ -228,7 +190,7 @@ export default function SourceCollegeTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getForms(userCollege, userProgram);
+      getForms();
     }
   };
   
@@ -238,7 +200,7 @@ export default function SourceCollegeTable() {
 
   return (
     <>
-      {rows.length > 0 && (
+      {/* {rows.length > 0 && ( */}
         <Paper sx={{ width: "98%", overflow: "hidden", padding: "12px" }}>
           <Typography
             gutterBottom
@@ -246,7 +208,7 @@ export default function SourceCollegeTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Transfer Request of Students To go to Other Colleges                       
+            Transfer Requests to be Approved by DEAN                      
           </Typography>
           <Divider />
           <Box height={10} />
@@ -267,7 +229,7 @@ export default function SourceCollegeTable() {
 
             ): null }
 
-              {userRole == "program_coordinator" && (
+              {/* {userRole == "program_coordinator" && ( */}
               <Autocomplete
               disablePortal
               id="combo-box-demo"
@@ -281,7 +243,7 @@ export default function SourceCollegeTable() {
               )}
             />
 
-            )}
+            {/* )} */}
             
           </Stack>
 
@@ -393,7 +355,7 @@ export default function SourceCollegeTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-      )} 
+      {/* )}  */}
     </>
   );
 }

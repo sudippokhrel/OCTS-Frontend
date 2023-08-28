@@ -147,11 +147,11 @@ export default function Navbar() {
   } else if (userRole === 'dean') {
     navigationItems = [
       { key: 'seats', icon: <HomeIcon />, text: 'Seats', path: '/seats' },
-      { key: 'viewtransfers', icon: <GradingIcon />, text: 'View Transfers', path: '/viewtransfers' },
+      { key: 'approvetransfer', icon: <GradingIcon />, text: 'Approve Transfers', path: '/deanapproval' },
       { key: 'directors', icon: <GroupIcon />, text: 'View Directors', path: '/directors' },
       { key: 'settings', icon: <SettingsIcon />, text: 'Settings', path: '/settings' },
     ];
-  } else if (userRole === 'admin'|| userRole === 'dean') {
+  } else if (userRole === 'admin') {
     navigationItems = [
       { key: 'seats', icon: <HomeIcon />, text: 'Seats', path: '/seats' },
       { key: 'students', icon: <GroupIcon />, text: 'View Students', path: '/students' },
