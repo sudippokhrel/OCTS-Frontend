@@ -145,7 +145,7 @@ export default function SourceCollegeTable() {
 
   const accpetUser = (id) =>{
     Swal.fire({
-      title: "Are you sure?",
+      title: "Are you sure to Approve the Transfer?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
@@ -162,17 +162,19 @@ export default function SourceCollegeTable() {
 
   const approveApi = async (id) => {
     // Logic for  Approving the form/ students
-
-
+    const userDoc = doc(db, "TransferApplications", id);
+    await updateDoc(userDoc,{
+      sourceCollegeStatus: 'Approved by Source College'
+    });
 
     Swal.fire("Approved!", "Form has been Approved", "success");
-    getForms();
+    getForms(userCollege, userProgram);
   };
 
 
   const rejectUser = (id) => {
     Swal.fire({
-      title: "Are you sure?",
+      title: "Are you sure to Reject the Transfer?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
@@ -188,13 +190,12 @@ export default function SourceCollegeTable() {
 
   const rejectApi = async (id) => {
     const userDoc = doc(db, "TransferApplications", id);
-
+    await updateDoc(userDoc,{
+      sourceCollegeStatus: 'Rejected by Source College'
+    });
     // Logic For Rejecting  the student
-
-
-
     Swal.fire("Rejected!", "Form has been rejected.", "success");
-    getForms();
+    getForms(userCollege, userProgram);
   };
 
 
@@ -345,9 +346,9 @@ export default function SourceCollegeTable() {
                                 cursor: "pointer",
                               }}
                               className="cursor-pointer"
-                              // onClick={() => {
-                              //   accpetUser(row.name,row.puRegNumber, row.sourceCollegeName, row.destinationCollegeName,row.program,row.semester);
-                              // }}
+                              onClick={() => {
+                                accpetUser(row.id);
+                              }}
                             />
 
                             
@@ -357,9 +358,9 @@ export default function SourceCollegeTable() {
                                 color: "darkred",
                                 cursor: "pointer",
                               }}
-                              // onClick={() => {
-                              //   rejectUser(row.id);
-                              // }}
+                              onClick={() => {
+                                rejectUser(row.id);
+                              }}
                             />
                           </Stack>
                         

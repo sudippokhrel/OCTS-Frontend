@@ -162,6 +162,10 @@ export default function SourceCollegeTable() {
 
   const approveApi = async (id) => {
     // Logic for  Approving the form/ students
+    const userDoc = doc(db, "TransferApplications", id);
+    await updateDoc(userDoc,{
+      sourceCollegeStatus: 'Approved by Source College'
+    });
 
 
 
@@ -188,6 +192,9 @@ export default function SourceCollegeTable() {
 
   const rejectApi = async (id) => {
     const userDoc = doc(db, "TransferApplications", id);
+    await updateDoc(userDoc,{
+      sourceCollegeStatus: 'Rejected by Source College'
+    });
 
     // Logic For Rejecting  the student
 
@@ -345,9 +352,9 @@ export default function SourceCollegeTable() {
                                 cursor: "pointer",
                               }}
                               className="cursor-pointer"
-                              // onClick={() => {
-                              //   accpetUser(row.name,row.puRegNumber, row.sourceCollegeName, row.destinationCollegeName,row.program,row.semester);
-                              // }}
+                              onClick={() => {
+                                accpetUser(row.id);
+                              }}
                             />
 
                             
@@ -357,9 +364,9 @@ export default function SourceCollegeTable() {
                                 color: "darkred",
                                 cursor: "pointer",
                               }}
-                              // onClick={() => {
-                              //   rejectUser(row.id);
-                              // }}
+                              onClick={() => {
+                                rejectUser(row.id);
+                              }}
                             />
                           </Stack>
                         
