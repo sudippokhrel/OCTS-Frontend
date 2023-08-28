@@ -6,7 +6,7 @@ import { useUserAuth } from '../../context/UserAuthContext';
 import { Alert } from '@mui/material';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {  collection, getDocs, doc,  setDoc } from "firebase/firestore";
+import {  doc,  setDoc } from "firebase/firestore";
 import { db } from '../../../firebase-config';
 
 const StudentForm = () => {

@@ -13,11 +13,7 @@ import { db } from '../../firebase-config';
 import Swal from 'sweetalert2';
 import {
   collection,
-  getDocs,
   addDoc,
-  updateDoc,
-  deleteDoc,
-  doc,
 } from "firebase/firestore";
 
 import getColleges from '../../components/users/getColleges';

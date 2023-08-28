@@ -25,8 +25,6 @@ import { db } from "../../../firebase-config";
 import {
   collection,
   getDocs,
-  addDoc,
-  updateDoc,
   deleteDoc,
   query,
   where,

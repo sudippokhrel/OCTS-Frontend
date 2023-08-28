@@ -100,7 +100,10 @@ const TransferForm = () => {
         semester: values.semester,
         ApplicationLetterPath: downloadURL, // Update this to the correct field name
         remarks: values.remarks,
-        status: 'Pending Source College Approval', // Initial status
+        sourceCollegeStatus: 'Pending Source College Approval', // Initial status
+        destinationCollegeStatus: 'Pending Destination College Approval',
+        deanStatus: 'Pending Dean Approval'
+      
       };
 
       const transferApplicationsCollection = collection(db, 'TransferApplications');
