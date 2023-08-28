@@ -92,7 +92,7 @@ export default function CoordinatorsTable() {
     };
 
     fetchData();
-  },);
+  },[user]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -102,7 +102,7 @@ export default function CoordinatorsTable() {
         getCoordinators(userCollege);
       }
     }
-  }, );
+  },[userRole, userCollege, isLoading] );
 
   const getCoordinators = async (userCollege) => {
     const empCollectionRef = collection(db, "users");
