@@ -112,19 +112,19 @@ export default function SourceCollegeTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Pending Source College Approval')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege),
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Pending Source College Approval'), where("sourceCollegeName", "==", userCollege),
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Pending Source College Approval'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -238,7 +238,7 @@ export default function SourceCollegeTable() {
 
   return (
     <>
-      {rows.length > 0 && (
+      
         <Paper sx={{ width: "98%", overflow: "hidden", padding: "12px" }}>
           <Typography
             gutterBottom
@@ -246,7 +246,7 @@ export default function SourceCollegeTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Transfer Request of Students To go to Other Colleges                       
+            Pending Transfer Request of Students To go to Other Colleges                       
           </Typography>
           <Divider />
           <Box height={10} />
@@ -393,7 +393,7 @@ export default function SourceCollegeTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-      )} 
+    
     </>
   );
 }
