@@ -13,9 +13,7 @@ import Divider from "@mui/material/Divider";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { db} from "../../firebase-config";
-
-//import { ref , getDownloadURL } from '@firebase/storage';
+import { db, storage } from "../../firebase-config";
 import {
   collection,
   getDocs,
@@ -39,6 +37,7 @@ import { useUserAuth } from '../../components/context/UserAuthContext';
 import getUserRole from '../../components/users/getUserRole';
 import getUserCollege from '../../components/users/getUserCollege';
 import getUserProgram from '../../components/users/getUserProgram';
+import { Print } from '@mui/icons-material';
 
 
 export default function SourceCollegeTable() {
@@ -46,13 +45,11 @@ export default function SourceCollegeTable() {
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [rows, setRows] = useState([]);  
   const [isLoading, setIsLoading] = useState(true); // Add a loading state
-  const [isLink, setIsLink] = useState(true);
 
   const {  user} = useUserAuth();//to display the profile bar according to user
   const [userRole, setUserRole] = React.useState(null);
   const [userCollege, setUserCollege] = React.useState(null);
   const [userProgram, setUserProgram] = React.useState(null);
-  //const [downloadUrls, setDownloadUrls] = useState({});
 
   
 
@@ -67,53 +64,49 @@ export default function SourceCollegeTable() {
           const college = await getUserCollege(user.uid);
           setUserCollege(college);
           const program = await getUserProgram(user.uid);
-          setUserProgram(program);
+          
 
-          // Fetch form based on userCollege here
-        } else {
-          // Fetch form for admin
-        }
+          setUserProgram(program);
+          console.log("user Program is :",userProgram);
+          console.log("user Program is :",userCollege);
+
+         // Fetch form based on userCollege here
+          // getForms(college,program);
+          
+        } else {Print("I was here")
+        // Fetch form for admin
+        // getForms(userCollege, userProgram);
+      }
 
         setIsLoading(false);
+      }
+      if (!isLoading) {
+        if (userRole === "admin" || userRole== "dean") {
+          getForms();
+        } else {
+          getForms(userCollege,userProgram);
+        }
+        
       }
     };
     fetchData();
 
-  }, [user]);
+  }, [user,userRole, userCollege, userProgram, isLoading]);
 
-  // const fetchDownloadUrls = async (rows) => {
-  //   try {
-  //     const urls = {};
-
-  //     for (const application of rows) {
-  //       if (application.ApplicationLetterPath) {
-  //         const url = await getDownloadURL(ref(storage, application.ApplicationLetterPath));
-  //         urls[application.id] = url;
-  //       }
-  //     }
-
-  //     setDownloadUrls(urls);
-  //   } catch (error) {
-  //     console.error('Error fetching download URLs:', error);
-  //   }
-  // };
-
-  useEffect(() => {
-    if (!isLoading) {
-      if (userRole === "admin"|| userRole== "dean") {
-        getForms();
-      } else {
-        getForms(userCollege,userProgram);
-      }
-      
-    }
-  }, [userRole, userCollege,userProgram, isLoading]);
+  // useEffect(() => {
+    
+  // }, [userRole, userCollege,userProgram, isLoading]);
 
 
 
   const getForms = async (userCollege,userProgram) => {
 
     const empCollectionRef = collection(db, "TransferApplications");
+    console.log("user Program inside is :",userProgram);
+          console.log("user College inside is :",userCollege);
+          console.log("user isloading inside is :",isLoading);
+          console.log("userRole is ", userRole);
+
 
     // Enter the Logic here to render the Application Forms
 
@@ -123,23 +116,22 @@ export default function SourceCollegeTable() {
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='director'){
-      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege)); // Use query() function here
+    }else if (userRole=='college_head' || userRole=='coordinator'){
+      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege),
+      ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege),
-      where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }
-    // fetchDownloadUrls(rows);
-    
 
+    }
+
+    
   };
 
   const handleChangePage = (event, newPage) => {
@@ -213,7 +205,7 @@ export default function SourceCollegeTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getForms(userCollege);
+      getForms(userCollege, userProgram);
     }
   };
 
@@ -332,17 +324,17 @@ export default function SourceCollegeTable() {
                         <TableCell align="left">{row.destinationCollegeName}</TableCell>
                         <TableCell align="left">{row.program}</TableCell>
                         <TableCell align="left">{row.semester}</TableCell>
-                    {/*   <TableCell align="left">{row.ApplicationLetterPath && downloadUrls[row.id] ? (
-                    //   <a href={downloadUrls[row.id]} target="_blank" rel="noopener noreferrer">
-                    //     View Application Letter
-                    //   </a>
-                    // ) : (
-                    //   'No application letter'
-                    // )}</TableCell>*/}
-                    
+                        <TableCell align="left">
+                          {row.ApplicationLetterPath ? (
+                           <a href={row.ApplicationLetterPath} target="_blank" rel="noopener noreferrer">
+                             View Application Letter
+                              </a>
+                             ) : (
+                              'No Application Letter'
+                               )}
+                        </TableCell>                  
                           {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
                           <TableCell align="left">
-                        
                           <Stack spacing={2} direction="row">
                            
                             <VerifiedIcon
@@ -352,9 +344,9 @@ export default function SourceCollegeTable() {
                                 cursor: "pointer",
                               }}
                               className="cursor-pointer"
-                              onClick={() => {
-                              accpetUser(row.name,row.puRegNumber, row.sourceCollegeName, row.destinationCollegeName,row.program,row.semester);
-                              }}
+                              // onClick={() => {
+                              //   accpetUser(row.name,row.puRegNumber, row.sourceCollegeName, row.destinationCollegeName,row.program,row.semester);
+                              // }}
                             />
 
                             
@@ -364,9 +356,9 @@ export default function SourceCollegeTable() {
                                 color: "darkred",
                                 cursor: "pointer",
                               }}
-                              onClick={() => {
-                                rejectUser(row.id);
-                              }}
+                              // onClick={() => {
+                              //   rejectUser(row.id);
+                              // }}
                             />
                           </Stack>
                         
