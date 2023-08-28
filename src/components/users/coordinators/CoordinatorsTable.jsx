@@ -90,7 +90,6 @@ export default function CoordinatorsTable() {
         setIsLoading(false);
       }
     };
-
     fetchData();
   },[user]);
 
