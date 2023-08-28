@@ -12,6 +12,7 @@ import "./App.css";
 import ApplyTransfer from "./pages/applytransfer/ApplyTransfer";
 import ViewTransfers from "./pages/viewtransfers/ViewTransfers";
 import ApproveTransfer from "./pages/approvetransfer/ApproveTransfer";
+import DeanApproval from "./pages/deanapproval/DeanApproval";
 //import Settings from "./pages/settings/Settings";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
@@ -53,6 +54,13 @@ function App() {
           element={
           <ProtectedRoute>
           <ApproveTransfer/>
+          </ProtectedRoute>}>
+        </Route>
+
+        <Route  path ="/deanapproval"  
+          element={
+          <ProtectedRoute>
+          <DeanApproval/>
           </ProtectedRoute>}>
         </Route>
 

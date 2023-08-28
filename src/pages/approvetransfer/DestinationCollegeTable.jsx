@@ -37,10 +37,9 @@ import { useUserAuth } from '../../components/context/UserAuthContext';
 import getUserRole from '../../components/users/getUserRole';
 import getUserCollege from '../../components/users/getUserCollege';
 import getUserProgram from '../../components/users/getUserProgram';
-import { Print } from '@mui/icons-material';
 
 
-export default function SourceCollegeTable() {
+export default function DestinationCollegeTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [rows, setRows] = useState([]);  
@@ -73,7 +72,7 @@ export default function SourceCollegeTable() {
           // Fetch form based on userCollege here
           // getForms(college,program);
           
-        } else {Print("I was here")
+        } else {
           // Fetch form for admin
           // getForms(userCollege, userProgram);
         }
@@ -117,14 +116,14 @@ export default function SourceCollegeTable() {
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("destinationCollegeName", "==", userCollege),
+      const q = query(empCollectionRef, where("destinationCollegeName", "==", userCollege), where("sourceCollegeStatus", "==", 'Approved by Source College')
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
