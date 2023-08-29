@@ -10,7 +10,9 @@ import {
   Container,
   Typography,
   Box,
+  Snackbar,
 } from '@mui/material';
+import MuiAlert from '@mui/material/Alert'; // Import Alert component
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import getColleges from '../users/getColleges';
@@ -27,6 +29,26 @@ const TransferForm = () => {
 
   const [colleges, setColleges] = useState([]);
   const [programs, setPrograms] = useState([]);
+  const [successOpen, setSuccessOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSuccessOpen(false);
+    setErrorOpen(false);
+  };
+
+  const handleSuccess = () => {
+    setSuccessOpen(true);
+  };
+
+  const handleError = () => {
+    setErrorOpen(true);
+  };
+
   
   useEffect(() => {
     const fetchCollegesAndPrograms = async () => {
@@ -78,7 +100,7 @@ const TransferForm = () => {
     remarks: Yup.string().required('Remarks is required'),
   });
 
-  const handleSubmit = async(values) => {
+  const handleSubmit = async(values,{ resetForm }) => {
     try {
       // Upload the edited PDF file (Application Letter)
       const file = values.ApplicationLetter;
@@ -115,8 +137,11 @@ const TransferForm = () => {
 
       console.log(values);
       console.log('Transfer application submitted:', transferApplicationData);
+      handleSuccess();
+      resetForm();
     } catch (error) {
       console.error('Error uploading transfer application:', error);
+      handleError();
     }
 
   };
@@ -279,6 +304,21 @@ const TransferForm = () => {
       )}
       </Formik>
     </Box>
+
+     {/* Snackbar for success */}
+     <Snackbar open={successOpen} autoHideDuration={6000} onClose={handleClose}>
+     <MuiAlert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+       Transfer application submitted successfully!
+     </MuiAlert>
+   </Snackbar>
+
+   {/* Snackbar for error */}
+   <Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleClose}>
+     <MuiAlert onClose={handleClose} severity="error" sx={{ width: '100%' }}>
+       Error submitting transfer application. Please try again.
+     </MuiAlert>
+   </Snackbar>
+
   </Container>
 );
 }
