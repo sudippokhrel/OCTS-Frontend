@@ -16,12 +16,12 @@ import { db} from '../../firebase-config';
 import { useUserAuth } from '../context/UserAuthContext';
 
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 170 },
-  { id: 'puRegNumber', label: 'Registration Number', minWidth: 170 },
-  { id: 'sourceCollegeName', label: 'Source College', minWidth: 170 },
-  { id: 'destinationCollegeName', label: 'Destination College', minWidth: 170 },
+  { id: 'name', label: 'Name', minWidth: 100 },
+  { id: 'puRegNumber', label: 'Registration Number', minWidth: 100 },
+  { id: 'sourceCollegeName', label: 'Source College', minWidth: 100 },
+  { id: 'destinationCollegeName', label: 'Destination College', minWidth: 100 },
   { id: 'program', label: 'Program', minWidth: 100 },
-  { id: 'semester', label: 'Semester', minWidth: 170, align: 'right' },
+  { id: 'semester', label: 'Semester', minWidth: 100 },
   //{ id: 'action', label: 'Action', minWidth: 100 },
   { id: 'sourceCollegeStatus', label: 'Source College Status', minWidth: 100 },
   { id: 'destinationCollegeStatus', label: 'Destination College Status', minWidth: 100 },
