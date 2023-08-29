@@ -10,7 +10,6 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { db, storage } from "../../firebase-config";
@@ -24,9 +23,6 @@ import {
   where,
   query,
 } from "firebase/firestore";
-import VerifiedIcon from '@mui/icons-material/Verified';
-import CancelIcon from '@mui/icons-material/Cancel';
-import Swal from "sweetalert2";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 
@@ -35,11 +31,9 @@ import Autocomplete from "@mui/material/Autocomplete";
 // Role based  add option
 import { useUserAuth } from '../../components/context/UserAuthContext';
 import getUserRole from '../../components/users/getUserRole';
-import getUserCollege from '../../components/users/getUserCollege';
-import getUserProgram from '../../components/users/getUserProgram';
 
 
-export default function DestinationCollegeTable() {
+export default function DeanRejected() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(2);
   const [rows, setRows] = useState([]);  
@@ -47,8 +41,6 @@ export default function DestinationCollegeTable() {
 
   const {  user} = useUserAuth();//to display the profile bar according to user
   const [userRole, setUserRole] = React.useState(null);
-  const [userCollege, setUserCollege] = React.useState(null);
-  const [userProgram, setUserProgram] = React.useState(null);
 
   
 
@@ -59,38 +51,18 @@ export default function DestinationCollegeTable() {
         const role = await getUserRole(user.uid);
         setUserRole(role);
 
-        if (role !== "admin" && role != "dean") {
-          const college = await getUserCollege(user.uid);
-          setUserCollege(college);
-          const program = await getUserProgram(user.uid);
-          
-
-          setUserProgram(program);
-          console.log("user Program is :",userProgram);
-          console.log("user Program is :",userCollege);
-
-          // Fetch form based on userCollege here
-          // getForms(college,program);
-          
-        } else {
-          // Fetch form for admin
-          // getForms(userCollege, userProgram);
-        }
-
         setIsLoading(false);
       }
       if (!isLoading) {
         if (userRole === "admin" || userRole== "dean") {
           getForms();
-        } else {
-          getForms(userCollege,userProgram);
         }
         
       }
     };
     fetchData();
 
-  }, [user,userRole, userCollege, userProgram, isLoading]);
+  }, [user,userRole, isLoading]);
 
   // useEffect(() => {
     
@@ -98,11 +70,9 @@ export default function DestinationCollegeTable() {
 
 
 
-  const getForms = async (userCollege,userProgram) => {
+  const getForms = async () => {
 
     const empCollectionRef = collection(db, "TransferApplications");
-    console.log("user Program inside is :",userProgram);
-          console.log("user College inside is :",userCollege);
           console.log("user isloading inside is :",isLoading);
           console.log("userRole is ", userRole);
 
@@ -111,25 +81,14 @@ export default function DestinationCollegeTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef, where("destinationCollegeStatus", "==", 'Pending Destination College Approval'), where("sourceCollegeStatus", "==", 'Approved by Source College')); // Use query() function here
+      const q = query(empCollectionRef, where("deanStatus", "==", 'Rejected by Dean')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("destinationCollegeStatus", "==", 'Pending Destination College Approval'), where("destinationCollegeName", "==", userCollege), where("sourceCollegeStatus", "==", 'Approved by Source College')
-      ); // Use query() function here
-    const data = await getDocs(q);
-    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setRows(fetchedRows);
+    }else {
+      console.log(" Yo are not dean and can't access the data")
     }
-    else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("destinationCollegeStatus", "==", 'Pending Destination College Approval'), where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
-    const data = await getDocs(q);
-    const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-    setRows(fetchedRows);
 
-    }
-    
 
   };
 
@@ -142,74 +101,6 @@ export default function DestinationCollegeTable() {
     setPage(0);
   };
 
-  const accpetUser = (id) =>{
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Approve user!",
-    }).then((result) => {
-      if (result.value) {
-        approveApi(id);
-      }
-    });
-
-  };
-
-  const approveApi = async (id) => {
-    try {
-      const transferApplicationDocRef = doc(db, "TransferApplications", id);
-      await updateDoc(transferApplicationDocRef, {
-        destinationCollegeStatus: 'Approved by Destination College'
-      });
-  
-     // You can add additional logic here if needed
-  
-      Swal.fire("Approved!", "Form has been Approved", "success");
-      getForms(userCollege, userProgram);
-    }catch (error) {
-      console.error('Error approving application:', error);
-    }
-  };
-  
-
-
-  const rejectUser = (id) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Reject it!",
-    }).then((result) => {
-      if (result.value) {
-        rejectApi(id);
-      }
-    });
-  };
-
-  const rejectApi = async (id) => {
-    try {
-      const transferApplicationDocRef = doc(db, "TransferApplications", id);
-      await updateDoc(transferApplicationDocRef, {
-        destinationCollegeStatus: 'Rejected by Destination College'
-      });
-  
-      // You can add additional logic here if needed
-  
-      Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
-      getForms(userCollege, userProgram);
-    } catch (error) {
-      console.error('Error rejecting application:', error);
-    }
-  };
-
-
 
   const filterDataSemester = (v) => {
     if (v) {
@@ -218,7 +109,7 @@ export default function DestinationCollegeTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getForms(userCollege, userProgram);
+      getForms();
     }
   };
 
@@ -229,7 +120,7 @@ export default function DestinationCollegeTable() {
       setRows(filteredRows);
     } else {
       // Reset the rows to the original data
-      getForms(userCollege, userProgram);
+      getForms();
     }
   };
   
@@ -239,6 +130,7 @@ export default function DestinationCollegeTable() {
 
   return (
     <>
+      {/* {rows.length > 0 && ( */}
         <Paper sx={{ width: "98%", overflow: "hidden", padding: "12px" }}>
           <Typography
             gutterBottom
@@ -246,7 +138,7 @@ export default function DestinationCollegeTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Pending Transfer Request of Students To Get into Our College                      
+            Rejected by DEAN                     
           </Typography>
           <Divider />
           <Box height={10} />
@@ -267,7 +159,7 @@ export default function DestinationCollegeTable() {
 
             ): null }
 
-              {userRole == "program_coordinator" && (
+              {/* {userRole == "program_coordinator" && ( */}
               <Autocomplete
               disablePortal
               id="combo-box-demo"
@@ -281,7 +173,7 @@ export default function DestinationCollegeTable() {
               )}
             />
 
-            )}
+            {/* )} */}
             
           </Stack>
 
@@ -312,11 +204,6 @@ export default function DestinationCollegeTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
-                  {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
-                  <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Action
-                  </TableCell>
-                  ): null }
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -345,38 +232,6 @@ export default function DestinationCollegeTable() {
                               'No Application Letter'
                                )}
                         </TableCell>                  
-                          {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
-                          <TableCell align="left">
-                        
-                          <Stack spacing={2} direction="row">
-                           
-                            <VerifiedIcon
-                              style={{
-                                fontSize: "20px",
-                                color: "blue",
-                                cursor: "pointer",
-                              }}
-                              className="cursor-pointer"
-                              onClick={() => {
-                                accpetUser(row.id);
-                              }}
-                            />
-
-                            
-                            <CancelIcon
-                              style={{
-                                fontSize: "20px",
-                                color: "darkred",
-                                cursor: "pointer",
-                              }}
-                              onClick={() => {
-                                rejectUser(row.id);
-                              }}
-                            />
-                          </Stack>
-                        
-                        </TableCell>
-                        ): null }
                     
                       </TableRow>
                     );
@@ -394,7 +249,7 @@ export default function DestinationCollegeTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-       
+      {/* )}  */}
     </>
   );
 }

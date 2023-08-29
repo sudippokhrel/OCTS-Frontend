@@ -5,6 +5,8 @@ import Appbar from '../../components/navbar/Appbar';
 
 import '../../App.css';
 import DeanApprovalTable from './DeanApprovalTable';
+import DeanApproved from './DeanApproved';
+import DeanRejected from './DeanRejected';
 
 
 function DeanApproval() {
@@ -19,6 +21,10 @@ function DeanApproval() {
        <Navbar/>    
         <Box component="main" sx={{ flexGrow: 1, p: 3}}> 
         <DeanApprovalTable/>
+        <br></br>
+        <DeanApproved/>
+        <br></br>
+        <DeanRejected/>
         </Box>
         
  
