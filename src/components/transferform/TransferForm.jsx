@@ -153,7 +153,7 @@ const TransferForm = () => {
       </Typography>
       <Box sx={{ bgcolor: '#f5f5f5', padding: '1rem', borderRadius: '0.5rem' }}>
       <Typography variant="subtitle2" align="justify" fontStyle="italic" gutterBottom>
-        Please fill in all the required fields in the form below. After completing the form, you can download the application letter template using the link provided. Edit the downloaded PDF by filling in the required information, and then upload the filled application letter using the form.
+        Please fill in all the required fields in the form below. After completing the form, you can download the application letter template using the link provided. Write a similar letter for initiating the transfer and attach your TRANSCRIPT and other relevant documents in the SINGLE PDF.
       </Typography>
 
       <Typography variant="subtitle2" align="center" gutterBottom>
@@ -268,7 +268,7 @@ const TransferForm = () => {
           <FormControl fullWidth margin="normal">
             <span className="upload-info">
               <Typography variant="subtitle2" align="justify" fontStyle="italic" gutterBottom>
-                Choose the edited PDF file of your Application Letter using the "Choose File" button below. Make sure to fill in all the required fields before uploading.
+                Upload your single pdf having Application Letter and Transcript. 
               </Typography> 
             </span>
                   <input

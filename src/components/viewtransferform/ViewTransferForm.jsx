@@ -12,7 +12,8 @@ import Divider from '@mui/material/Divider';
 import Switch from '@mui/material/Switch';
 import { collection, getDocs } from '@firebase/firestore';
 import { db} from '../../firebase-config';
-
+import generatePDF from '../../../pdf/generatePDF';
+import { Button } from '@mui/material';
 import { useUserAuth } from '../context/UserAuthContext';
 
 const columns = [
@@ -108,9 +109,35 @@ const ViewTransfer = () => {
                       return (
                         <TableCell key={column.id} align={column.align}>
                     {row.ApplicationLetterPath  ? (
+                      <div>
                       <a href={row.ApplicationLetterPath} target="_blank" rel="noopener noreferrer">
                         View Application Letter
                       </a>
+                      <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={() => {
+                        const transferDataForPDF = {
+                          Name: row.name,
+                          'Registration Number': row.puRegNumber,
+                          'Source College': row.sourceCollegeName,
+                          'Destination College': row.destinationCollegeName,
+                          Program: row.program,
+                          Semester: row.semester,
+                          'Source College Status': row.sourceCollegeStatus,
+                          'Destination College Status': row.destinationCollegeStatus,
+                          'Dean Status': row.deanStatus,
+                        };
+                        const pdfBlob = generatePDF(transferDataForPDF);
+                        const downloadLink = document.createElement('a');
+                        downloadLink.href = URL.createObjectURL(pdfBlob);
+                        downloadLink.download = 'TransferDetails.pdf';
+                        downloadLink.click();
+                      }}
+                    >
+                      Download PDF
+                    </Button>
+                    </div>
                     ) : (
                       'No application letter'
                     )}
