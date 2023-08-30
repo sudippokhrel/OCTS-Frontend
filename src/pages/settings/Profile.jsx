@@ -72,7 +72,7 @@ const Profile = () => {
         <strong>Email:</strong> {user.email}
       </Typography>
       <Typography variant="body1" paragraph>
-        <strong>Faculty:</strong> {faculty}
+        <strong>Faculty:</strong> Science and Technology
       </Typography>
       <Typography variant="body1" paragraph>
         <strong>College:</strong> {college}

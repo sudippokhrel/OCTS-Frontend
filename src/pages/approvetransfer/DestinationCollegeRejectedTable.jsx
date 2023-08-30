@@ -113,7 +113,7 @@ export default function DestinationCollegeRejectedTable() {
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
+    }else if (userRole=='college_head' || userRole=='director'){
       const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Rejected by Destination College'),  where("destinationCollegeName", "==", userCollege)
       ); // Use query() function here
     const data = await getDocs(q);
