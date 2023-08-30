@@ -109,19 +109,19 @@ export default function SourceCollegeRejectedTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Rejected by Source College')); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Rejected by Source College Head')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Rejected by Source College'),  where("sourceCollegeName", "==", userCollege)
+    }else if (userRole=='college_head' || userRole=='director'){
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Approved by Source College Coordinator'), where("sourceCollegeStatus", "==", 'Rejected by Source College Head'),  where("sourceCollegeName", "==", userCollege)
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Rejected by Source College'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Rejected by Source College Coordinator'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -178,7 +178,7 @@ export default function SourceCollegeRejectedTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Rejected Transfer Forms                      
+            Transfer Forms rejected by {userRole}                     
           </Typography>
           <Divider />
           <Box height={10} />

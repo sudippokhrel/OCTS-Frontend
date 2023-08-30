@@ -109,19 +109,19 @@ export default function SourceCollegeApprovedTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College')); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College Head')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'),  where("sourceCollegeName", "==", userCollege)
+    }else if (userRole=='college_head' || userRole=='director'){
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Approved by Source College Coordinator'), where("sourceCollegeStatus", "==", 'Approved by Source College Head'),  where("sourceCollegeName", "==", userCollege)
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Approved by Source College Coordinator'), where("sourceCollegeStatus", "==", 'Pending Source College Head Approval'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -178,7 +178,7 @@ export default function SourceCollegeApprovedTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Accepted Transfer form of Students To go to Other Colleges                       
+            Accepted by {userRole} , The Transfer form of Students To go to Other Colleges                      
           </Typography>
           <Divider />
           <Box height={10} />
@@ -244,8 +244,14 @@ export default function SourceCollegeApprovedTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
+                  {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                    <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Source College Head Status
+                  </TableCell>
+
+                  ): null }
                   <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Destination College Status
+                    Destination College Head Status
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Dean Status
@@ -278,6 +284,10 @@ export default function SourceCollegeApprovedTable() {
                               'No Application Letter'
                                )}
                         </TableCell>
+                        {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                          <TableCell align="left">{row.sourceCollegeStatus}</TableCell>
+
+                        ): null }
                         <TableCell align="left">{row.destinationCollegeStatus}</TableCell>
                         <TableCell align="left">{row.deanStatus}</TableCell>                  
                     

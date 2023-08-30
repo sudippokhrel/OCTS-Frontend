@@ -116,15 +116,15 @@ export default function SourceCollegeTable() {
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Pending Source College Approval'), where("sourceCollegeName", "==", userCollege),
+    }else if (userRole=='college_head' || userRole=='director'){
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Approved by Source College Coordinator'), where("sourceCollegeStatus", "==", 'Pending Source College Head Approval'), where("sourceCollegeName", "==", userCollege),
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Pending Source College Approval'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Pending Source College Coordinator Approval'), where("sourceCollegeStatus", "==", 'Pending Source College Head Approval'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -142,6 +142,72 @@ export default function SourceCollegeTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+
+  const accpetCoordinatorUser = (id) =>{
+    Swal.fire({
+      title: "Coordinator, Are you sure to Approve the Transfer?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Approve user!",
+    }).then((result) => {
+      if (result.value) {
+        approveCoordinatorApi(id);
+      }
+    });
+
+  };
+
+  const approveCoordinatorApi = async (id) => { 
+     try {
+    const transferApplicationDocRef = doc(db, "TransferApplications", id);
+    await updateDoc(transferApplicationDocRef, {
+      sourceCollegeCoordinatorStatus: 'Approved by Source College Coordinator'
+    });
+
+   // You can add additional logic here if needed
+
+    Swal.fire("Approved!", "Form has been Approved By Coordinator", "success");
+    getForms(userCollege, userProgram);
+  }catch (error) {
+    console.error('Error approving application:', error);
+  }
+};
+
+const rejectCoordinatorUser = (id) => {
+  Swal.fire({
+    title: "Coordinator, Are you sure to Reject the Transfer?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, Reject it!",
+  }).then((result) => {
+    if (result.value) {
+      rejectCoordinatorApi(id);
+    }
+  });
+};
+
+const rejectCoordinatorApi = async (id) => {
+  try {
+    const transferApplicationDocRef = doc(db, "TransferApplications", id);
+    await updateDoc(transferApplicationDocRef, {
+      sourceCollegeCoordinatorStatus: 'Rejected by Source College Coordinator'
+    });
+
+    // You can add additional logic here if needed
+
+    Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
+    getForms(userCollege, userProgram);
+  } catch (error) {
+    console.error('Error rejecting application:', error);
+  }
+};
+  
 
   const accpetUser = (id) =>{
     Swal.fire({
@@ -246,7 +312,7 @@ export default function SourceCollegeTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Pending Transfer Request of Students To go to Other Colleges                       
+            Pending {userRole} Approval of Students To go to Other Colleges                       
           </Typography>
           <Divider />
           <Box height={10} />
@@ -312,11 +378,10 @@ export default function SourceCollegeTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
-                  {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Action
                   </TableCell>
-                  ): null }
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -370,6 +435,38 @@ export default function SourceCollegeTable() {
                               }}
                               onClick={() => {
                                 rejectUser(row.id);
+                              }}
+                            />
+                          </Stack>
+                        
+                        </TableCell>
+                        ): null }
+
+                       { userRole=="program_coordinator" || userRole== "coordinator" ? (
+                          <TableCell align="left">
+                          <Stack spacing={2} direction="row">
+                           
+                            <VerifiedIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "blue",
+                                cursor: "pointer",
+                              }}
+                              className="cursor-pointer"
+                              onClick={() => {
+                                accpetCoordinatorUser(row.id);
+                              }}
+                            />
+
+                            
+                            <CancelIcon
+                              style={{
+                                fontSize: "20px",
+                                color: "darkred",
+                                cursor: "pointer",
+                              }}
+                              onClick={() => {
+                                rejectCoordinatorUser(row.id);
                               }}
                             />
                           </Stack>

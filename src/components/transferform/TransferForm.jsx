@@ -122,8 +122,10 @@ const TransferForm = () => {
         semester: values.semester,
         ApplicationLetterPath: downloadURL, // Update this to the correct field name
         remarks: values.remarks,
-        sourceCollegeStatus: 'Pending Source College Approval', // Initial status
-        destinationCollegeStatus: 'Pending Destination College Approval',
+        sourceCollegeCoordinatorStatus: 'Pending Source College Coordinator Approval', // Initial status
+        destinationCollegeCoordinatorStatus: 'Pending Destination College Coordinator Approval',
+        sourceCollegeStatus: 'Pending Source College Head Approval', // Initial status
+        destinationCollegeStatus: 'Pending Destination College Head Approval',
         deanStatus: 'Pending Dean Approval'
       
       };
