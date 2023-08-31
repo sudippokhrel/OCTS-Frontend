@@ -192,7 +192,7 @@ const Signup = () => {
               fullWidth
               margin="normal"
               placeholder="Semester"
-              onChange={(e) => setSemester(e.target.value)}
+              onChange={(e) => setSemester(parseInt(e.target.value, 10))}
             />
             <TextField
               variant="outlined"

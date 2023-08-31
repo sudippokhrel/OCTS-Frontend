@@ -8,3 +8,5 @@ npm install @mui/system @mui/lab @mui/material
 
 npm install sweetalert2
 
+npm i jspdf
+

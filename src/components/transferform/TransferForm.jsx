@@ -110,7 +110,7 @@ const TransferForm = () => {
     contactNumber: Yup.number()
       .required('Contact Number is required'),
     program: Yup.string().required('Program Enrolled is required'),
-    semester: Yup.string().required('Current Semester is required'),
+    semester: Yup.number().required('Current Semester is required'),
     ApplicationLetter: Yup.mixed().required('Application Letter is required').test(
       'fileFormat',
       'Invalid file format. Please upload a PDF file.',
@@ -138,12 +138,16 @@ const TransferForm = () => {
         email: values.email,
         contactNumber: values.contactNumber,
         program: values.program,
-        semester: values.semester,
+        semester: parseInt(values.semester,10),
         ApplicationLetterPath: downloadURL, // Update this to the correct field name
         remarks: values.remarks,
-        sourceCollegeStatus: 'Pending Source College Approval', // Initial status
-        destinationCollegeStatus: 'Pending Destination College Approval',
-        deanStatus: 'Pending Dean Approval'
+        sourceCollegeCoordinatorStatus: 'Pending Source College Coordinator Approval', // Initial status
+        destinationCollegeCoordinatorStatus: 'Pending Destination College Coordinator Approval',
+        sourceCollegeStatus: 'Pending Source College Head Approval', // Initial status
+        destinationCollegeStatus: 'Pending Destination College Head Approval',
+        deanStatus: 'Pending Dean Approval',
+        deanRemark: '',
+        isSucess: false,
       
       };
 

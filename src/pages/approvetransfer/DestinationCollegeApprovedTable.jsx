@@ -10,6 +10,7 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
+import { Button } from '@mui/material';
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import { db,  } from "../../firebase-config";
@@ -26,6 +27,7 @@ import {
 
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import Swal from "sweetalert2";
 
 
 
@@ -109,19 +111,19 @@ export default function DestinationCollegeApprovedTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Approved by Destination College')); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College Head'), where("destinationCollegeStatus", "==", 'Approved by Destination College Head')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
-    }else if (userRole=='college_head' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Approved by Destination College'),  where("destinationCollegeName", "==", userCollege)
+    }else if (userRole=='college_head' || userRole=='director'){
+      const q = query(empCollectionRef, where("destinationCollegeStatus", "==", 'Approved by Destination College Head'), where("destinationCollegeCoordinatorStatus", "==", 'Approved by Destination College Coordinator'), where("sourceCollegeStatus", "==", 'Approved by Source College Head'),  where("destinationCollegeName", "==", userCollege)
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Approved by Destination College'), where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("destinationCollegeCoordinatorStatus", "==", 'Approved by Destination College Coordinator'), where("sourceCollegeStatus", "==", 'Approved by Source College Head'), where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -130,6 +132,107 @@ export default function DestinationCollegeApprovedTable() {
 
 
   };
+
+// Change Seats after Dean Approved
+  const adjustSeats = (id, sourceCollegeName, destinationCollegeName, program, semester) =>{
+    Swal.fire({
+      title: "Are you sure to Accept student and  Update Seats?",
+      text: "This is done once Student is Admitted to your college,and You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Complete Transfer!",
+    }).then((result) => {
+      if (result.value) {
+        adjustApi(id, sourceCollegeName, destinationCollegeName, program, semester);
+      }
+    });
+
+  };
+
+  const adjustApi = async (id, sourceCollegeName, destinationCollegeName, program, semester) => { 
+    console.log(" Source College", sourceCollegeName);
+    console.log("Destination College", destinationCollegeName);
+     try {
+      const seatsDocRef = collection(db, "seats");
+
+      // Query to decrease seats for the source college
+      const qdecrease = query(
+        seatsDocRef,
+        where("College", "==", sourceCollegeName),
+        where("Program", "==", program),
+        where("Semester", "==", semester)
+      );
+      
+      const decreaseQuerySnapshot = await getDocs(qdecrease);
+      
+      if (!decreaseQuerySnapshot.empty) {
+        const decreaseDoc = decreaseQuerySnapshot.docs[0];
+        const decreaseDocRef = decreaseDoc.ref;
+        const currentDecreaseSeats = decreaseDoc.data().Seats;
+        console.log("Seats of Source Before Decreasing",currentDecreaseSeats);
+      
+        if (currentDecreaseSeats > 0) {
+          await updateDoc(decreaseDocRef, { Seats: currentDecreaseSeats - 1 });
+        } else {
+          console.log("No available seats to decrease for source document:", decreaseDoc.id);
+        }
+      } 
+      
+      // Query to increase seats for the destination college
+      const qincrease = query(
+        seatsDocRef,
+        where("College", "==", destinationCollegeName),
+        where("Program", "==", program),
+        where("Semester", "==", semester)
+      );
+
+      // Update isSucess value after successful adjustments
+    const transferDocRef = doc(db, "TransferApplications", id);
+    await updateDoc(transferDocRef, { isSucess: true });
+
+    // Find the index of the updated row in the rows array
+    const updatedRowIndex = rows.findIndex(row => row.id === id);
+
+    // Update the specific row in the rows array
+    if (updatedRowIndex !== -1) {
+      const updatedRow = { ...rows[updatedRowIndex], isSucess: true };
+      const updatedRows = [...rows];
+      updatedRows[updatedRowIndex] = updatedRow;
+      setRows(updatedRows);
+    }
+      
+      const increaseQuerySnapshot = await getDocs(qincrease);
+      
+      if (!increaseQuerySnapshot.empty) {
+        const increaseDoc = increaseQuerySnapshot.docs[0];
+        const increaseDocRef = increaseDoc.ref;
+        const currentIncreaseSeats = increaseDoc.data().Seats;
+        console.log("Seats of Destination Before Increasing",currentIncreaseSeats);
+      
+        // Increase the Seats
+        if (currentIncreaseSeats < increaseDoc.data().TotalSeats) {
+          const newIncreaseSeats = currentIncreaseSeats + 1;
+          await updateDoc(increaseDocRef, { Seats: newIncreaseSeats });
+          console.log("Seats increased for destination document:", increaseDoc.id);
+        } else {
+          console.log("No available seats to increase for destination document:", increaseDoc.id);
+        }
+      } else {
+        console.log("No matching document found for destination seat increase.");
+      }
+   Swal.fire("Approved!", "Seats has been Updated", "success");
+   
+   // to change the Accept transfer button after adjusting Seats
+  
+ }catch (error) {
+   console.error('Error approving application:', error);
+ }
+};
+
+
+
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -178,7 +281,7 @@ export default function DestinationCollegeApprovedTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Approved Transfer Forms                      
+          Transfer Forms Approver by {userRole}                     
           </Typography>
           <Divider />
           <Box height={10} />
@@ -244,6 +347,12 @@ export default function DestinationCollegeApprovedTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
+                  {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                    <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Destination College Head Status
+                  </TableCell>
+
+                  ): null }
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Dean Status
                   </TableCell>
@@ -253,6 +362,7 @@ export default function DestinationCollegeApprovedTable() {
                 {rows
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
+                  
                     return (
                       <TableRow
                         hover
@@ -275,7 +385,41 @@ export default function DestinationCollegeApprovedTable() {
                               'No Application Letter'
                                )}
                         </TableCell>
-                        <TableCell align="left">{row.deanStatus}</TableCell>                  
+                        {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                          <TableCell align="left">{row.destinationCollegeStatus}</TableCell>
+
+                        ): null }
+                        <TableCell align="left">{row.deanStatus}</TableCell>
+                        {/* this table cell is filtered based on coordinator approval */}
+                        {userRole == "college_head" || userRole=="director" ? (
+                        <TableCell align="left">
+                          {row.deanStatus === 'Approved by Dean' ? (
+                            row.isSucess == 0 ? (
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              style={{
+                                padding: '5px 10px',  // Adjust padding as needed
+                                margin: '-6px -16px', // Negative margins to remove gaps      // Remove border
+                                fontSize:10,
+                                backgroundColor: "#1976D2",
+                                color: "white",
+                                fontWeight: "bold",
+                              }}
+                              onClick={() => adjustSeats(row.id, row.sourceCollegeName, row.destinationCollegeName, row.program, row.semester)}
+                            >
+                            Complete Transfer
+                            </Button>
+                            ) : (
+                            <strong>Transfer Is Completed</strong>
+                              )
+                            ) : (
+                              // Empty cell
+                           ''
+                          )}
+                        </TableCell>
+                        ): null }
+                 
                     
                       </TableRow>
                     );

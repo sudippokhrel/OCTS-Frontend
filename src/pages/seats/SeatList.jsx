@@ -230,7 +230,7 @@ export default function SeatsList() {
 
   return (
     <>
-      {rows.length > 0 && (
+      {/* {rows.length > 0 && ( */}
         <Paper sx={{ width: "98%", overflow: "hidden", padding: "12px" }}>
           <Typography
             gutterBottom
@@ -397,7 +397,7 @@ export default function SeatsList() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-      )}
+      {/* )} */}
     </>
   );
 }
