@@ -116,6 +116,7 @@ const ViewTransfer = () => {
                       <a href={row.ApplicationLetterPath} target="_blank" rel="noopener noreferrer">
                         View Application Letter
                       </a>
+                      {row.deanStatus === 'Approved by Dean' ? (
                       <Button
                       variant="outlined"
                       size="small"
@@ -140,6 +141,10 @@ const ViewTransfer = () => {
                     >
                       Download PDF
                     </Button>
+                    ) : (
+                      // Empty cell
+                   ''
+                  )}
                     </div>
                     ) : (
                       'No application letter'
