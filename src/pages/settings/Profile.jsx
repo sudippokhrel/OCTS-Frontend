@@ -16,14 +16,14 @@ import { blue } from '@mui/material/colors';
 const Profile = () => {
   const { user } = useUserAuth();
   const [name, setName] = useState('');
-  const [faculty, setFaculty] = useState('');
+  //const [faculty, setFaculty] = useState('');
   const [college, setCollege] = useState('');
   const [program, setProgram] = useState('');
 
   useEffect(() => {
     if (user) {
       const userId = user.uid;
-      const userRef = doc(db,'users',userId);
+      //const userRef = doc(db,'users',userId);
 
       getDocs(collection(db, 'users'))
         .then((querySnapshot) => {
@@ -32,13 +32,13 @@ const Profile = () => {
               const userDetails = doc.data();
               const nameValue = userDetails.name;
               // const emailValue = userDetails.email;
-              const facultyValue = userDetails.faculty;
+              //const facultyValue = userDetails.faculty;
               const collegeValue = userDetails.college;
               const programValue = userDetails.program;
 
               setName(nameValue);
               // setEmail(emailValue);
-              setFaculty(facultyValue);
+              //setFaculty(facultyValue);
               setCollege(collegeValue);
               setProgram(programValue);
             }
@@ -72,7 +72,7 @@ const Profile = () => {
         <strong>Email:</strong> {user.email}
       </Typography>
       <Typography variant="body1" paragraph>
-        <strong>Faculty:</strong> {faculty}
+        <strong>Faculty:</strong> Science and Technology
       </Typography>
       <Typography variant="body1" paragraph>
         <strong>College:</strong> {college}
