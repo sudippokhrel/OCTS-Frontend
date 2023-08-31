@@ -119,7 +119,7 @@ const TransferForm = () => {
         email: values.email,
         contactNumber: values.contactNumber,
         program: values.program,
-        semester: values.semester,
+        semester: parseInt(values.semester,10),
         ApplicationLetterPath: downloadURL, // Update this to the correct field name
         remarks: values.remarks,
         sourceCollegeCoordinatorStatus: 'Pending Source College Coordinator Approval', // Initial status
@@ -128,6 +128,7 @@ const TransferForm = () => {
         destinationCollegeStatus: 'Pending Destination College Head Approval',
         deanStatus: 'Pending Dean Approval',
         deanRemark: '',
+        isSucess: false,
       
       };
 
