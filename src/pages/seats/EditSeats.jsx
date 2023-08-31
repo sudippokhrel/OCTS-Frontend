@@ -81,16 +81,16 @@ const EditSeats = ({fid, closeEditEvent }) => {
 
   const handleTotalSeatsChange =(event, value) => {
     if (userRole === 'admin') {
-      setTotalSeats(event.target.value);
+      setTotalSeats(parseInt(event.target.value,10));
     } else if (userRole === 'college_head' || userRole === 'program_coordinator' || userRole === 'dean' || userRole=='coordinator' || userRole=='director')  {
       setTotalSeats(value.name);
     }
   };
 
   const handleSemesterChange = (event) => {
-    const semesterValue = parseInt(event.target.value);
+    const semesterValue = parseInt(event.target.value,10);
     if (!isNaN(semesterValue) && semesterValue >= 1 && semesterValue <= 8) {
-      setSemester(semesterValue);
+      setSemester(parseInt(semesterValue));
       setSemesterError(false);
     } else {
       setSemesterError(true);
@@ -106,7 +106,7 @@ const EditSeats = ({fid, closeEditEvent }) => {
     filledSeatsValue >= 0 &&
     filledSeatsValue <= TotalSeats
   ) {
-    setSeats(filledSeatsValue);
+    setSeats(parseInt(filledSeatsValue,10));
     setFilledSeatsError(false);
   } else {
     setFilledSeatsError(true);
