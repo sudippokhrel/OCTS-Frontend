@@ -121,7 +121,7 @@ export default function SourceCollegeApprovedTable() {
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Approved by Source College Coordinator'), where("sourceCollegeStatus", "==", 'Pending Source College Head Approval'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeCoordinatorStatus", "==", 'Approved by Source College Coordinator'), where("sourceCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -178,7 +178,7 @@ export default function SourceCollegeApprovedTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Accepted by {userRole} , The Transfer form of Students To go to Other Colleges                      
+            The Transfer form Approved by {userRole} To go to Other Colleges                      
           </Typography>
           <Divider />
           <Box height={10} />

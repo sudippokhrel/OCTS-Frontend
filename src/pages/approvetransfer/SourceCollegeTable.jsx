@@ -230,7 +230,7 @@ const rejectCoordinatorApi = async (id) => {
      try {
     const transferApplicationDocRef = doc(db, "TransferApplications", id);
     await updateDoc(transferApplicationDocRef, {
-      sourceCollegeStatus: 'Approved by Source College'
+      sourceCollegeStatus: 'Approved by Source College Head'
     });
 
    // You can add additional logic here if needed
@@ -263,7 +263,7 @@ const rejectCoordinatorApi = async (id) => {
     try {
       const transferApplicationDocRef = doc(db, "TransferApplications", id);
       await updateDoc(transferApplicationDocRef, {
-        sourceCollegeStatus: 'Rejected by Source College'
+        sourceCollegeStatus: 'Rejected by Source College Head'
       });
   
       // You can add additional logic here if needed
