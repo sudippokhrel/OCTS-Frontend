@@ -85,7 +85,7 @@ export default function DeanApprovalTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'),where("destinationCollegeStatus", "==", 'Approved by Destination College'), where("deanStatus", "==",'Pending Dean Approval')); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College Head'),where("destinationCollegeStatus", "==", 'Approved by Destination College Head'), where("deanStatus", "==",'Pending Dean Approval')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);

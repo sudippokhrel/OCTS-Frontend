@@ -109,19 +109,19 @@ export default function DestinationCollegeApprovedTable() {
 
 
     if (userRole=='admin' || userRole=='dean'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Approved by Destination College')); // Use query() function here
+      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College Head'), where("destinationCollegeStatus", "==", 'Approved by Destination College Head')); // Use query() function here
       const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }else if (userRole=='college_head' || userRole=='director'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Approved by Destination College'),  where("destinationCollegeName", "==", userCollege)
+      const q = query(empCollectionRef, where("destinationCollegeStatus", "==", 'Approved by Destination College Head'), where("destinationCollegeCoordinatorStatus", "==", 'Approved by Destination College Coordinator'), where("sourceCollegeStatus", "==", 'Approved by Source College Head'),  where("destinationCollegeName", "==", userCollege)
       ); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
     }
     else if (userRole=='program_coordinator' || userRole=='coordinator'){
-      const q = query(empCollectionRef, where("sourceCollegeStatus", "==", 'Approved by Source College'), where("destinationCollegeStatus", "==", 'Approved by Destination College'), where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
+      const q = query(empCollectionRef, where("destinationCollegeCoordinatorStatus", "==", 'Approved by Destination College Coordinator'), where("sourceCollegeStatus", "==", 'Approved by Source College Head'), where("destinationCollegeName", "==", userCollege), where("program", "==", userProgram)); // Use query() function here
     const data = await getDocs(q);
     const fetchedRows = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
     setRows(fetchedRows);
@@ -178,7 +178,7 @@ export default function DestinationCollegeApprovedTable() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Approved Transfer Forms                      
+          Transfer Forms Approver by {userRole}                     
           </Typography>
           <Divider />
           <Box height={10} />
@@ -244,6 +244,12 @@ export default function DestinationCollegeApprovedTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
+                  {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                    <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Destination College Head Status
+                  </TableCell>
+
+                  ): null }
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Dean Status
                   </TableCell>
@@ -275,6 +281,10 @@ export default function DestinationCollegeApprovedTable() {
                               'No Application Letter'
                                )}
                         </TableCell>
+                        {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                          <TableCell align="left">{row.destinationCollegeStatus}</TableCell>
+
+                        ): null }
                         <TableCell align="left">{row.deanStatus}</TableCell>                  
                     
                       </TableRow>
