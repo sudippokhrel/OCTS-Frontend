@@ -26,8 +26,11 @@ const columns = [
   //{ id: 'action', label: 'Action', minWidth: 100 },
   { id: 'sourceCollegeStatus', label: 'Source College Status', minWidth: 100 },
   { id: 'destinationCollegeStatus', label: 'Destination College Status', minWidth: 100 },
+  { id: 'deanRemark', label: 'Dean Remark', minWidth: 100 },
   { id: 'deanStatus', label: 'Dean Status', minWidth: 100 },
   { id: 'ApplicationLetter', label: 'Application Letter', minWidth: 100 },
+  
+
 ];
 
 
@@ -38,7 +41,7 @@ const ViewTransfer = () => {
 
   const [transferApplications, setTransferApplications] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(2);
 
 
   useEffect(() => {

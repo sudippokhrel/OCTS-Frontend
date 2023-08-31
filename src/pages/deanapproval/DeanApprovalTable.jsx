@@ -105,6 +105,37 @@ export default function DeanApprovalTable() {
     setPage(0);
   };
 
+  const sendRemark = async (rowId) => {
+    const { value: remark } = await Swal.fire({
+      title: "Enter Remark",
+      input: "text",
+      inputPlaceholder: "Enter your remark here",
+      inputLabel: "Your Remark", // Custom label for the input field
+      showCancelButton: true,
+      confirmButtonText: "Send",
+      cancelButtonText: "Cancel",
+      inputValidator: (value) => {
+        if (!value) {
+          return "Remark is required!";
+        }
+      },
+    });
+  
+    if (remark) {
+      try {
+        const transferApplicationDocRef = doc(db, "TransferApplications", rowId);
+        await updateDoc(transferApplicationDocRef, {
+          deanRemark: remark,
+        });
+  
+        Swal.fire("Remark Sent!", "Your remark has been sent.", "success");
+      } catch (error) {
+        console.error("Error sending remark:", error);
+        Swal.fire("Error", "An error occurred. Please try again.", "error");
+      }
+    }
+  };
+
   const accpetUser = (id) =>{
     Swal.fire({
       title: "Are you sure to Approve the Transfer?",
@@ -274,11 +305,17 @@ export default function DeanApprovalTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Transfer Letter
                   </TableCell>
-                  {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
-                  <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Action
+                  {userRole == "admin"  || userRole== "dean" ? (
+                    <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Send Remarks
                   </TableCell>
                   ): null }
+                  {userRole == "admin"  || userRole== "dean" ? (
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Accept/Reject
+                  </TableCell>
+                  ): null }
+                  
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -306,14 +343,37 @@ export default function DeanApprovalTable() {
                              ) : (
                               'No Application Letter'
                                )}
-                        </TableCell>                  
-                          {userRole == "admin" || userRole=="college_head" || userRole== "dean" ? (
+                        </TableCell> 
+                        {userRole == "admin" || userRole== "dean" ? ( 
+                          <TableCell align="left">
+                            <Button variant="outlined" color="primary" 
+                            style={{
+                              padding: '5px 10px',  // Adjust padding as needed
+                              margin: '-6px -16px', // Negative margins to remove gaps      // Remove border
+                              fontSize:12,
+                              backgroundColor: "#1976D2",
+                              color: "white",
+                              fontWeight: "bold",
+                            }}
+                            onClick={() => {
+                                sendRemark(row.id);
+                              }} >
+
+                            Remarks
+                            
+                            </Button>
+                          </TableCell>
+
+                        ): null }  
+
+
+                          {userRole == "admin" || userRole== "dean" ? (
                           <TableCell align="left">
                           <Stack spacing={2} direction="row">
                            
                             <VerifiedIcon
                               style={{
-                                fontSize: "20px",
+                                fontSize: "25px",
                                 color: "blue",
                                 cursor: "pointer",
                               }}
@@ -326,7 +386,7 @@ export default function DeanApprovalTable() {
                             
                             <CancelIcon
                               style={{
-                                fontSize: "20px",
+                                fontSize: "25px",
                                 color: "darkred",
                                 cursor: "pointer",
                               }}
