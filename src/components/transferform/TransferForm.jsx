@@ -126,7 +126,8 @@ const TransferForm = () => {
         destinationCollegeCoordinatorStatus: 'Pending Destination College Coordinator Approval',
         sourceCollegeStatus: 'Pending Source College Head Approval', // Initial status
         destinationCollegeStatus: 'Pending Destination College Head Approval',
-        deanStatus: 'Pending Dean Approval'
+        deanStatus: 'Pending Dean Approval',
+        deanRemark: '',
       
       };
 
