@@ -21,16 +21,21 @@ import ApplicationLetterPDF from '../../../pdf/FinalApplicationTemplate _fillabl
 import { storage } from '../../firebase-config';
 import { uploadBytes, ref } from 'firebase/storage';
 import {  getDownloadURL } from '@firebase/storage';
-import { collection, addDoc } from '@firebase/firestore';
+import { collection, query,where,getDoc, addDoc,doc } from '@firebase/firestore';
 import { db } from '../../firebase-config';
+import { useUserAuth } from '../context/UserAuthContext';
 
 const TransferForm = () => {
 
+  const { user } = useUserAuth(); // Access the user details from your context or hook
 
   const [colleges, setColleges] = useState([]);
   const [programs, setPrograms] = useState([]);
   const [successOpen, setSuccessOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
+
+  // State for user data
+  const [userData, setUserData] = useState(null);
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -51,6 +56,19 @@ const TransferForm = () => {
 
   
   useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userDocRef = doc(db, 'users', user.uid); // Adjust the collection name and path if necessary
+        const userDocSnap = await getDoc(userDocRef);
+  
+        if (userDocSnap.exists()) {
+          setUserData(userDocSnap.data());
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
     const fetchCollegesAndPrograms = async () => {
       const fetchedColleges = await getColleges();
       console.log('Fetched colleges:', fetchedColleges);
@@ -63,18 +81,19 @@ const TransferForm = () => {
     };
 
     fetchCollegesAndPrograms();
-  }, []);
+    fetchUserData();
+  }, [user.uid]);
 
   const initialValues = {
-    name: '',
-    puRegNumber: '',
+    name: userData?.name || '',
+    puRegNumber: userData?.puRegNumber ||  '',
     examRollNumber: '',
     sourceCollegeName: '',
     destinationCollegeName: '',
-    email: '',
+    email:user.email ||'',
     contactNumber: '',
     program: '',
-    semester: '',
+    semester: userData?.semester || '',
     ApplicationLetter: null,
     remarks: '',
   };
@@ -157,9 +176,9 @@ const TransferForm = () => {
       </Typography>
       <Box sx={{ bgcolor: '#f5f5f5', padding: '1rem', borderRadius: '0.5rem' }}>
       <Typography variant="subtitle2" align="justify" fontStyle="italic" gutterBottom>
-        Please fill in all the required fields in the form below. After completing the form, you can download the application letter template using the link provided. Write a similar letter for initiating the transfer and attach your TRANSCRIPT and other relevant documents in the SINGLE PDF.
-      </Typography>
-
+        Please fill in all the required fields in the form below. After completing the form, you can download the application letter template using the link provided. Write a similar letter and upload it along with your most recent semester gradesheet. If the gradesheet is not available, 
+        provide relevant document that shows the proof that you had appeared in at least one examination of the last semester. Upload the documents in a SINGLE PDF.
+        </Typography>
       <Typography variant="subtitle2" align="center" gutterBottom>
         <a href={ApplicationLetterPDF} download>
           Download Application Letter Template
@@ -173,6 +192,7 @@ const TransferForm = () => {
             required
             fullWidth
             label="Full Name"
+            value={initialValues.name}
             name="name"
             margin="normal"
           />
@@ -184,6 +204,7 @@ const TransferForm = () => {
             fullWidth
             label="Registration Number"
             name="puRegNumber"
+            value={initialValues.puRegNumber}
             margin="normal"
           />
           <ErrorMessage name="puRegNumber" component="div" className="error-red" />
@@ -263,6 +284,7 @@ const TransferForm = () => {
             fullWidth
             label="Current Semester"
             name="semester"
+            value={initialValues.semester}
             margin="normal"
           />
           <ErrorMessage name="semester" component="div" className="error-red" />

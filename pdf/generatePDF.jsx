@@ -25,7 +25,7 @@ const generatePDF = (transferData) => {
    const currentDate = new Date().toLocaleDateString();
    doc.setTextColor(0); // Black color
    doc.setFontSize(10);
-   doc.text(`Date: ${currentDate}`, doc.internal.pageSize.width - 30, 10, null, null, 'right');
+   doc.text(`Date: ${currentDate}`, doc.internal.pageSize.width - 30, 30, null, null, 'right');
  
 
   // Define table columns and data
