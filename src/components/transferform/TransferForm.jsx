@@ -91,7 +91,7 @@ const TransferForm = () => {
     contactNumber: Yup.number()
       .required('Contact Number is required'),
     program: Yup.string().required('Program Enrolled is required'),
-    semester: Yup.string().required('Current Semester is required'),
+    semester: Yup.number().required('Current Semester is required'),
     ApplicationLetter: Yup.mixed().required('Application Letter is required').test(
       'fileFormat',
       'Invalid file format. Please upload a PDF file.',

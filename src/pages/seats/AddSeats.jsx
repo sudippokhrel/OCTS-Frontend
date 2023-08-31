@@ -64,15 +64,18 @@ const AddSeats = ({ closeEvent }) => {
   };
 
   const handleSemesterChange = (event) => {
-    setSemester(event.target.value);
+    const semesterValue = parseInt(event.target.value, 10); // Parse input as integer
+    setSemester(semesterValue);
   };
 
   const handleSeatsChange = (event) => {
-    setSeats(event.target.value);
+    const seatsValue = parseInt(event.target.value, 10); // Parse input as integer
+    setSeats(seatsValue);
   };
 
   const handleTotalSeatsChange = (event) => {
-    setTotalSeats(event.target.value);
+    const totalSeatsValue = parseInt(event.target.value, 10); // Parse input as integer
+    setTotalSeats(totalSeatsValue);
   };
 
   const handleSubmit = async () => {
