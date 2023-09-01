@@ -13,20 +13,24 @@ import Switch from '@mui/material/Switch';
 import { collection, getDocs } from '@firebase/firestore';
 import { db} from '../../firebase-config';
 import generatePDF from '../../../pdf/generatePDF';
-import { Button } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import { useUserAuth } from '../context/UserAuthContext';
 
+import Input from '@mui/material/Input';
+import IconButton from '@mui/material/IconButton';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
+
 const columns = [
-  { id: 'name', label: 'Name', minWidth: 100 },
+  { id: 'name', label: 'Name' },
   { id: 'puRegNumber', label: 'Registration Number', minWidth: 100 },
   { id: 'sourceCollegeName', label: 'Source College', minWidth: 100 },
   { id: 'destinationCollegeName', label: 'Destination College', minWidth: 100 },
   { id: 'program', label: 'Program', minWidth: 100 },
-  { id: 'semester', label: 'Semester', minWidth: 100 },
+  { id: 'semester', label: 'Semester', minWidth: 80 },
   //{ id: 'action', label: 'Action', minWidth: 100 },
   { id: 'sourceCollegeStatus', label: 'Source College Status', minWidth: 100 },
   { id: 'destinationCollegeStatus', label: 'Destination College Status', minWidth: 100 },
-  { id: 'deanRemark', label: 'Dean Remark', minWidth: 100 },
   { id: 'deanStatus', label: 'Dean Status', minWidth: 100 },
   { id: 'ApplicationLetter', label: 'Application Letter', minWidth: 100 },
   
@@ -42,6 +46,9 @@ const ViewTransfer = () => {
   const [transferApplications, setTransferApplications] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(2);
+
+  const [fileData, setFileData] = useState({ file: null, fileName: 'voucher to dean' });
+
 
 
   useEffect(() => {
@@ -106,6 +113,7 @@ const ViewTransfer = () => {
               
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
+                <React.Fragment key={row.id}>
                 <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
                   {columns.map((column) => {
                     if (column.id === 'ApplicationLetter') {
@@ -116,35 +124,6 @@ const ViewTransfer = () => {
                       <a href={row.ApplicationLetterPath} target="_blank" rel="noopener noreferrer">
                         View Application Letter
                       </a>
-                      {row.deanStatus === 'Approved by Dean' ? (
-                      <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => {
-                        const transferDataForPDF = {
-                          Name: row.name,
-                          'Registration Number': row.puRegNumber,
-                          'Source College': row.sourceCollegeName,
-                          'Destination College': row.destinationCollegeName,
-                          Program: row.program,
-                          Semester: row.semester,
-                          'Source College Status': row.sourceCollegeStatus,
-                          'Destination College Status': row.destinationCollegeStatus,
-                          'Dean Status': row.deanStatus,
-                        };
-                        const pdfBlob = generatePDF(transferDataForPDF);
-                        const downloadLink = document.createElement('a');
-                        downloadLink.href = URL.createObjectURL(pdfBlob);
-                        downloadLink.download = 'TransferDetails.pdf';
-                        downloadLink.click();
-                      }}
-                    >
-                      Download PDF
-                    </Button>
-                    ) : (
-                      // Empty cell
-                   ''
-                  )}
                     </div>
                     ) : (
                       'No application letter'
@@ -160,6 +139,85 @@ const ViewTransfer = () => {
                     );
                   })}
                 </TableRow>
+                {row.destinationCollegeStatus === 'Approved by Destination College Head' && (
+                <TableRow>
+                <TableCell colSpan={columns.length}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {/* Input field and upload button */}
+                    <div style={{ marginRight: '10px' }}>
+                      <Input
+                        type="file"
+                        onChange={(e) => {
+                          setFileData({
+                            file: e.target.files[0],
+                            fileName: e.target.files[0].name,
+                          });
+                        }}
+                      />
+                      <IconButton
+                        onClick={() => {
+                          // Handle the file upload to Firebase Storage here
+                          // You'll need to implement this logic
+                          // Use fileData.file to access the selected file
+                        }}
+                      >
+                        <CloudUploadIcon />
+                      </IconButton>
+                    </div>
+                    {/* Dean's remark */}
+                    {row.deanRemark && (
+                      <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <div style={{ fontWeight: 'bold', marginRight: '5px' }}>Dean Remark:</div>
+                        <div style={{ fontStyle: 'italic', color: 'gray' }}>
+                          "{row.deanRemark}"
+                        </div>
+                      </div>
+                    </div>
+                    )}
+                    {/* Download PDF button */}
+                    {row.deanStatus === 'Approved by Dean' && (
+                      <div style={{ marginLeft: '10px' }}>
+                        <Button
+                        style={{
+                          padding: '5px 10px',  // Adjust padding as needed
+                          margin: '-6px -16px', // Negative margins to remove gaps      // Remove border
+                          fontSize:12,
+                          backgroundColor: "#1976D2",
+                          color: "white",
+                          fontWeight: "bold",
+                        }}
+                          variant="outlined"
+                          size="small"
+                          onClick={() => {
+                            const transferDataForPDF = {
+                              Name: row.name,
+                              'Registration Number': row.puRegNumber,
+                              'Source College': row.sourceCollegeName,
+                              'Destination College': row.destinationCollegeName,
+                              Program: row.program,
+                              Semester: row.semester,
+                              'Source College Status': row.sourceCollegeStatus,
+                              'Destination College Status': row.destinationCollegeStatus,
+                              'Dean Status': row.deanStatus,
+                            };
+                            const pdfBlob = generatePDF(transferDataForPDF);
+                            const downloadLink = document.createElement('a');
+                            downloadLink.href = URL.createObjectURL(pdfBlob);
+                            downloadLink.download = 'TransferDetails.pdf';
+                            downloadLink.click();
+                          }}
+                        >
+                          Download PDF
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+              
+      )}
+                </React.Fragment>
               ))}
           </TableBody>
         </Table>
