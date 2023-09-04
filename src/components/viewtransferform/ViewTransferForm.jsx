@@ -95,7 +95,6 @@ const ViewTransfer = () => {
           if (applicationData.email === user.email) { // Filter applications by user email
             applicationsData.push({ id: doc.id, ...applicationData });
             console.log("I am fetching the dataaaaaaaaaaaaaaaaa");
-            Swal.fire(" Fetching the data");
           }
         });
 
@@ -211,7 +210,7 @@ const ViewTransfer = () => {
           downloadLink.click();
         }}
       >
-        Download Sucess Report
+        Download Confirmation
       </Button>
     </div>
 
@@ -311,6 +310,23 @@ const ViewTransfer = () => {
     </TableCell>
   </TableRow>
 ) : null}
+            {/* Logic when the form is rejected */}
+            {row.sourceCollegeCoordinatorStatus == 'Rejected by Source College Coordinator' ||row.sourceCollegeStatus == 'Rejected by Source College Head' 
+            || row.destinationCollegeCoordinatorStatus == 'Rejected by Destination College Coordinator'|| row.DestinationCollegeStatus == 'Rejected by Destination College Head' 
+            || row.deanStatus =='Rejected by Dean' ?(
+              <TableRow>
+                <TableCell colSpan={columns.length}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <div style={{ fontWeight: 'bold', marginRight: '5px' }}>
+                    Your form has been rejected, Unfortunately you can't be Transfered to {row.destinationCollegeName}
+                  </div>
+
+                </div>
+
+                </TableCell>
+              </TableRow>
+
+            ):null}
 
 
                 </React.Fragment>
