@@ -256,6 +256,9 @@ export default function SourceCollegeApprovedTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Dean Status
                   </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Transfer Status
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -289,7 +292,23 @@ export default function SourceCollegeApprovedTable() {
 
                         ): null }
                         <TableCell align="left">{row.destinationCollegeStatus}</TableCell>
-                        <TableCell align="left">{row.deanStatus}</TableCell>                  
+                        <TableCell align="left">{row.deanStatus}</TableCell>  
+                        <TableCell align="left">{row.isSucess ?(
+                          <strong>Transfer Is Completed</strong>
+                        ):(row.sourceCollegeCoordinatorStatus == 'Rejected by Source College Coordinator' ||row.sourceCollegeStatus == 'Rejected by Source College Head' 
+                        || row.destinationCollegeCoordinatorStatus == 'Rejected by Destination College Coordinator'|| row.DestinationCollegeStatus == 'Rejected by Destination College Head' 
+                        || row.deanStatus =='Rejected by Dean' ?(
+                        <strong>Transfer Is Rejected</strong>):
+                        (row.deanStatus =='Approved by Dean' && row.isSucess ==0 ?(
+                        <strong>Student Approved for admission to Another college</strong>):(
+
+                          <strong>Transfer Is Underway</strong>
+                        )
+                        )
+                          
+                          
+                        )}
+                        </TableCell>                 
                     
                       </TableRow>
                     );
