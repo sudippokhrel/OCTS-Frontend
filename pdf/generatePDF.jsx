@@ -1,6 +1,7 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import logo from "../images/PU_Logo.jpg" // Replace with the actual path to your logo image
+import deanSignature from "../images/Dean_Sign.png"
 
 const generatePDF = (transferData) => {
   const doc = new jsPDF();
@@ -25,7 +26,7 @@ const generatePDF = (transferData) => {
    const currentDate = new Date().toLocaleDateString();
    doc.setTextColor(0); // Black color
    doc.setFontSize(10);
-   doc.text(`Date: ${currentDate}`, doc.internal.pageSize.width - 30, 30, null, null, 'right');
+   doc.text(`Date: ${currentDate}`, doc.internal.pageSize.width - 30, 10, null, null, 'right');
  
 
   // Define table columns and data
@@ -49,6 +50,12 @@ const generatePDF = (transferData) => {
     },
   });
 
+  // Add the dean's signature below the table
+  const signatureWidth = 40;
+  const signatureHeight = 20;
+  const signatureX = 140; // Adjust the horizontal position
+  const signatureY = doc.autoTable.previous.finalY + 10; // Position it below the table
+  doc.addImage(deanSignature, 'PNG', signatureX, signatureY, signatureWidth, signatureHeight);
 
   // Draw a line to separate the footer
   const lineHeight = doc.internal.pageSize.height - 30;
