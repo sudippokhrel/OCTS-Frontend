@@ -196,7 +196,8 @@ const rejectCoordinatorApi = async (id) => {
   try {
     const transferApplicationDocRef = doc(db, "TransferApplications", id);
     await updateDoc(transferApplicationDocRef, {
-      destinationCollegeCoordinatorStatus: 'Rejected by Destination College Coordinator'
+      destinationCollegeCoordinatorStatus: 'Rejected by Destination College Coordinator',
+      destinationCollegeStatus: 'Rejected by Destination College Coordinator',
     });
 
     Swal.fire("Rejected!", "Transfer application has been rejected.", "success");
@@ -313,7 +314,7 @@ const rejectCoordinatorApi = async (id) => {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Pending Transferto be approved by {userRole} To Get into Our College                      
+            Pending Transfer to be approved by {userRole} To Get into Our College                      
           </Typography>
           <Divider />
           <Box height={10} />

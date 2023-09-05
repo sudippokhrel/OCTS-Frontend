@@ -138,7 +138,7 @@ export default function DeanApproved() {
             component="div"
             sx={{ padding: "15px" }}
           >
-            Sucessful Transfers                     
+            Approved by Dean                     
           </Typography>
           <Divider />
           <Box height={10} />

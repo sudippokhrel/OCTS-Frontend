@@ -356,6 +356,12 @@ export default function DestinationCollegeApprovedTable() {
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Dean Status
                   </TableCell>
+                  {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                    <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Transfer Status
+                  </TableCell>
+
+                  ): null }
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -390,6 +396,20 @@ export default function DestinationCollegeApprovedTable() {
 
                         ): null }
                         <TableCell align="left">{row.deanStatus}</TableCell>
+                        {userRole == "program_coordinator" || userRole=="coordinator" ? (
+                          <TableCell align="left">
+                            {row.DestinationCollegeStatus == 'Rejected by Destination College Head' 
+                          || row.deanStatus =='Rejected by Dean' ?(
+                          <strong>Transfer Is Rejected</strong>):
+                          (row.isSucess ?(<strong>Transfer Is Sucess</strong>):(
+                          <strong>Transfer Is Underway</strong>
+                          )
+                            
+  
+                          )}
+                          </TableCell>
+
+                        ): null }
                         {/* this table cell is filtered based on coordinator approval */}
                         {userRole == "college_head" || userRole=="director" ? (
                         <TableCell align="left">
