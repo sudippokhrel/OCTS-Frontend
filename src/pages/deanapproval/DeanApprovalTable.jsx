@@ -398,6 +398,21 @@ export default function DeanApprovalTable() {
                         
                         </TableCell>
                         ): null }
+
+                          {userRole== "dean" ? ( 
+                          <TableCell align="left">
+                            {row.voucher  ? (
+                      <div>
+                      <a href={row.voucher} target="_blank" rel="noopener noreferrer">
+                        Voucher & Additional Documents
+                      </a>
+                    </div>
+                    ) : (
+                      ''
+                    )}
+                          </TableCell>
+
+                        ): null }
                     
                       </TableRow>
                     );
