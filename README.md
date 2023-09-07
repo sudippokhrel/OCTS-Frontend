@@ -1,4 +1,4 @@
-# Online College Transfer System
+# Online College Transfer System (OCTS)
 
 
 This project is an Online College Transfer System developed for Pokhara University. The system allows everyone to view the seats in respective colleges without requiring user authentication. It allows students to apply for transfer from one college to another within the university based on the availability of seats in specific programs and semesters. The system includes a user-friendly dashboard and a multi-level approval process to ensure a smooth transfer experience.
@@ -21,7 +21,28 @@ Pokhara University consists of multiple constituent colleges, each offering vari
 1. Student initiates the transfer request.
 2. Program Coordinator of the source college reviews and approves/rejects the application.
 3. College Head of the source college reviews and approves/rejects the application.
-4. Program Coordinator of the destination college reviews and approves/rejects the application.
+4. Program Coordinator of the destination college reviews and approves/rejects# Online College Transfer System (OCTS)
+
+
+This project is an Online College Transfer System developed for Pokhara University. The system allows everyone to view the seats in respective colleges without requiring user authentication. It allows students to apply for transfer from one college to another within the university based on the availability of seats in specific programs and semesters. The system includes a user-friendly dashboard and a multi-level approval process to ensure a smooth transfer experience.
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Technology Stack](#technology-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Admin Setup](#admin-setup)
+- [Contributing](#contributing)
+- [Team Members](#team-members)
+- [License](#license)
+
+## Project Overview
+
+Pokhara University consists of multiple constituent colleges, each offering various programs with 8 semesters. This system provides a dashboard accessible to everyone, displaying the available seats in each semester of each program at every college within the university. Students can initiate a transfer from their source college to a destination college if seats are available in their desired program and semester. The application then goes through the following approval process:
+
+1. Student initiates the transfer request.
+2. Program Coordinator of the source college reviews and approves/rejects the application. the application.
 5. College Head of the destination college reviews and approves/rejects the application.
 6. The transfer application reaches the Pokhara University dean for the final approval.
 
