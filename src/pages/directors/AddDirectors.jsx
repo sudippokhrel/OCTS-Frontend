@@ -8,21 +8,21 @@ import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
-import Button from '@mui/material/Button';
 import Swal from 'sweetalert2';
-import { ToastContainer } from 'react-toastify';
+import Button from '@mui/material/Button';
 import { toast } from 'react-toastify';
 import { Alert } from '@mui/material';
-import { useUserAuth } from '../../components/context/UserAuthContext';
 import {
-  collection,
   doc,
   setDoc,
 } from "firebase/firestore";
 import { db } from '../../firebase-config';
 import getColleges from '../../components/users/getColleges';
+import { getAuth } from '@firebase/auth';
+import { createUserWithEmailAndPassword } from '@firebase/auth';
+import { initializeApp } from '@firebase/app';
 
-const AddDirectors = ({ closeEvent }) => {
+const AddDirectors = ({ closeEvent, userCollege, getDirectors }) => {
 
   const [colleges, setColleges] = useState([]);
   const [selectedCollege, setSelectedCollege] = useState(null);
@@ -32,16 +32,31 @@ const AddDirectors = ({ closeEvent }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { signUp, logIn } = useUserAuth();
 
-  const empCollectionRef = collection(db, 'users');
+  const [secondaryApp, setSecondaryApp] = useState(null);
+
+  useEffect(() => {
+    const secondaryConfig = {
+      apiKey: "AIzaSyC-q2_dwLpsPj5kyJJ5mq9WyAjmw2diCkY",
+      authDomain: "octs-37cd6.firebaseapp.com",
+      projectId: "octs-37cd6",
+      storageBucket: "octs-37cd6.appspot.com",
+      messagingSenderId: "791843106649",
+      appId: "1:791843106649:web:e9bab3648144a2f97da648",
+      measurementId: "G-EVYDTQVSKZ"
+    };
+
+    const secondaryFirebase = initializeApp(secondaryConfig, "Secondary");
+    setSecondaryApp(secondaryFirebase);
+  }, []);
+
 
   useEffect(() => {
     // Fetch colleges from Firestore
     const fetchColleges = async () => {
       const fetchedColleges = await getColleges();
       console.log('Fetched colleges:', fetchedColleges);
-      setColleges(fetchedColleges);
+      setColleges(fetchedColleges || []);
     };
 
     fetchColleges();
@@ -61,7 +76,11 @@ const AddDirectors = ({ closeEvent }) => {
     setError('');
 
     try {
-      const { user: authUser } = await signUp(email, password);
+      const secondaryAuth = getAuth(secondaryApp);
+
+      // Sign up the new collegehead/director using the secondary auth instance
+      const { user: authUser } = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+      
       const userRef = doc(db, 'users', authUser.uid);
       const newUser = {
         name: name,
@@ -74,13 +93,17 @@ const AddDirectors = ({ closeEvent }) => {
 
       console.log('Successfully created an account');
       toast.success('Successfully Created an account');
+
+      // Fetch coordinators again after successfully adding a new coordinator
+      getDirectors(userCollege);
+
       closeEvent(newUser);
       Swal.fire('Submitted', ' New Director has been Added', 'success');
     } 
     catch (error) {
       console.error('Error creating account:', error);
       setError('Invalid email or password');
-      toast.error('Error creating an account. Please try again!');
+      //toast.error('Error creating an account. Please try again!');
     }
   
     // Handle form submission logic here
@@ -88,7 +111,6 @@ const AddDirectors = ({ closeEvent }) => {
 
   const handleCollegeChange = (event, value) => {
     setSelectedCollege(value);
-    console.log(selectedCollege);
   };
 
 
@@ -173,6 +195,8 @@ const AddDirectors = ({ closeEvent }) => {
 
 AddDirectors.propTypes = {
   closeEvent: PropTypes.func.isRequired,
+  userCollege: PropTypes.string.isRequired,
+  getDirectors: PropTypes.func.isRequired,
 };
 
 export default AddDirectors;

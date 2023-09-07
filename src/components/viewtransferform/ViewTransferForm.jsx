@@ -286,7 +286,7 @@ const ViewTransfer = () => {
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div style={{ fontWeight: 'bold', marginRight: '5px' }}>Dean Remark:</div>
                   <div style={{ fontStyle: 'italic', color: 'gray' }}>
-                    "{row.deanRemark}"
+                  &quot;{row.deanRemark}&quot;
                   </div>
                 </div>
               </div>
@@ -318,7 +318,7 @@ const ViewTransfer = () => {
                 <TableCell colSpan={columns.length}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                   <div style={{ fontWeight: 'bold', marginRight: '5px' }}>
-                    Your form has been rejected, Unfortunately you can't be Transfered to {row.destinationCollegeName}
+                    Your form has been rejected, Unfortunately you can&apos;t be transfered to {row.destinationCollegeName}
                   </div>
 
                 </div>
