@@ -54,11 +54,11 @@ const generatePDF = (transferData) => {
   const signatureWidth = 40;
   const signatureHeight = 20;
   const signatureX = 140; // Adjust the horizontal position
-  const signatureY = doc.autoTable.previous.finalY + 10; // Position it below the table
+  const signatureY = doc.autoTable.previous.finalY +-1.2; // Position it below the table
   doc.addImage(deanSignature, 'PNG', signatureX, signatureY, signatureWidth, signatureHeight);
 
   // Draw a line to separate the footer
-  const lineHeight = doc.internal.pageSize.height - 30;
+  const lineHeight = doc.internal.pageSize.height - 25;
   doc.setLineWidth(0.5);
   doc.setDrawColor(0, 51, 102);
   doc.line(10, lineHeight, doc.internal.pageSize.width - 10, lineHeight);
@@ -67,9 +67,10 @@ const generatePDF = (transferData) => {
   // Add Footer Content
   doc.setTextColor(128, 128, 128); // Black color for footer
   doc.setFontSize(10);
-  doc.text('P.O. Box: 427, Pokhara Metropolitan City-30, Lekhnath, Kaski, Nepal. E-mail: info@pu.edu.np', 15, lineHeight+15 );
-  doc.text('URL: https://pu.edu.np, Tel.: +977-61-504046/504039', 15, lineHeight + 20);
-  doc.text('2023 © All Rights Reserved. Powered By OCTS', 15, lineHeight + 25);
+  doc.text('P.O. Box: 427, Pokhara Metropolitan City-30, Lekhnath, Kaski, Nepal', 15, lineHeight+8 );
+  doc.text('E-mail: info@pu.edu.np', 15, lineHeight+12 );
+  doc.text('URL: https://pu.edu.np, Tel.: +977-61-504046/504039', 15, lineHeight + 18);
+  doc.text('2023 © All Rights Reserved. Powered By OCTS', 15, lineHeight + 22);
 
 
   // Save the PDF and return it

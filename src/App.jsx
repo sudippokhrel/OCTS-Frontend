@@ -112,7 +112,7 @@ function App() {
         <Route
           path="/collegehead"
           element={
-          <ProtectedRoute >
+          <ProtectedRoute>
           <CollegeHeadDashboard />
           </ProtectedRoute>
           }
