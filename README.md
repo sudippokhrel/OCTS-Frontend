@@ -21,7 +21,7 @@ Pokhara University consists of multiple constituent colleges, each offering vari
 1. Student initiates the transfer request.
 2. Program Coordinator of the source college reviews and approves/rejects the application.
 3. College Head of the source college reviews and approves/rejects the application.
-4. Program Coordinator of the destination college reviews and approves/rejects# Online College Transfer System (OCTS)
+4. Program Coordinator of the destination college reviews and approves/rejects
 
 
 This project is an Online College Transfer System developed for Pokhara University. The system allows everyone to view the seats in respective colleges without requiring user authentication. It allows students to apply for transfer from one college to another within the university based on the availability of seats in specific programs and semesters. The system includes a user-friendly dashboard and a multi-level approval process to ensure a smooth transfer experience.
