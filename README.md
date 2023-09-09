@@ -3,6 +3,10 @@
 
 This project is an Online College Transfer System developed for Pokhara University. The system allows everyone to view the seats in respective colleges without requiring user authentication. It allows students to apply for transfer from one college to another within the university based on the availability of seats in specific programs and semesters. The system includes a user-friendly dashboard and a multi-level approval process to ensure a smooth transfer experience.
 
+## Live Demo
+
+Check out the live demo of the Online College Transfer System (OCTS) here: [Live Demo](https://octs-finalproject.web.app)
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)
