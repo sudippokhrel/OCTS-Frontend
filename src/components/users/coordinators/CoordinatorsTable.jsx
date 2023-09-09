@@ -226,6 +226,9 @@ export default function CoordinatorsTable() {
                     Name
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
+                    Email
+                  </TableCell>
+                  <TableCell align="left" style={{ minWidth: "100px" }}>
                     College
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
@@ -253,6 +256,7 @@ export default function CoordinatorsTable() {
                        
                       >
                         <TableCell align="left">{row.name}</TableCell>
+                        <TableCell align="left">{row.email}</TableCell>
                         <TableCell align="left">{row.college}</TableCell>
                         <TableCell align="left">{row.program}</TableCell>
                         <TableCell align="left"> {row.role}</TableCell>
