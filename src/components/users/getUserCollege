@@ -1,0 +1,35 @@
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
+
+
+const getUserCollege = async (uid) => {
+  try {
+    // Reference the Firestore 'users' collection
+    const db = getFirestore();
+    const userRef = doc(db, 'users', uid);
+
+    // Retrieve the user document using the UID
+    const userDoc = await getDoc(userRef);
+
+    // Check if the document exists
+    if (userDoc.exists()) {
+      // Retrieve the college from the document data
+      const college = userDoc.data().college;
+
+      // Return the user's college
+      return college;
+    } else {
+      // Handle the case where the user document does not exist
+      console.log('User document does not exist');
+      return null;
+    }
+  } catch (error) {
+    // Handle any errors that occur during the retrieval
+    console.error('Error retrieving user college:', error);
+    return null;
+  }
+};
+
+export default getUserCollege;
+
+
+
