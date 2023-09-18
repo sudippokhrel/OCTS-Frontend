@@ -37,13 +37,20 @@ const AddDirectors = ({ closeEvent, userCollege, getDirectors }) => {
 
   useEffect(() => {
     const secondaryConfig = {
-      apiKey: "AIzaSyC-q2_dwLpsPj5kyJJ5mq9WyAjmw2diCkY",
-      authDomain: "octs-37cd6.firebaseapp.com",
-      projectId: "octs-37cd6",
-      storageBucket: "octs-37cd6.appspot.com",
-      messagingSenderId: "791843106649",
-      appId: "1:791843106649:web:e9bab3648144a2f97da648",
-      measurementId: "G-EVYDTQVSKZ"
+      // apiKey: "AIzaSyC-q2_dwLpsPj5kyJJ5mq9WyAjmw2diCkY",
+      // authDomain: "octs-37cd6.firebaseapp.com",
+      // projectId: "octs-37cd6",
+      // storageBucket: "octs-37cd6.appspot.com",
+      // messagingSenderId: "791843106649",
+      // appId: "1:791843106649:web:e9bab3648144a2f97da648",
+      // measurementId: "G-EVYDTQVSKZ"
+      apiKey: "AIzaSyBJYa0v7vBkcexw6zt5GEHB3OR-5yXEC1I",
+      authDomain: "octs-finalproject.firebaseapp.com",
+      projectId: "octs-finalproject",
+      storageBucket: "octs-finalproject.appspot.com",
+      messagingSenderId: "51124541022",
+      appId: "1:51124541022:web:faded1fb85ae5c2e8886cf",
+      measurementId: "G-DB6XN9FV36"
     };
 
     const secondaryFirebase = initializeApp(secondaryConfig, "Secondary");

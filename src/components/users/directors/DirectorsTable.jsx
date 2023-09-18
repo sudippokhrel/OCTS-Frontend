@@ -175,10 +175,10 @@ export default function DirectorssTable() {
                     Name
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
-                    College
+                    Email
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
-                    Email
+                    College
                   </TableCell>
                   <TableCell align="left" style={{ minWidth: "100px" }}>
                     Role
